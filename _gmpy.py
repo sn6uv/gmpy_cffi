@@ -64,7 +64,10 @@ def _new_mpz():
 
 def _pylong_to_mpz(n, a):
     """
-    Set mpz `a` from int `n` > 2 * sys.maxint + 1.
+    Set `a` from `n` > 2 * sys.maxint + 1.
+
+    :type n: int
+    :type a: mpz
     """
 
     neg = n < 0
@@ -93,8 +96,10 @@ class mpz(object):
         """
         Create a mpz from `n`.
 
-        `n`: Value to convert. Can be an int, a float or a string; if float, it gets truncated.
-        `base`: Base in which to interpret the string `n`. Only allowed if `n` is a string. If not given, `base` defaults to 10.
+        :param n: Value to convert. Can be an int, a float or a string; if float, it gets truncated.
+        :type n: int or float or str
+        :param base: Base in which to interpret the string `n`. Only allowed if `n` is a string. If not given, `base` defaults to 10.
+        :type base: int or None.
         """
 
         a = self._mpz = ffi.gc(ffi.new("mpz_t"), gmp.mpz_clear)
