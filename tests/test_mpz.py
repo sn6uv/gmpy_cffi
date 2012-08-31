@@ -7,7 +7,7 @@ class TestInit(object):
 
     def _test_init(self, numbers):
         for n in numbers:
-            _gmpy.mpz(n) == n
+            assert _gmpy.mpz(n) == n
 
     def test_init_smallint(self):
         self._test_init(self.small_ints)
@@ -17,22 +17,23 @@ class TestInit(object):
 
     def test_init_small_decimal_str(self):
         for n in self.small_ints:
-            _gmpy.mpz(str(n), 10) == n
-            _gmpy.mpz(str(n)) == n
-            _gmpy.mpz(str(n), 0) == n
+            assert _gmpy.mpz(str(n), 10) == n
+            assert _gmpy.mpz(str(n)) == n
+            assert _gmpy.mpz(str(n), 0) == n
 
     def test_init_big_decimal_str(self):
         for n in self.big_ints:
-            _gmpy.mpz(str(n), 10) == n
-            _gmpy.mpz(str(n)) == n
-            _gmpy.mpz(str(n), 0) == n
+            assert _gmpy.mpz(str(n), 10) == n
+            assert _gmpy.mpz(str(n)) == n
+            assert _gmpy.mpz(str(n), 0) == n
 
     def test_init_small_hex_str(self):
         for n in self.small_ints:
-            _gmpy.mpz("%x" % n, 16) == n
-            _gmpy.mpz("%#x" % n, 0) == n
+            assert _gmpy.mpz("%x" % n, 16) == n
+            assert _gmpy.mpz("%#x" % n, 0) == n
 
     def test_init_big_hex_str(self):
         for n in self.big_ints:
-            _gmpy.mpz("%x" % n, 16) == n
-            _gmpy.mpz("%#x" % n, 0) == n
+            assert _gmpy.mpz("%x" % n, 16) == n
+            assert _gmpy.mpz("%#x" % n, 0) == n
+
