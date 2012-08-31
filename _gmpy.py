@@ -67,6 +67,8 @@ def _pylong_to_mpz(n, a):
     Set mpz `a` from int `n` > 2 * sys.maxint + 1.
     """
 
+    neg = n < 0
+    n = abs(n)
     #tmp = ffi.new("uint64_t[]", (n.bit_length() + 63) // 64)
     #count = len(tmp)
     #for i in range(count):
@@ -80,6 +82,8 @@ def _pylong_to_mpz(n, a):
         tmp.append(v)
     addr, count = tmp.buffer_info()
     gmp.mpz_import(a, count, -1, tmp.itemsize, 0, 0, ffi.cast('void *', addr))
+    if neg:
+        gmp.mpz_neg(a, a)
 
 class mpz(object):
     _mpz_str = None
@@ -111,10 +115,7 @@ class mpz(object):
         elif n <= MAX_UI:
             gmp.mpz_init_set_ui(a, n)
         else:
-            neg = n < 0
-            _pylong_to_mpz(abs(n), a)
-            if neg:
-                gmp.mpz_neg(a, a)
+            _pylong_to_mpz(n, a)
 
     @classmethod
     def _from_c_mpz(cls, mpz):
@@ -135,8 +136,12 @@ class mpz(object):
         if isinstance(other, int) and 0 <= other <= MAX_UI:
             gmp.mpz_add_ui(res, self._mpz, other)
         else:
-            oth = mpz(other) if isinstance(other, int) else other
-            gmp.mpz_add(res, self._mpz, oth._mpz)
+            if isinstance(other, int):
+                oth = _new_mpz()
+                _pylong_to_mpz(other, oth)
+            else:
+                oth = other._mpz
+            gmp.mpz_add(res, self._mpz, oth)
         return mpz._from_c_mpz(res)
     __radd__ = __add__
 
@@ -145,8 +150,12 @@ class mpz(object):
         if isinstance(other, int) and 0 <= other <= MAX_UI:
             gmp.mpz_sub_ui(res, self._mpz, other)
         else:
-            oth = mpz(other) if isinstance(other, int) else other
-            gmp.mpz_sub(res, self._mpz, oth._mpz)
+            if isinstance(other, int):
+                oth = _new_mpz()
+                _pylong_to_mpz(other, oth)
+            else:
+                oth = other._mpz
+            gmp.mpz_sub(res, self._mpz, oth)
         return mpz._from_c_mpz(res)
 
     def __rsub__(self, other):
@@ -159,8 +168,12 @@ class mpz(object):
         if isinstance(other, int) and 0 <= other <= MAX_UI:
             gmp.mpz_mul_ui(res, self._mpz, other)
         else:
-            oth = mpz(other) if isinstance(other, int) else other
-            gmp.mpz_mul(res, self._mpz, oth._mpz)
+            if isinstance(other, int):
+                oth = _new_mpz()
+                _pylong_to_mpz(other, oth)
+            else:
+                oth = other._mpz
+            gmp.mpz_mul(res, self._mpz, oth)
         return mpz._from_c_mpz(res)
     __rmul__ = __mul__
 
@@ -169,8 +182,12 @@ class mpz(object):
         if isinstance(other, int) and 0 <= other <= MAX_UI:
             gmp.mpz_fdiv_q_ui(q, self._mpz, other)
         else:
-            oth = mpz(other) if isinstance(other, int) else other
-            gmp.mpz_fdiv_q(q, self._mpz, oth._mpz)
+            if isinstance(other, int):
+                oth = _new_mpz()
+                _pylong_to_mpz(other, oth)
+            else:
+                oth = other._mpz
+            gmp.mpz_fdiv_q(q, self._mpz, oth)
         return mpz._from_c_mpz(q)
 
     def __rdiv__(self, other):
@@ -186,8 +203,12 @@ class mpz(object):
         if isinstance(other, int) and 0 <= other <= MAX_UI:
             gmp.mpz_fdiv_r_ui(r, self._mpz, other)
         else:
-            oth = mpz(other) if isinstance(other, int) else other
-            gmp.mpz_fdiv_r(r, self._mpz, oth._mpz)
+            if isinstance(other, int):
+                oth = _new_mpz()
+                _pylong_to_mpz(other, oth)
+            else:
+                oth = other._mpz
+            gmp.mpz_fdiv_r(r, self._mpz, oth)
         return mpz._from_c_mpz(r)
 
     def __rmod__(self, other):
@@ -201,8 +222,12 @@ class mpz(object):
         if isinstance(other, int) and 0 <= other <= MAX_UI:
             gmp.mpz_fdiv_qr_ui(q, r, self._mpz, other)
         else:
-            oth = mpz(other) if isinstance(other, int) else other
-            gmp.mpz_fdiv_qr(q, r, self._mpz, oth._mpz)
+            if isinstance(other, int):
+                oth = _new_mpz()
+                _pylong_to_mpz(other, oth)
+            else:
+                oth = other._mpz
+            gmp.mpz_fdiv_qr(q, r, self._mpz, oth)
         return mpz._from_c_mpz(q), mpz._from_c_mpz(r)
 
     def __rdivmod__(self, other):
@@ -225,5 +250,9 @@ class mpz(object):
         if isinstance(other, int) and 0 <= other <= MAX_UI:
             return gmp.mpz_cmp_ui(self._mpz, other)
         else:
-            oth = mpz(other) if isinstance(other, int) else other
-            return gmp.mpz_cmp(self._mpz, oth._mpz)
+            if isinstance(other, int):
+                oth = _new_mpz()
+                _pylong_to_mpz(other, oth)
+            else:
+                oth = other._mpz
+            return gmp.mpz_cmp(self._mpz, oth)
