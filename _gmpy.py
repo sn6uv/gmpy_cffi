@@ -117,7 +117,7 @@ class mpz(object):
             gmp.mpz_init_set_d(a, n)
         elif -sys.maxint - 1 <= n <= sys.maxint:
             gmp.mpz_init_set_si(a, n)
-        elif n <= MAX_UI:
+        elif sys.maxint < n <= MAX_UI:
             gmp.mpz_init_set_ui(a, n)
         else:
             _pylong_to_mpz(n, a)
@@ -138,10 +138,10 @@ class mpz(object):
 
     def __add__(self, other):
         res = _new_mpz()
-        if isinstance(other, int) and 0 <= other <= MAX_UI:
+        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             gmp.mpz_add_ui(res, self._mpz, other)
         else:
-            if isinstance(other, int):
+            if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
             else:
@@ -152,10 +152,10 @@ class mpz(object):
 
     def __sub__(self, other):
         res = _new_mpz()
-        if isinstance(other, int) and 0 <= other <= MAX_UI:
+        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             gmp.mpz_sub_ui(res, self._mpz, other)
         else:
-            if isinstance(other, int):
+            if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
             else:
@@ -170,10 +170,10 @@ class mpz(object):
 
     def __mul__(self, other):
         res = _new_mpz()
-        if isinstance(other, int) and 0 <= other <= MAX_UI:
+        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             gmp.mpz_mul_ui(res, self._mpz, other)
         else:
-            if isinstance(other, int):
+            if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
             else:
@@ -184,10 +184,10 @@ class mpz(object):
 
     def __div__(self, other):
         q = _new_mpz()
-        if isinstance(other, int) and 0 <= other <= MAX_UI:
+        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             gmp.mpz_fdiv_q_ui(q, self._mpz, other)
         else:
-            if isinstance(other, int):
+            if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
             else:
@@ -207,10 +207,10 @@ class mpz(object):
 
     def __mod__(self, other):
         r = _new_mpz()
-        if isinstance(other, int) and 0 <= other <= MAX_UI:
+        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             gmp.mpz_fdiv_r_ui(r, self._mpz, other)
         else:
-            if isinstance(other, int):
+            if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
             else:
@@ -228,10 +228,10 @@ class mpz(object):
     def __divmod__(self, other):
         q = _new_mpz()
         r = _new_mpz()
-        if isinstance(other, int) and 0 <= other <= MAX_UI:
+        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             gmp.mpz_fdiv_qr_ui(q, r, self._mpz, other)
         else:
-            if isinstance(other, int):
+            if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
             else:
@@ -258,10 +258,10 @@ class mpz(object):
         return mpz._from_c_mpz(res)
 
     def __cmp__(self, other):
-        if isinstance(other, int) and 0 <= other <= MAX_UI:
+        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             return gmp.mpz_cmp_ui(self._mpz, other)
         else:
-            if isinstance(other, int):
+            if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
             else:
