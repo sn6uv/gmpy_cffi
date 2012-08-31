@@ -22,7 +22,7 @@ def main(N):
                 ns = ns * 10 + t
                 i += 1
                 if i % 10 == 0:
-                    print ('%s\t:%d' % (str(ns).zfill(10), i))
+#                    print ('%s\t:%d' % (str(ns).zfill(10), i))
                     ns = mpz(0)
                 if i >= N:
                     break

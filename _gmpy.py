@@ -58,7 +58,7 @@ MAX_UI = 2 * sys.maxint + 1
 def _new_mpz():
     """Return an initialized c mpz."""
 
-    mpz = ffi.new("mpz_t")
+    mpz = ffi.gc(ffi.new("mpz_t"), gmp.mpz_clear)
     gmp.mpz_init(mpz)
     return mpz
 
@@ -96,13 +96,12 @@ class mpz(object):
         `base`: Base in which to interpret the string `n`. Only allowed if `n` is a string. If not given, `base` defaults to 10.
         """
 
-        a = self._mpz = ffi.new("mpz_t")
+        a = self._mpz = ffi.gc(ffi.new("mpz_t"), gmp.mpz_clear)
         if isinstance(n, str):
             if base is None:
                 base = 10
             if base == 0 or 2 <= base <= 62:
                 if gmp.mpz_init_set_str(a, n, base) == -1:
-                    gmp.mpz_clear(a)
                     raise ValueError("Can't create mpz from %s with base %s" % (n, base))
             else:
                 raise ValueError('base must be 0 or 2..62, not %s' % base)
