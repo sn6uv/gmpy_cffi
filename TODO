@@ -1,0 +1,4 @@
+Cache for c mpz's
+Support mpz(s, base=256)
+Use *_si variants, if possible
+Error checking
