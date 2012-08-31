@@ -26,9 +26,6 @@
     <default-html-doctype>$APPLICATION_HOME_DIR$/lib/pycharm.jar!/resources/html5-schema/html5.rnc</default-html-doctype>
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="PyPy 1.9.1-dev0 (/mnt/space/data/pypy/pypy/translator/goal/pypy-c)" project-jdk-type="Python SDK" />
-  <component name="PyCoverageOptionsProvider">
-    <option name="myUseBundledCoveragePy" value="true" />
-  </component>
   <component name="masterDetails">
     <states>
       <state key="ScopeChooserConfigurable.UI">

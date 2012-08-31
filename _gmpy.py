@@ -85,6 +85,7 @@ def _pylong_to_mpz(n, a):
     if neg:
         gmp.mpz_neg(a, a)
 
+
 class mpz(object):
     _mpz_str = None
 
@@ -191,7 +192,9 @@ class mpz(object):
 
     def __rdiv__(self, other):
         q = _new_mpz()
-        gmp.mpz_fdiv_q(q, mpz(other)._mpz, self._mpz)
+        oth = _new_mpz()
+        _pylong_to_mpz(other, oth)
+        gmp.mpz_fdiv_q(q, oth, self._mpz)
         return mpz._from_c_mpz(q)
 
     __floordiv__ = __div__
@@ -212,7 +215,9 @@ class mpz(object):
 
     def __rmod__(self, other):
         r = _new_mpz()
-        gmp.mpz_fdiv_r(r, mpz(other)._mpz, self._mpz)
+        oth = _new_mpz()
+        _pylong_to_mpz(other, oth)
+        gmp.mpz_fdiv_r(r, oth, self._mpz)
         return mpz._from_c_mpz(r)
 
     def __divmod__(self, other):
@@ -232,7 +237,9 @@ class mpz(object):
     def __rdivmod__(self, other):
         q = _new_mpz()
         r = _new_mpz()
-        gmp.mpz_fdiv_qr(q, r, mpz(other)._mpz, self._mpz)
+        oth = _new_mpz()
+        _pylong_to_mpz(other, oth)
+        gmp.mpz_fdiv_qr(q, r, oth, self._mpz)
         return mpz._from_c_mpz(q), mpz._from_c_mpz(r)
 
     def __lshift__(self, other):
