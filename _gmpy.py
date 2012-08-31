@@ -2,7 +2,7 @@ import sys
 import cffi
 import array
 
-__all__ = "ffi", "lib", "mpz"
+__all__ = "ffi", "gmp", "mpz"
 
 ffi = cffi.FFI()
 
@@ -38,7 +38,7 @@ ffi.cdef("""
 //    void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
 """)
 
-lib = ffi.verify("#include <gmp.h>", libraries=['gmp', 'm'])
+gmp = ffi.verify("#include <gmp.h>", libraries=['gmp', 'm'])
 
 # ____________________________________________________________
 
@@ -52,14 +52,14 @@ def _pylong_to_mpz(n, a):
     #for i in range(count):
     #    n, v = divmod(n, 1 << 64)
     #    tmp[i] = v
-    #lib.mpz_import(a, count, -1, 8, 0, 0, tmp)
+    #gmp.mpz_import(a, count, -1, 8, 0, 0, tmp)
     tmp = array.array('L')
     divisor = 1 << (8 * tmp.itemsize)
     while n:
         n, v = divmod(n, divisor)
         tmp.append(v)
     addr, count = tmp.buffer_info()
-    lib.mpz_import(a, count, -1, tmp.itemsize, 0, 0, ffi.cast('void *', addr))
+    gmp.mpz_import(a, count, -1, tmp.itemsize, 0, 0, ffi.cast('void *', addr))
 
 def mpz(n, base=None):
     """
@@ -73,23 +73,23 @@ def mpz(n, base=None):
         if base is None:
             base = 10
         if base == 0 or 2 <= base <= 62:
-            if lib.mpz_init_set_str(a, n, base) == -1:
-                lib.mpz_clear(a)
+            if gmp.mpz_init_set_str(a, n, base) == -1:
+                gmp.mpz_clear(a)
                 raise ValueError("Can't create mpz from %s with base %s" % (n, base))
         else:
             raise ValueError('base must be 0 or 2..62, not %s' % base)
     elif base is not None:
         raise ValueError('Base only allowed for str, not for %s.' % type(n))
     elif isinstance(n, float):
-        lib.mpz_init_set_d(a, n)
+        gmp.mpz_init_set_d(a, n)
     elif -sys.maxint - 1 <= n <= sys.maxint:
-        lib.mpz_init_set_si(a, n)
+        gmp.mpz_init_set_si(a, n)
     elif n <= 2 * sys.maxint + 1:
-        lib.mpz_init_set_ui(a, n)
+        gmp.mpz_init_set_ui(a, n)
     else:
         neg = n < 0
         _pylong_to_mpz(abs(n), a)
         if neg:
-            lib.mpz_neg(a, a)
+            gmp.mpz_neg(a, a)
 
     return a
