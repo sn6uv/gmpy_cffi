@@ -10,7 +10,7 @@ ffi.cdef("""
     typedef struct { ...; } __mpz_struct;
     typedef __mpz_struct *mpz_t;
 
-    void mpz_init (mpz_t x);
+//    void mpz_init (mpz_t x);
     void mpz_init_set_ui (mpz_t rop, unsigned long int op);
     void mpz_init_set_si (mpz_t rop, signed long int op);
     void mpz_init_set_d (mpz_t rop, double op);
@@ -19,7 +19,7 @@ ffi.cdef("""
 
     char * mpz_get_str (char *str, int base, mpz_t op);
     void mpz_import (mpz_t rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op);
-    void * mpz_export (void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, mpz_t op);
+//    void * mpz_export (void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, mpz_t op);
 
     void mpz_add (mpz_t rop, mpz_t op1, mpz_t op2);
     void mpz_add_ui (mpz_t rop, mpz_t op1, unsigned long int op2);
@@ -27,15 +27,15 @@ ffi.cdef("""
     void mpz_mul (mpz_t rop, mpz_t op1, mpz_t op2);
     void mpz_mul_ui (mpz_t rop, mpz_t op1, unsigned long int op2);
     void mpz_submul (mpz_t rop, mpz_t op1, mpz_t op2);
-    void mpz_neg (mpz_t rop, mpz_t op);
+//    void mpz_neg (mpz_t rop, mpz_t op);
 
     void mpz_fdiv_qr (mpz_t q, mpz_t r, mpz_t n, mpz_t d);
-    int mpz_divisible_ui_p (mpz_t n, unsigned long int d);
+//    int mpz_divisible_ui_p (mpz_t n, unsigned long int d);
 
     int mpz_cmp (mpz_t op1, mpz_t op2);
 
-    void mpz_bin_ui (mpz_t rop, mpz_t n, unsigned long int k);
-    void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
+//    void mpz_bin_ui (mpz_t rop, mpz_t n, unsigned long int k);
+//    void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
 """)
 
 lib = ffi.verify("#include <gmp.h>", libraries=['gmp', 'm'])
