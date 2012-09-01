@@ -32,22 +32,22 @@ class TestInit(object):
             _gmpy.mpz(n, base)
 
 class TestMath(object):
-    numbers = {(0, 1), (23, 42), (sys.maxint, sys.maxint), (sys.maxint, 1)}
+    numbers = {-1, 0, 1, sys.maxint, -sys.maxint - 1, 2 * sys.maxint + 1, 2 * sys.maxint + 2}
 
-    @pytest.mark.parametrize(('a', 'b'), numbers)
-    def test_add(self, a, b):
-        assert _gmpy.mpz(a) + _gmpy.mpz(b) == _gmpy.mpz(a + b)
-        assert _gmpy.mpz(a) + b == _gmpy.mpz(a + b)
-        assert b + _gmpy.mpz(a) == _gmpy.mpz(b + a)
-        assert (-a) + _gmpy.mpz(b) == _gmpy.mpz(-a + b)
-        assert _gmpy.mpz(a) + (-b) == _gmpy.mpz(a - b)
+    @pytest.mark.parametrize('b', numbers)
+    def test_add(self, b):
+        assert _gmpy.mpz(1) + _gmpy.mpz(b) == _gmpy.mpz(1 + b)
+        assert _gmpy.mpz(1) + b == _gmpy.mpz(1 + b)
 
-    @pytest.mark.parametrize(('a', 'b'), numbers)
-    def test_sub(self, a, b):
-        if a:
-            pytest.xfail('a != 0')
-        assert _gmpy.mpz(a) - _gmpy.mpz(b) == _gmpy.mpz(a - b)
-        assert _gmpy.mpz(a) - b == _gmpy.mpz(a - b)
-        assert a - _gmpy.mpz(b) == _gmpy.mpz(a - b)
-        assert (-a) - _gmpy.mpz(b) == _gmpy.mpz(-a - b)
-        assert _gmpy.mpz(a) - (-b) == _gmpy.mpz(a + b)
+    @pytest.mark.parametrize('b', numbers)
+    def test_radd(self, b):
+        assert b + _gmpy.mpz(1) == _gmpy.mpz(b + 1)
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_sub(self, b):
+        assert _gmpy.mpz(1) - _gmpy.mpz(b) == _gmpy.mpz(1 - b)
+        assert _gmpy.mpz(1) - b == _gmpy.mpz(1 - b)
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_rsub(self, b):
+        assert b - _gmpy.mpz(1) == _gmpy.mpz(b - 1)
