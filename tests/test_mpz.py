@@ -27,9 +27,14 @@ class TestInit(object):
         assert _gmpy.mpz("%#x" % n, 0) == n
 
     @pytest.mark.parametrize(('n', 'base'), {('0x1', 16), ('g', 16), ('a', 10)})
-    def test_init_invalid(self, n, base):
+    def test_init_invalid_str(self, n, base):
         with pytest.raises(ValueError):
             _gmpy.mpz(n, base)
+
+    @pytest.mark.parametrize('type_', {int, float, _gmpy.mpz, str})
+    def test_init_type(self, type_):
+        assert _gmpy.mpz(type_(1)) == 1
+
 
 class TestMath(object):
     numbers = {-1, 0, 1, sys.maxint, -sys.maxint - 1, 2 * sys.maxint + 1, 2 * sys.maxint + 2}

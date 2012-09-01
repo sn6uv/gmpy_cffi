@@ -96,12 +96,15 @@ class mpz(object):
         """
         Create a mpz from `n`.
 
-        :param n: Value to convert. Can be an int, a float or a string; if float, it gets truncated.
-        :type n: int or float or str
+        :param n: Value to convert. Can be an int, a float, a mpz or a string; if float, it gets truncated.
+        :type n: int or float or str or mpz
         :param base: Base in which to interpret the string `n`. Only allowed if `n` is a string. If not given, `base` defaults to 10.
         :type base: int or None.
         """
 
+        if isinstance(n, self.__class__):
+            self._mpz = n._mpz
+            return
         a = self._mpz = ffi.gc(ffi.new("mpz_t"), gmp.mpz_clear)
         if isinstance(n, str):
             if base is None:
