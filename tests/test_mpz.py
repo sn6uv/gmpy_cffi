@@ -1,4 +1,5 @@
 import sys
+import pytest
 import _gmpy
 
 class TestInit(object):
@@ -14,6 +15,11 @@ class TestInit(object):
 
     def test_init_bigint(self):
         self._test_init(self.big_ints)
+
+    def test_init_float(self):
+        for f in {0.0, 1.0, 1.5, 1e15 + 0.9}:
+            assert _gmpy.mpz(f) == int(f)
+            assert _gmpy.mpz(-f) == int(-f)
 
     def test_init_small_decimal_str(self):
         for n in self.small_ints:
@@ -37,3 +43,26 @@ class TestInit(object):
             assert _gmpy.mpz("%x" % n, 16) == n
             assert _gmpy.mpz("%#x" % n, 0) == n
 
+    def test_init_invalid(self):
+        for n, base in {('0x1', 16), ('g', 16), ('a', 10)}:
+            with pytest.raises(ValueError):
+                _gmpy.mpz(n, base)
+
+class TestMath(object):
+    numbers = {(0, 1), (23, 42), (sys.maxint, sys.maxint), (sys.maxint, 1)}
+
+    def test_add(self):
+        for a, b in self.numbers:
+            assert _gmpy.mpz(a) + _gmpy.mpz(b) == _gmpy.mpz(a + b)
+            assert _gmpy.mpz(a) + b == _gmpy.mpz(a + b)
+            assert b + _gmpy.mpz(a) == _gmpy.mpz(b + a)
+            assert (-a) + _gmpy.mpz(b) == _gmpy.mpz(-a + b)
+            assert _gmpy.mpz(a) + (-b) == _gmpy.mpz(a - b)
+
+    def test_sub(self):
+        for a, b in self.numbers:
+            assert _gmpy.mpz(a) - _gmpy.mpz(b) == _gmpy.mpz(a - b)
+            assert _gmpy.mpz(a) - b == _gmpy.mpz(a - b)
+            assert a - _gmpy.mpz(b) == _gmpy.mpz(a - b)
+            #assert (-a) - _gmpy.mpz(b) == _gmpy.mpz(-a - b)
+            assert _gmpy.mpz(a) - (-b) == _gmpy.mpz(a + b)
