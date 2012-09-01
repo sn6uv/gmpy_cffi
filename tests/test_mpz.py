@@ -31,6 +31,11 @@ class TestInit(object):
         with pytest.raises(ValueError):
             _gmpy.mpz(n, base)
 
+    @pytest.mark.parametrize(('n', 'base'), {('0', -1), ('0', 1), ('0', 63), (0, 10)})
+    def test_init_invalid_base(self, n, base):
+        with pytest.raises(ValueError):
+            _gmpy.mpz(n, base)
+
     @pytest.mark.parametrize('type_', {int, float, _gmpy.mpz, str})
     def test_init_type(self, type_):
         assert _gmpy.mpz(type_(1)) == 1
@@ -119,3 +124,34 @@ class TestMath(object):
     def test_rdivmod_by_zero(self):
         with pytest.raises(ZeroDivisionError):
             divmod(1, _gmpy.mpz(0))
+
+    @pytest.mark.parametrize('b', {0, 2, 1 << 16})
+    def test_shifts(self, b):
+        assert _gmpy.mpz(1) << _gmpy.mpz(b) == _gmpy.mpz(1 << b)
+        assert _gmpy.mpz(1) << b == _gmpy.mpz(1 << b)
+        assert _gmpy.mpz(1 << 100) >> _gmpy.mpz(b) == _gmpy.mpz((1 << 100) >> b)
+        assert _gmpy.mpz(1 << 100) >> b == _gmpy.mpz((1 << 100) >> b)
+
+    @pytest.mark.parametrize('b', {0, 2, sys.maxint, _gmpy.MAX_UI})
+    def test_rshifts(self, b):
+        assert b << _gmpy.mpz(1) == _gmpy.mpz(b << 1)
+        assert b >> _gmpy.mpz(1) == _gmpy.mpz(b >> 1)
+
+    @pytest.mark.parametrize('b', {-1, _gmpy.MAX_UI + 1})
+    def test_shifts_invalid_shift(self, b):
+        with pytest.raises(OverflowError):
+            _gmpy.mpz(1) << b
+        with pytest.raises(OverflowError):
+            _gmpy.mpz(1) >> b
+
+    @pytest.mark.parametrize('type_', {int, long, _gmpy.mpz})
+    def test_shifts_valid_type(self, type_):
+        assert _gmpy.mpz(1) << type_(1) == _gmpy.mpz(2)
+        assert _gmpy.mpz(4) >> type_(1) == _gmpy.mpz(2)
+
+    @pytest.mark.parametrize('type_', {float, str})
+    def test_shifts_invalid_type(self, type_):
+        with pytest.raises(TypeError):
+            _gmpy.mpz(1) << type_(1)
+        with pytest.raises(TypeError):
+            _gmpy.mpz(1) >> type_(1)

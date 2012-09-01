@@ -18,6 +18,7 @@ ffi.cdef("""
     int mpz_init_set_str (mpz_t rop, char *str, int base);
     void mpz_clear (mpz_t x);
 
+    unsigned long int mpz_get_ui (mpz_t op);
     char * mpz_get_str (char *str, int base, mpz_t op);
     void mpz_import (mpz_t rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op);
 //    void * mpz_export (void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, mpz_t op);
@@ -272,14 +273,30 @@ class mpz(object):
         return mpz._from_c_mpz(q), mpz._from_c_mpz(r)
 
     def __lshift__(self, other):
+        if not isinstance(other, (int, long, mpz)):
+            return NotImplemented
+        oth = gmp.mpz_get_ui(other._mpz) if isinstance(other, mpz) else other
         res = _new_mpz()
-        gmp.mpz_mul_2exp(res, self._mpz, other)
+        gmp.mpz_mul_2exp(res, self._mpz, oth)
         return mpz._from_c_mpz(res)
 
+    def __rlshift__(self, other):
+        if not isinstance(other, (int, long)):
+            return NotImplemented
+        return mpz(other) << self
+
     def __rshift__(self, other):
+        if not isinstance(other, (int, long, mpz)):
+            return NotImplemented
+        oth = gmp.mpz_get_ui(other._mpz) if isinstance(other, mpz) else other
         res = _new_mpz()
-        gmp.mpz_fdiv_q_2exp(res, self._mpz, other)
+        gmp.mpz_fdiv_q_2exp(res, self._mpz, oth)
         return mpz._from_c_mpz(res)
+
+    def __rrshift__(self, other):
+        if not isinstance(other, (int, long)):
+            return NotImplemented
+        return mpz(other) >> self
 
     def __cmp__(self, other):
         if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
