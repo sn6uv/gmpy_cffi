@@ -64,9 +64,9 @@ def _new_mpz():
 
 def _pylong_to_mpz(n, a):
     """
-    Set `a` from `n` > 2 * sys.maxint + 1.
+    Set `a` from `n`.
 
-    :type n: int
+    :type n: long
     :type a: mpz
     """
 
@@ -123,6 +123,7 @@ class mpz(object):
         elif sys.maxint < n <= MAX_UI:
             gmp.mpz_init_set_ui(a, n)
         else:
+            assert isinstance(n, long)
             _pylong_to_mpz(n, a)
 
     @classmethod
