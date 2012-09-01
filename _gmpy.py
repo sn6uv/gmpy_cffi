@@ -165,7 +165,15 @@ class mpz(object):
 
     def __rsub__(self, other):
         res = _new_mpz()
-        gmp.mpz_ui_sub(res, other, self._mpz)
+        if 0 <= other <= MAX_UI:
+            gmp.mpz_ui_sub(res, other, self._mpz)
+        elif -MAX_UI <= other < 0:
+            gmp.mpz_add_ui(res, self._mpz, -other)
+            gmp.mpz_neg(res, res)
+        else:
+            oth = _new_mpz()
+            _pylong_to_mpz(other, oth)
+            gmp.mpz_sub(res, oth, self._mpz)
         return mpz._from_c_mpz(res)
 
     def __mul__(self, other):
