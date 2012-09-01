@@ -155,3 +155,17 @@ class TestMath(object):
             _gmpy.mpz(1) << type_(1)
         with pytest.raises(TypeError):
             _gmpy.mpz(1) >> type_(1)
+
+    @pytest.mark.parametrize('type_', {float, str})
+    def test_rshifts_invalid_type(self, type_):
+        with pytest.raises(TypeError):
+            type_(1) << _gmpy.mpz(1)
+        with pytest.raises(TypeError):
+            type_(1) >> _gmpy.mpz(1)
+
+    def test_str(self):
+        n = _gmpy.mpz('123456789abcdef0', 16)
+        assert str(n) == '1311768467463790320'
+        assert repr(n) == 'mpz(1311768467463790320)'
+        assert hex(n) == '0x123456789abcdef0'
+        assert oct(n) == '0110642547423257157360'

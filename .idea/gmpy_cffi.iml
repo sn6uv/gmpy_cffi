@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="jdk" jdkName="PyPy 1.9.1-dev0 (/mnt/space/data/pypy/pypy/translator/goal/pypy-c)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="gmpy-1.14" />
   </component>
   <component name="PackageRequirementsSettings">
     <option name="requirementsPath" value="" />

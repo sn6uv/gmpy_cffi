@@ -141,6 +141,12 @@ class mpz(object):
     def __repr__(self):
         return 'mpz(%s)' % self
 
+    def __hex__(self):
+        return '0x' + ffi.string(gmp.mpz_get_str(ffi.NULL, 16, self._mpz))
+
+    def __oct__(self):
+        return '0' + ffi.string(gmp.mpz_get_str(ffi.NULL, 8, self._mpz))
+
     def __add__(self, other):
         res = _new_mpz()
         if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
