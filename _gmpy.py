@@ -195,8 +195,10 @@ class mpz(object):
     __rmul__ = __mul__
 
     def __div__(self, other):
+        if other == 0:
+            raise ZeroDivisionError('mpz division by zero')
         q = _new_mpz()
-        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
+        if isinstance(other, (int, long)) and 0 < other <= MAX_UI:
             gmp.mpz_fdiv_q_ui(q, self._mpz, other)
         else:
             if isinstance(other, (int, long)):
@@ -208,6 +210,8 @@ class mpz(object):
         return mpz._from_c_mpz(q)
 
     def __rdiv__(self, other):
+        if self == 0:
+            raise ZeroDivisionError('mpz division by zero')
         q = _new_mpz()
         oth = _new_mpz()
         _pylong_to_mpz(other, oth)
@@ -218,6 +222,8 @@ class mpz(object):
     __rfloordiv__ = __rdiv__
 
     def __mod__(self, other):
+        if other == 0:
+            raise ZeroDivisionError('mpz modulo by zero')
         r = _new_mpz()
         if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             gmp.mpz_fdiv_r_ui(r, self._mpz, other)
@@ -231,6 +237,8 @@ class mpz(object):
         return mpz._from_c_mpz(r)
 
     def __rmod__(self, other):
+        if self == 0:
+            raise ZeroDivisionError('mpz modulo by zero')
         r = _new_mpz()
         oth = _new_mpz()
         _pylong_to_mpz(other, oth)
@@ -238,6 +246,8 @@ class mpz(object):
         return mpz._from_c_mpz(r)
 
     def __divmod__(self, other):
+        if other == 0:
+            raise ZeroDivisionError('mpz modulo by zero')
         q = _new_mpz()
         r = _new_mpz()
         if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
@@ -252,6 +262,8 @@ class mpz(object):
         return mpz._from_c_mpz(q), mpz._from_c_mpz(r)
 
     def __rdivmod__(self, other):
+        if self == 0:
+            raise ZeroDivisionError('mpz modulo by zero')
         q = _new_mpz()
         r = _new_mpz()
         oth = _new_mpz()

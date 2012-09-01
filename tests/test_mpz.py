@@ -56,3 +56,66 @@ class TestMath(object):
     @pytest.mark.parametrize('b', numbers)
     def test_rsub(self, b):
         assert b - _gmpy.mpz(1) == _gmpy.mpz(b - 1)
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_mul(self, b):
+        assert _gmpy.mpz(2) * _gmpy.mpz(b) == _gmpy.mpz(2 * b)
+        assert _gmpy.mpz(2) * b == _gmpy.mpz(2 * b)
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_rmul(self, b):
+        assert b * _gmpy.mpz(2) == _gmpy.mpz(b * 2)
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_div(self, b):
+        if b != 0:
+            assert _gmpy.mpz(2) / _gmpy.mpz(b) == _gmpy.mpz(2 / b)
+            assert _gmpy.mpz(2) / b == _gmpy.mpz(2 / b)
+        else:
+            with pytest.raises(ZeroDivisionError):
+                _gmpy.mpz(2) / _gmpy.mpz(b)
+            with pytest.raises(ZeroDivisionError):
+                _gmpy.mpz(2) / b
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_rdiv(self, b):
+        assert b / _gmpy.mpz(2) == _gmpy.mpz(b / 2)
+    def test_rdiv_by_zero(self):
+        with pytest.raises(ZeroDivisionError):
+            1 / _gmpy.mpz(0)
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_mod(self, b):
+        if b != 0:
+            assert _gmpy.mpz(2) % _gmpy.mpz(b) == _gmpy.mpz(2 % b)
+            assert _gmpy.mpz(2) % b == _gmpy.mpz(2 % b)
+        else:
+            with pytest.raises(ZeroDivisionError):
+                _gmpy.mpz(2) % _gmpy.mpz(b)
+            with pytest.raises(ZeroDivisionError):
+                _gmpy.mpz(2) % b
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_rmod(self, b):
+        assert b % _gmpy.mpz(2) == _gmpy.mpz(b % 2)
+    def test_rmod_by_zero(self):
+        with pytest.raises(ZeroDivisionError):
+            1 % _gmpy.mpz(0)
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_divmod(self, b):
+        if b != 0:
+            assert divmod(_gmpy.mpz(2), _gmpy.mpz(b)) == tuple(map(_gmpy.mpz, divmod(2, b)))
+            assert divmod(_gmpy.mpz(2), b) == tuple(map(_gmpy.mpz, divmod(2, b)))
+        else:
+            with pytest.raises(ZeroDivisionError):
+                divmod(_gmpy.mpz(2), _gmpy.mpz(b))
+            with pytest.raises(ZeroDivisionError):
+                divmod(_gmpy.mpz(2), b)
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_rdivmod(self, b):
+        assert divmod(b, _gmpy.mpz(2)) == tuple(map(_gmpy.mpz, divmod(b, 2)))
+    def test_rdivmod_by_zero(self):
+        with pytest.raises(ZeroDivisionError):
+            divmod(1, _gmpy.mpz(0))
