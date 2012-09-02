@@ -359,3 +359,6 @@ class mpz(object):
 
     def __float__(self):
         return gmp.mpz_get_d(self._mpz)
+
+    def __complex__(self):
+        return float(self) + 0j

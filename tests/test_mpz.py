@@ -170,12 +170,24 @@ class TestMath(object):
         assert hex(n) == '0x123456789abcdef0'
         assert oct(n) == '0110642547423257157360'
 
-    def test_number_conversions_value(self):
+    def test_conversions_int(self):
         for n in self.numbers:
             for type_ in {int, long}:
                 n1 = type_(n)
                 mpz_n = type_(mpz(n))
-                assert type(n1) == type(mpz_n) and n1 == mpz_n
+                assert type(n1) == type(mpz_n)
+                assert n1 == mpz_n
+
+    def test_conversion_float(self):
+        for n in self.numbers:
             n1 = float(n)
             mpz_n = float(mpz(n))
-            assert type(n1) == type(mpz_n) and abs(n1 - mpz_n) <= abs(n1 * sys.float_info.epsilon)
+            assert type(n1) == type(mpz_n)
+            assert abs(n1 - mpz_n) <= abs(n1 * sys.float_info.epsilon)
+
+    def test_conversion_complex(self):
+        for n in self.numbers:
+            n1 = complex(n)
+            mpz_n = complex(mpz(n))
+            assert type(n1) == type(mpz_n)
+            assert abs(n1.real - mpz_n.real) <= abs(n1.real * sys.float_info.epsilon) and n1.imag == mpz_n.imag
