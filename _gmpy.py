@@ -130,6 +130,21 @@ def _mpz_to_pylong(a):
 
     return res * gmp.mpz_sgn(a)
 
+def _mpz_to_str(a, base):
+    """
+    Return string representation of a in base base.
+
+    :type a: gmp.mpz_t
+    :param base: 2..62
+    :type base: int
+    :rtype: str
+    """
+
+    l = gmp.mpz_sizeinbase(a, base) + 2
+    p = ffi.new('char[]', l)
+    gmp.mpz_get_str(p, base, a)
+    return ffi.string(p)
+
 class mpz(object):
     _mpz_str = None
 
@@ -175,17 +190,19 @@ class mpz(object):
 
     def __str__(self):
         if self._mpz_str is None:
-            self._mpz_str = ffi.string(gmp.mpz_get_str(ffi.NULL, 10, self._mpz))
+            self._mpz_str = _mpz_to_str(self._mpz, 10)
         return self._mpz_str
 
     def __repr__(self):
         return 'mpz(%s)' % self
 
     def __hex__(self):
-        return '0x' + ffi.string(gmp.mpz_get_str(ffi.NULL, 16, self._mpz))
+        tmp = '0x' + _mpz_to_str(abs(self)._mpz, 16)
+        return tmp if self >= 0 else '-' + tmp
 
     def __oct__(self):
-        return '0' + ffi.string(gmp.mpz_get_str(ffi.NULL, 8, self._mpz))
+        tmp = '0' + _mpz_to_str(abs(self)._mpz, 8)
+        return tmp if self >= 0 else '-' + tmp
 
     def __add__(self, other):
         res = _new_mpz()

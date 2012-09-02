@@ -175,6 +175,11 @@ class TestMath(object):
         assert repr(n) == 'mpz(1311768467463790320)'
         assert hex(n) == '0x123456789abcdef0'
         assert oct(n) == '0110642547423257157360'
+        n = -mpz('123456789abcdef0', 16)
+        assert str(n) == '-1311768467463790320'
+        assert repr(n) == 'mpz(-1311768467463790320)'
+        assert hex(n) == '-0x123456789abcdef0'
+        assert oct(n) == '-0110642547423257157360'
 
     def test_conversions_int(self):
         for n in self.numbers:
