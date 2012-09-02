@@ -15,11 +15,9 @@ ffi.cdef("""
     void mpz_clear (mpz_t x);
 
     void mpz_set_ui (mpz_t rop, unsigned long int op);
-
-    void mpz_init_set_ui (mpz_t rop, unsigned long int op);
-    void mpz_init_set_si (mpz_t rop, signed long int op);
-    void mpz_init_set_d (mpz_t rop, double op);
-    int mpz_init_set_str (mpz_t rop, char *str, int base);
+    void mpz_set_si (mpz_t rop, signed long int op);
+    void mpz_set_d (mpz_t rop, double op);
+    int mpz_set_str (mpz_t rop, char *str, int base);
 
     unsigned long int mpz_get_ui (mpz_t op);
     signed long int mpz_get_si (mpz_t op);
@@ -78,18 +76,18 @@ gmp = ffi.verify("#include <gmp.h>", libraries=['gmp', 'm'])
 MAX_UI = 2 * sys.maxint + 1
 
 def _new_mpz():
-    """Return an initialized c mpz."""
+    """Return an initialized mpz_t."""
 
-    mpz = ffi.gc(ffi.new("mpz_t"), gmp.mpz_clear)
+    mpz = ffi.new("mpz_t")
     gmp.mpz_init(mpz)
-    return mpz
+    return ffi.gc(mpz, gmp.mpz_clear)
 
 def _pylong_to_mpz(n, a):
     """
     Set `a` from `n`.
 
     :type n: long
-    :type a: mpz
+    :type a: mpz_t
     """
 
     neg = n < 0
@@ -114,7 +112,7 @@ def _mpz_to_pylong(a):
     """
     Convert a to a python long.
 
-    :type a: mpz
+    :type a: mpz_t
     :rtype: long
     """
 
@@ -134,7 +132,7 @@ def _mpz_to_str(a, base):
     """
     Return string representation of a in base base.
 
-    :type a: gmp.mpz_t
+    :type a: mpz_t
     :param base: 2..62
     :type base: int
     :rtype: str
@@ -161,23 +159,23 @@ class mpz(object):
         if isinstance(n, self.__class__):
             self._mpz = n._mpz
             return
-        a = self._mpz = ffi.gc(ffi.new("mpz_t"), gmp.mpz_clear)
+        a = self._mpz = _new_mpz()
         if isinstance(n, str):
             if base is None:
                 base = 10
             if base == 0 or 2 <= base <= 62:
-                if gmp.mpz_init_set_str(a, n, base) == -1:
+                if gmp.mpz_set_str(a, n, base) == -1:
                     raise ValueError("Can't create mpz from %s with base %s" % (n, base))
             else:
                 raise ValueError('base must be 0 or 2..62, not %s' % base)
         elif base is not None:
             raise ValueError('Base only allowed for str, not for %s.' % type(n))
         elif isinstance(n, float):
-            gmp.mpz_init_set_d(a, n)
+            gmp.mpz_set_d(a, n)
         elif -sys.maxint - 1 <= n <= sys.maxint:
-            gmp.mpz_init_set_si(a, n)
+            gmp.mpz_set_si(a, n)
         elif sys.maxint < n <= MAX_UI:
-            gmp.mpz_init_set_ui(a, n)
+            gmp.mpz_set_ui(a, n)
         else:
             assert isinstance(n, long)
             _pylong_to_mpz(n, a)
