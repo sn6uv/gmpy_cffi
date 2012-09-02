@@ -19,9 +19,11 @@ ffi.cdef("""
     void mpz_clear (mpz_t x);
 
     unsigned long int mpz_get_ui (mpz_t op);
+    signed long int mpz_get_si (mpz_t op);
+    double mpz_get_d (mpz_t op);
     char * mpz_get_str (char *str, int base, mpz_t op);
     void mpz_import (mpz_t rop, size_t count, int order, size_t size, int endian, size_t nails, const void *op);
-//    void * mpz_export (void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, mpz_t op);
+    void * mpz_export (void *rop, size_t *countp, int order, size_t size, int endian, size_t nails, mpz_t op);
 
     void mpz_add (mpz_t rop, mpz_t op1, mpz_t op2);
     void mpz_add_ui (mpz_t rop, mpz_t op1, unsigned long int op2);
@@ -45,6 +47,11 @@ ffi.cdef("""
 
     int mpz_cmp (mpz_t op1, mpz_t op2);
     int mpz_cmp_ui (mpz_t op1, unsigned long int op2);
+    int mpz_sgn (mpz_t op);
+
+    int mpz_fits_ulong_p (mpz_t op);
+    int mpz_fits_slong_p (mpz_t op);
+    size_t mpz_sizeinbase (mpz_t op, int base);
 
 //    void mpz_bin_ui (mpz_t rop, mpz_t n, unsigned long int k);
 //    void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
@@ -89,6 +96,25 @@ def _pylong_to_mpz(n, a):
     if neg:
         gmp.mpz_neg(a, a)
 
+def _mpz_to_pylong(a):
+    """
+    Convert a to a python long.
+
+    :type a: mpz
+    :rtype: long
+    """
+
+    size = ffi.sizeof('uint64_t')
+    numb = 8 * size
+    count = (gmp.mpz_sizeinbase(a, 2) + numb - 1) // numb
+    factor = 1 << numb
+    p = ffi.new('uint64_t[]', count)
+    gmp.mpz_export(p, ffi.NULL, 1, size, 0, 0, a)
+    res = 0
+    for n in p:
+        res = factor * res + n
+
+    return res * gmp.mpz_sgn(a)
 
 class mpz(object):
     _mpz_str = None
@@ -314,3 +340,22 @@ class mpz(object):
             else:
                 oth = other._mpz
             return gmp.mpz_cmp(self._mpz, oth)
+
+    def __int__(self):
+        if gmp.mpz_fits_slong_p(self._mpz):
+            return gmp.mpz_get_si(self._mpz)
+        elif gmp.mpz_fits_ulong_p(self._mpz):
+            return gmp.mpz_get_ui(self._mpz)
+        else:
+            return _mpz_to_pylong(self._mpz)
+
+    def __long__(self):
+        if gmp.mpz_fits_slong_p(self._mpz):
+            return long(gmp.mpz_get_si(self._mpz))
+        elif gmp.mpz_fits_ulong_p(self._mpz):
+            return gmp.mpz_get_ui(self._mpz)
+        else:
+            return _mpz_to_pylong(self._mpz)
+
+    def __float__(self):
+        return gmp.mpz_get_d(self._mpz)

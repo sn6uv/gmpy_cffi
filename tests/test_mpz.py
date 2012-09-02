@@ -42,7 +42,7 @@ class TestInit(object):
 
 
 class TestMath(object):
-    numbers = {-1, 0, 1, sys.maxint, -sys.maxint - 1, 2 * sys.maxint + 1, 2 * sys.maxint + 2}
+    numbers = {-1, 0, 1, sys.maxint, -sys.maxint - 1, MAX_UI, MAX_UI + 1}
 
     @pytest.mark.parametrize('b', numbers)
     def test_add(self, b):
@@ -169,3 +169,13 @@ class TestMath(object):
         assert repr(n) == 'mpz(1311768467463790320)'
         assert hex(n) == '0x123456789abcdef0'
         assert oct(n) == '0110642547423257157360'
+
+    def test_number_conversions_value(self):
+        for n in self.numbers:
+            for type_ in {int, long}:
+                n1 = type_(n)
+                mpz_n = type_(mpz(n))
+                assert type(n1) == type(mpz_n) and n1 == mpz_n
+            n1 = float(n)
+            mpz_n = float(mpz(n))
+            assert type(n1) == type(mpz_n) and abs(n1 - mpz_n) <= abs(n1 * sys.float_info.epsilon)
