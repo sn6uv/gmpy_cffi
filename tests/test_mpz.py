@@ -1,3 +1,5 @@
+from __future__ import division
+
 import sys
 import pytest
 from _gmpy import mpz, MAX_UI
@@ -72,22 +74,26 @@ class TestMath(object):
         assert b * mpz(2) == mpz(b * 2)
 
     @pytest.mark.parametrize('b', numbers)
-    def test_div(self, b):
+    def test_floordiv(self, b):
         if b != 0:
-            assert mpz(2) / mpz(b) == mpz(2 / b)
-            assert mpz(2) / b == mpz(2 / b)
+            assert mpz(2) // mpz(b) == mpz(2 // b)
+            assert mpz(2) // b == mpz(2 // b)
         else:
             with pytest.raises(ZeroDivisionError):
-                mpz(2) / mpz(b)
+                mpz(2) // mpz(b)
             with pytest.raises(ZeroDivisionError):
-                mpz(2) / b
+                mpz(2) // b
 
     @pytest.mark.parametrize('b', numbers)
-    def test_rdiv(self, b):
-        assert b / mpz(2) == mpz(b / 2)
-    def test_rdiv_by_zero(self):
+    def test_rfloordiv(self, b):
+        assert b // mpz(2) == mpz(b // 2)
+    def test_rfloordiv_by_zero(self):
         with pytest.raises(ZeroDivisionError):
-            1 / mpz(0)
+            1 // mpz(0)
+
+    @pytest.mark.xfail(reason='__truediv__ needs mpf')
+    def test_truediv(self):
+        assert mpz(3) / mpz(2) == 1.5
 
     @pytest.mark.parametrize('b', numbers)
     def test_mod(self, b):

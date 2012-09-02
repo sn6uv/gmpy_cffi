@@ -241,7 +241,7 @@ class mpz(object):
         return mpz._from_c_mpz(res)
     __rmul__ = __mul__
 
-    def __div__(self, other):
+    def __floordiv__(self, other):
         if other == 0:
             raise ZeroDivisionError('mpz division by zero')
         q = _new_mpz()
@@ -256,7 +256,7 @@ class mpz(object):
             gmp.mpz_fdiv_q(q, self._mpz, oth)
         return mpz._from_c_mpz(q)
 
-    def __rdiv__(self, other):
+    def __rfloordiv__(self, other):
         if self == 0:
             raise ZeroDivisionError('mpz division by zero')
         q = _new_mpz()
@@ -265,8 +265,8 @@ class mpz(object):
         gmp.mpz_fdiv_q(q, oth, self._mpz)
         return mpz._from_c_mpz(q)
 
-    __floordiv__ = __div__
-    __rfloordiv__ = __rdiv__
+    __div__ = __floordiv__
+    __rdiv__ = __rfloordiv__
 
     def __mod__(self, other):
         if other == 0:
