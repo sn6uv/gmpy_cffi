@@ -5,12 +5,11 @@ def main(N):
     i = 0
     k, ns = mpz(0), mpz(0)
     k1 = mpz(1)
-    n, a, d, t, u = mpz(1), mpz(0), mpz(1), mpz(0), mpz(0)
+    n, a, d = mpz(1), mpz(0), mpz(1)
     while True:
         k += 1
-        t = n << 1
+        a += n << 1
         n *= k
-        a += t
         k1 += 2
         a *= k1
         d *= k1
