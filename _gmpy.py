@@ -1,6 +1,7 @@
 import sys
 import cffi
 import array
+from types import NoneType
 
 __all__ = "ffi", "gmp", "mpz"
 

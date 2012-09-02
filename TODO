@@ -4,3 +4,4 @@ Use *_si variants, if possible
 Error checking
 __truediv__
 factor out int -> c-mpz conversion
+ffi.gc slows down c-mpz generation, cache might help
