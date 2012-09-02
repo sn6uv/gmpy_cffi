@@ -191,3 +191,90 @@ class TestMath(object):
             mpz_n = complex(mpz(n))
             assert type(n1) == type(mpz_n)
             assert abs(n1.real - mpz_n.real) <= abs(n1.real * sys.float_info.epsilon) and n1.imag == mpz_n.imag
+
+    @pytest.mark.parametrize('n', numbers)
+    def test_unary_methods(self, n):
+        assert mpz(-n) == -mpz(n)
+        assert mpz(+n) == +mpz(n)
+        assert mpz(abs(n)) == abs(mpz(n))
+        assert mpz(~n) == ~mpz(n)
+
+    @pytest.mark.parametrize('n', numbers)
+    def test_bit_ops(self, n):
+        assert mpz(n) & mpz(n + 1) == mpz(n & (n + 1))
+        assert mpz(n) & (n + 1) == mpz(n & (n + 1))
+        assert mpz(n) | mpz(n + 1) == mpz(n | (n + 1))
+        assert mpz(n) | (n + 1) == mpz(n | (n + 1))
+        assert mpz(n) ^ mpz(n + 1) == mpz(n ^ (n + 1))
+        assert mpz(n) ^ (n + 1) == mpz(n ^ (n + 1))
+
+    @pytest.mark.parametrize('n', numbers)
+    def test_bit_rops(self, n):
+        assert n & mpz(n + 1) == mpz(n & (n + 1))
+        assert n | mpz(n + 1) == mpz(n | (n + 1))
+        assert n ^ mpz(n + 1) == mpz(n ^ (n + 1))
+
+    def test_index(self):
+        l = range(5)
+        assert l[mpz(2)] == l[2]
+        assert l[mpz(-1)] == l[-1]
+        with pytest.raises(IndexError):
+            l[mpz(10)]
+            print "mist"
+
+    def test_nonzero(self):
+        assert mpz(23)
+        assert not mpz(0)
+        assert mpz(-1)
+
+    @pytest.mark.parametrize('b', {-1, 0, 1, 1024, MAX_UI + 1})
+    def test_pow_no_mod(self, b):
+        if b < 0:
+            for exp in {mpz(b), b}:
+                with pytest.raises(ValueError) as exc:
+                    mpz(2) ** exp
+                assert exc.value.args == ('mpz.pow with negative exponent',)
+        elif b > MAX_UI:
+            for exp in {mpz(b), b}:
+                with pytest.raises(ValueError) as exc:
+                    mpz(2) ** exp
+                assert exc.value.args == ('mpz.pow with outragous exponent',)
+        else:
+            res = mpz(2 ** b)
+            assert mpz(2) ** mpz(b) == res
+            assert mpz(2) ** b == res
+
+    @pytest.mark.parametrize('b', {-1, 0, 1, 1024, MAX_UI + 1})
+    def test_pow_with_mod(self, b):
+        if b < 0:
+            for exp in {mpz(b), b}:
+                for mod in {mpz(7), 7}:
+                    with pytest.raises(ValueError) as exc:
+                        pow(mpz(2), exp, mod)
+                    assert exc.value.args == ('mpz.pow with negative exponent',)
+        else:
+            res = mpz(pow(2, b, 7))
+            assert pow(mpz(2), mpz(b), mpz(7)) == res
+            assert pow(mpz(2), b, mpz(7)) == res
+            assert pow(mpz(2), mpz(b), 7) == res
+            assert pow(mpz(2), b, 7) == res
+
+    @pytest.mark.parametrize('b', numbers)
+    def test_rpow(self, b):
+        assert b ** mpz(3) == mpz(b ** 3)
+
+    def test_rpow_invalid(self):
+        with pytest.raises(ValueError) as exc:
+            1 ** mpz(-1)
+        assert exc.value.args == ('mpz.pow with negative exponent',)
+        with pytest.raises(ValueError) as exc:
+            1 ** mpz(MAX_UI + 1)
+        assert exc.value.args == ('mpz.pow with outragous exponent',)
+
+    def test_pow_invalid(self):
+        with pytest.raises(TypeError):
+            mpz(2) ** 2.0
+        with pytest.raises(TypeError):
+            2.0 ** mpz(2)
+        with pytest.raises(TypeError):
+            pow(mpz(2), 2, 2.0)

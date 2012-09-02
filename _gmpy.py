@@ -12,11 +12,14 @@ ffi.cdef("""
     typedef unsigned long mp_bitcnt_t;
 
     void mpz_init (mpz_t x);
+    void mpz_clear (mpz_t x);
+
+    void mpz_set_ui (mpz_t rop, unsigned long int op);
+
     void mpz_init_set_ui (mpz_t rop, unsigned long int op);
     void mpz_init_set_si (mpz_t rop, signed long int op);
     void mpz_init_set_d (mpz_t rop, double op);
     int mpz_init_set_str (mpz_t rop, char *str, int base);
-    void mpz_clear (mpz_t x);
 
     unsigned long int mpz_get_ui (mpz_t op);
     signed long int mpz_get_si (mpz_t op);
@@ -35,6 +38,7 @@ ffi.cdef("""
     void mpz_submul (mpz_t rop, mpz_t op1, mpz_t op2);
     void mpz_mul_2exp (mpz_t rop, mpz_t op1, mp_bitcnt_t op2);
     void mpz_neg (mpz_t rop, mpz_t op);
+    void mpz_abs (mpz_t rop, mpz_t op);
 
     void mpz_fdiv_q (mpz_t q, mpz_t n, mpz_t d);
     void mpz_fdiv_q_ui (mpz_t q, mpz_t n, unsigned long int d);
@@ -45,9 +49,19 @@ ffi.cdef("""
     void mpz_fdiv_q_2exp (mpz_t q, mpz_t n, mp_bitcnt_t b);
 //    int mpz_divisible_ui_p (mpz_t n, unsigned long int d);
 
+    void mpz_powm (mpz_t rop, mpz_t base, mpz_t exp, mpz_t mod);
+    void mpz_powm_ui (mpz_t rop, mpz_t base, unsigned long int exp, mpz_t mod);
+    void mpz_pow_ui (mpz_t rop, mpz_t base, unsigned long int exp);
+    void mpz_ui_pow_ui (mpz_t rop, unsigned long int base, unsigned long int exp);
+
     int mpz_cmp (mpz_t op1, mpz_t op2);
     int mpz_cmp_ui (mpz_t op1, unsigned long int op2);
     int mpz_sgn (mpz_t op);
+
+    void mpz_and (mpz_t rop, mpz_t op1, mpz_t op2);
+    void mpz_ior (mpz_t rop, mpz_t op1, mpz_t op2);
+    void mpz_xor (mpz_t rop, mpz_t op1, mpz_t op2);
+    void mpz_com (mpz_t rop, mpz_t op);
 
     int mpz_fits_ulong_p (mpz_t op);
     int mpz_fits_slong_p (mpz_t op);
@@ -349,6 +363,8 @@ class mpz(object):
         else:
             return _mpz_to_pylong(self._mpz)
 
+    __index__ = __int__
+
     def __long__(self):
         if gmp.mpz_fits_slong_p(self._mpz):
             return long(gmp.mpz_get_si(self._mpz))
@@ -362,3 +378,123 @@ class mpz(object):
 
     def __complex__(self):
         return float(self) + 0j
+
+    def __abs__(self):
+        res = _new_mpz()
+        gmp.mpz_abs(res, self._mpz)
+        return mpz._from_c_mpz(res)
+
+    def __neg__(self):
+        res = _new_mpz()
+        gmp.mpz_neg(res, self._mpz)
+        return mpz._from_c_mpz(res)
+
+    def __pos__(self):
+        return self
+
+    def __invert__(self):
+        res = _new_mpz()
+        gmp.mpz_com(res, self._mpz)
+        return mpz._from_c_mpz(res)
+
+    def __and__(self, other):
+        res = _new_mpz()
+        if isinstance(other, (int, long)):
+            oth = _new_mpz()
+            if 0 <= other <= MAX_UI:
+                gmp.mpz_set_ui(oth, other)
+            else:
+                _pylong_to_mpz(other, oth)
+        else:
+            oth = other._mpz
+        gmp.mpz_and(res, self._mpz, oth)
+
+        return mpz._from_c_mpz(res)
+    __rand__ = __and__
+
+    def __or__(self, other):
+        res = _new_mpz()
+        if isinstance(other, (int, long)):
+            oth = _new_mpz()
+            if 0 <= other <= MAX_UI:
+                gmp.mpz_set_ui(oth, other)
+            else:
+                _pylong_to_mpz(other, oth)
+        else:
+            oth = other._mpz
+        gmp.mpz_ior(res, self._mpz, oth)
+
+        return mpz._from_c_mpz(res)
+    __ror__ = __or__
+
+    def __xor__(self, other):
+        res = _new_mpz()
+        if isinstance(other, (int, long)):
+            oth = _new_mpz()
+            if 0 <= other <= MAX_UI:
+                gmp.mpz_set_ui(oth, other)
+            else:
+                _pylong_to_mpz(other, oth)
+        else:
+            oth = other._mpz
+        gmp.mpz_xor(res, self._mpz, oth)
+
+        return mpz._from_c_mpz(res)
+    __rxor__ = __xor__
+
+    def __nonzero__(self):
+        return gmp.mpz_cmp_ui(self._mpz, 0) != 0
+
+    def __pow__(self, power, modulo=None):
+        if not isinstance(power, (int, long, mpz)):
+            return NotImplemented
+        if not isinstance(modulo, (int, long, mpz, NoneType)):
+            return NotImplemented
+
+        if power < 0:
+            raise ValueError('mpz.pow with negative exponent')
+
+        res = _new_mpz()
+        if modulo is None:
+            exp = int(power)
+            if exp > MAX_UI:
+                raise ValueError('mpz.pow with outragous exponent')
+            gmp.mpz_pow_ui(res, self._mpz, exp)
+        else:
+            if isinstance(modulo, (int, long)):
+                mod = _new_mpz()
+                _pylong_to_mpz(abs(modulo), mod)
+            else:
+                mod = modulo._mpz
+            if isinstance(power, (int, long)) and power <= MAX_UI:
+                gmp.mpz_powm_ui(res, self._mpz, power, mod)
+            else:
+                if isinstance(power, (int, long)):
+                    exp = _new_mpz()
+                    _pylong_to_mpz(power, exp)
+                else:
+                    exp = power._mpz
+                gmp.mpz_powm(res, self._mpz, exp, mod)
+
+        return mpz._from_c_mpz(res)
+
+    def __rpow__(self, other):
+        if not isinstance(other, (int, long)):
+            return NotImplemented
+
+        if self < 0:
+            raise ValueError('mpz.pow with negative exponent')
+
+        res = _new_mpz()
+
+        exp = int(self)
+        if exp > MAX_UI:
+            raise ValueError('mpz.pow with outragous exponent')
+        if 0 <= other <= MAX_UI:
+            gmp.mpz_ui_pow_ui(res, other, exp)
+        else:
+            base = _new_mpz()
+            _pylong_to_mpz(other, base)
+            gmp.mpz_pow_ui(res, base, exp)
+
+        return mpz._from_c_mpz(res)
