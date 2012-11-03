@@ -5,3 +5,4 @@ Error checking
 __truediv__
 factor out int -> c-mpz conversion
 ffi.gc slows down c-mpz generation, cache might help
+mpz_powm(rop, base, exp, mod) mit exp<0: mpz_powm(rop, base^-1, -exp, mod)

@@ -1,4 +1,5 @@
 import sys
+import gc
 from _gmpy import mpz
 
 def main(N):
@@ -20,8 +21,12 @@ def main(N):
                 ns = ns * 10 + t
                 i += 1
                 if i % 10 == 0:
-#                    print ('%010d\t:%d' % (ns, i))
+                    #print ('%010d\t:%d' % (ns, i))
                     ns = mpz(0)
+                    #if i % 1000 == 0:
+                        #print "start"
+                        #print len(gc.get_objects())
+                        #gc.collect()
                 if i >= N:
                     break
                 a -= d * t

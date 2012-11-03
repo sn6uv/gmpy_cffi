@@ -1,3 +1,4 @@
+import logging
 import sys
 import cffi
 import array
@@ -75,13 +76,43 @@ gmp = ffi.verify("#include <gmp.h>", libraries=['gmp', 'm'])
 # ____________________________________________________________
 
 MAX_UI = 2 * sys.maxint + 1
+#logging.basicConfig(filename='_gmpy.log', level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
+
+cache_size = _incache = 100
+_cache = []
+
+def _init_cache():
+    for _ in xrange(cache_size):
+        mpz = ffi.new("mpz_t")
+        gmp.mpz_init(mpz)
+        _cache.append(mpz)
+_init_cache()
 
 def _new_mpz():
     """Return an initialized mpz_t."""
+    global _incache
 
-    mpz = ffi.new("mpz_t")
-    gmp.mpz_init(mpz)
-    return ffi.gc(mpz, gmp.mpz_clear)
+    if _incache:
+#        logging.debug('_from_cache: %d', _incache)
+        _incache -= 1
+        return _cache[_incache]
+    else:
+#        logging.debug('_new_mpz')
+        mpz = ffi.new("mpz_t")
+        gmp.mpz_init(mpz)
+        return mpz
+
+def _del_mpz(mpz):
+    global _incache
+
+    if _incache < cache_size:
+#        logging.debug('_to_cache: %d', _incache)
+        _cache[_incache] = mpz
+        _incache += 1
+    else:
+#        logging.debug('_del_mpz')
+        gmp.mpz_clear(mpz)
 
 def _pylong_to_mpz(n, a):
     """
@@ -160,7 +191,7 @@ class mpz(object):
         if isinstance(n, self.__class__):
             self._mpz = n._mpz
             return
-        a = self._mpz = _new_mpz()
+        a = self._mpz = ffi.gc(_new_mpz(), _del_mpz)
         if isinstance(n, str):
             if base is None:
                 base = 10
@@ -184,7 +215,7 @@ class mpz(object):
     @classmethod
     def _from_c_mpz(cls, mpz):
         inst = object.__new__(cls)
-        inst._mpz = mpz
+        inst._mpz = ffi.gc(mpz, _del_mpz)
         return inst
 
     def __str__(self):
@@ -211,9 +242,10 @@ class mpz(object):
             if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
+                gmp.mpz_add(res, self._mpz, oth)
+                _del_mpz(oth)
             else:
-                oth = other._mpz
-            gmp.mpz_add(res, self._mpz, oth)
+                gmp.mpz_add(res, self._mpz, other._mpz)
         return mpz._from_c_mpz(res)
     __radd__ = __add__
 
@@ -225,9 +257,10 @@ class mpz(object):
             if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
+                gmp.mpz_sub(res, self._mpz, oth)
+                _del_mpz(oth)
             else:
-                oth = other._mpz
-            gmp.mpz_sub(res, self._mpz, oth)
+                gmp.mpz_sub(res, self._mpz, other._mpz)
         return mpz._from_c_mpz(res)
 
     def __rsub__(self, other):
@@ -241,6 +274,7 @@ class mpz(object):
             oth = _new_mpz()
             _pylong_to_mpz(other, oth)
             gmp.mpz_sub(res, oth, self._mpz)
+            _del_mpz(oth)
         return mpz._from_c_mpz(res)
 
     def __mul__(self, other):
@@ -251,9 +285,10 @@ class mpz(object):
             if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
+                gmp.mpz_mul(res, self._mpz, oth)
+                _del_mpz(oth)
             else:
-                oth = other._mpz
-            gmp.mpz_mul(res, self._mpz, oth)
+                gmp.mpz_mul(res, self._mpz, other._mpz)
         return mpz._from_c_mpz(res)
     __rmul__ = __mul__
 
@@ -267,9 +302,10 @@ class mpz(object):
             if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
+                gmp.mpz_fdiv_q(q, self._mpz, oth)
+                _del_mpz(oth)
             else:
-                oth = other._mpz
-            gmp.mpz_fdiv_q(q, self._mpz, oth)
+                gmp.mpz_fdiv_q(q, self._mpz, other._mpz)
         return mpz._from_c_mpz(q)
 
     def __rfloordiv__(self, other):
@@ -279,6 +315,7 @@ class mpz(object):
         oth = _new_mpz()
         _pylong_to_mpz(other, oth)
         gmp.mpz_fdiv_q(q, oth, self._mpz)
+        _del_mpz(oth)
         return mpz._from_c_mpz(q)
 
     __div__ = __floordiv__
@@ -294,9 +331,10 @@ class mpz(object):
             if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
+                gmp.mpz_fdiv_r(r, self._mpz, oth)
+                _del_mpz(oth)
             else:
-                oth = other._mpz
-            gmp.mpz_fdiv_r(r, self._mpz, oth)
+                gmp.mpz_fdiv_r(r, self._mpz, other._mpz)
         return mpz._from_c_mpz(r)
 
     def __rmod__(self, other):
@@ -306,6 +344,7 @@ class mpz(object):
         oth = _new_mpz()
         _pylong_to_mpz(other, oth)
         gmp.mpz_fdiv_r(r, oth, self._mpz)
+        _del_mpz(oth)
         return mpz._from_c_mpz(r)
 
     def __divmod__(self, other):
@@ -319,9 +358,10 @@ class mpz(object):
             if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
+                gmp.mpz_fdiv_qr(q, r, self._mpz, oth)
+                _del_mpz(oth)
             else:
-                oth = other._mpz
-            gmp.mpz_fdiv_qr(q, r, self._mpz, oth)
+                gmp.mpz_fdiv_qr(q, r, self._mpz, other._mpz)
         return mpz._from_c_mpz(q), mpz._from_c_mpz(r)
 
     def __rdivmod__(self, other):
@@ -332,6 +372,7 @@ class mpz(object):
         oth = _new_mpz()
         _pylong_to_mpz(other, oth)
         gmp.mpz_fdiv_qr(q, r, oth, self._mpz)
+        _del_mpz(oth)
         return mpz._from_c_mpz(q), mpz._from_c_mpz(r)
 
     def __lshift__(self, other):
@@ -367,9 +408,11 @@ class mpz(object):
             if isinstance(other, (int, long)):
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
+                res = gmp.mpz_cmp(self._mpz, oth)
+                _del_mpz(oth)
             else:
-                oth = other._mpz
-            return gmp.mpz_cmp(self._mpz, oth)
+                res = gmp.mpz_cmp(self._mpz, other._mpz)
+            return res
 
     def __int__(self):
         if gmp.mpz_fits_slong_p(self._mpz):
@@ -421,9 +464,10 @@ class mpz(object):
                 gmp.mpz_set_ui(oth, other)
             else:
                 _pylong_to_mpz(other, oth)
+            gmp.mpz_and(res, self._mpz, oth)
+            _del_mpz(oth)
         else:
-            oth = other._mpz
-        gmp.mpz_and(res, self._mpz, oth)
+            gmp.mpz_and(res, self._mpz, other._mpz)
 
         return mpz._from_c_mpz(res)
     __rand__ = __and__
@@ -436,9 +480,10 @@ class mpz(object):
                 gmp.mpz_set_ui(oth, other)
             else:
                 _pylong_to_mpz(other, oth)
+            gmp.mpz_ior(res, self._mpz, oth)
+            _del_mpz(oth)
         else:
-            oth = other._mpz
-        gmp.mpz_ior(res, self._mpz, oth)
+            gmp.mpz_ior(res, self._mpz, other._mpz)
 
         return mpz._from_c_mpz(res)
     __ror__ = __or__
@@ -451,9 +496,10 @@ class mpz(object):
                 gmp.mpz_set_ui(oth, other)
             else:
                 _pylong_to_mpz(other, oth)
+            gmp.mpz_xor(res, self._mpz, oth)
+            _del_mpz(oth)
         else:
-            oth = other._mpz
-        gmp.mpz_xor(res, self._mpz, oth)
+            gmp.mpz_xor(res, self._mpz, other._mpz)
 
         return mpz._from_c_mpz(res)
     __rxor__ = __xor__
@@ -477,9 +523,11 @@ class mpz(object):
                 raise ValueError('mpz.pow with outragous exponent')
             gmp.mpz_pow_ui(res, self._mpz, exp)
         else:
+            del_mod = del_exp = False
             if isinstance(modulo, (int, long)):
                 mod = _new_mpz()
                 _pylong_to_mpz(abs(modulo), mod)
+                del_mod = True
             else:
                 mod = modulo._mpz
             if isinstance(power, (int, long)) and power <= MAX_UI:
@@ -488,9 +536,14 @@ class mpz(object):
                 if isinstance(power, (int, long)):
                     exp = _new_mpz()
                     _pylong_to_mpz(power, exp)
+                    del_exp = True
                 else:
                     exp = power._mpz
                 gmp.mpz_powm(res, self._mpz, exp, mod)
+                if del_exp:
+                    _del_mpz(exp)
+                if del_mod:
+                    _del_mpz(mod)
 
         return mpz._from_c_mpz(res)
 
@@ -512,5 +565,6 @@ class mpz(object):
             base = _new_mpz()
             _pylong_to_mpz(other, base)
             gmp.mpz_pow_ui(res, base, exp)
+            _del_mpz(base)
 
         return mpz._from_c_mpz(res)

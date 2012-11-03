@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file:///tmp/gmpy-1.14/.idea/gmpy-1.14.iml" filepath="/tmp/gmpy-1.14/.idea/gmpy-1.14.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/gmpy_cffi.iml" filepath="$PROJECT_DIR$/.idea/gmpy_cffi.iml" />
     </modules>
   </component>
