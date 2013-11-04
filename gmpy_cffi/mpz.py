@@ -185,14 +185,25 @@ def _mpz_to_str(a, base):
 class mpz(object):
     _mpz_str = None
 
-    def __init__(self, n, base=None):
+    def __init__(self, n=0, base=None):
         """
-        Create a mpz from `n`.
+        mpz() -> mpz(0)
 
-        :param n: Value to convert. Can be an int, a float, a mpz or a string; if float, it gets truncated.
-        :type n: int or float or str or mpz
-        :param base: Base in which to interpret the string `n`. Only allowed if `n` is a string. If not given, `base` defaults to 10.
-        :type base: int or None.
+            If no argument is given, return mpz(0).
+
+        mpz(n) -> mpz
+
+            Return an 'mpz' object with a numeric value 'n' (truncating n
+            to its integer part if it's a Fraction, 'mpq', Decimal, float
+            or 'mpfr').
+
+        mpz(s[, base=0]):
+
+            Return an 'mpz' object from a string 's' made of digits in the
+            given base.  If base=0, binary, octal, or hex Python strings
+            are recognized by leading 0b, 0o, or 0x characters, otherwise
+            the string is assumed to be decimal. Values for base can range
+            between 2 and 62.
         """
 
         if isinstance(n, self.__class__):
