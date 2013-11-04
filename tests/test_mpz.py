@@ -23,6 +23,8 @@ class TestInit(object):
         assert mpz(str(n), 10) == n
         assert mpz(str(n)) == n
         assert mpz(str(n), 0) == n
+        assert mpz(hex(n).rstrip('L'), 0) == n
+        assert mpz(oct(n).rstrip('L'), 0) == n
 
     @pytest.mark.parametrize('n', small_ints.union(big_ints))
     def test_init_hex_str(self, n):
