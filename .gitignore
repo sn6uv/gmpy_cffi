@@ -1,5 +1,5 @@
-.idea/workspace.xml
 */__pycache__/
 *.pyc
 dist/
+build/
 gmpy_cffi.egg-info/
