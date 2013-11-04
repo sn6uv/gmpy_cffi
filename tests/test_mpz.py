@@ -4,6 +4,7 @@ import sys
 import pytest
 from gmpy_cffi import mpz, MAX_UI
 
+
 class TestInit(object):
     small_ints = {-1, 0, 1, 123, -9876, sys.maxint, -sys.maxint - 1}
     big_ints = {sys.maxint + 1, -sys.maxint - 2, 2 * sys.maxint + 1, 2 * sys.maxint + 2}
@@ -87,6 +88,7 @@ class TestMath(object):
     @pytest.mark.parametrize('b', numbers)
     def test_rfloordiv(self, b):
         assert b // mpz(2) == mpz(b // 2)
+
     def test_rfloordiv_by_zero(self):
         with pytest.raises(ZeroDivisionError):
             1 // mpz(0)
@@ -109,6 +111,7 @@ class TestMath(object):
     @pytest.mark.parametrize('b', numbers)
     def test_rmod(self, b):
         assert b % mpz(2) == mpz(b % 2)
+
     def test_rmod_by_zero(self):
         with pytest.raises(ZeroDivisionError):
             1 % mpz(0)
@@ -127,6 +130,7 @@ class TestMath(object):
     @pytest.mark.parametrize('b', numbers)
     def test_rdivmod(self, b):
         assert divmod(b, mpz(2)) == tuple(map(mpz, divmod(b, 2)))
+
     def test_rdivmod_by_zero(self):
         with pytest.raises(ZeroDivisionError):
             divmod(1, mpz(0))

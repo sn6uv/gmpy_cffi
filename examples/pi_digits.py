@@ -2,6 +2,7 @@ import sys
 import gc
 from gmpy_cffi import mpz
 
+
 def main(N):
     i = 0
     k, ns = mpz(0), mpz(0)

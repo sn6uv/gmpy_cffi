@@ -82,12 +82,14 @@ MAX_UI = 2 * sys.maxint + 1
 cache_size = _incache = 100
 _cache = []
 
+
 def _init_cache():
     for _ in xrange(cache_size):
         mpz = ffi.new("mpz_t")
         gmp.mpz_init(mpz)
         _cache.append(mpz)
 _init_cache()
+
 
 def _new_mpz():
     """Return an initialized mpz_t."""
@@ -103,6 +105,7 @@ def _new_mpz():
         gmp.mpz_init(mpz)
         return mpz
 
+
 def _del_mpz(mpz):
     global _incache
 
@@ -113,6 +116,7 @@ def _del_mpz(mpz):
     else:
 #        logging.debug('_del_mpz')
         gmp.mpz_clear(mpz)
+
 
 def _pylong_to_mpz(n, a):
     """
@@ -140,6 +144,7 @@ def _pylong_to_mpz(n, a):
     if neg:
         gmp.mpz_neg(a, a)
 
+
 def _mpz_to_pylong(a):
     """
     Convert a to a python long.
@@ -160,6 +165,7 @@ def _mpz_to_pylong(a):
 
     return res * gmp.mpz_sgn(a)
 
+
 def _mpz_to_str(a, base):
     """
     Return string representation of a in base base.
@@ -174,6 +180,7 @@ def _mpz_to_str(a, base):
     p = ffi.new('char[]', l)
     gmp.mpz_get_str(p, base, a)
     return ffi.string(p)
+
 
 class mpz(object):
     _mpz_str = None
