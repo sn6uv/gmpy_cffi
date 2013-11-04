@@ -67,6 +67,33 @@ ffi.cdef("""
 
 //    void mpz_bin_ui (mpz_t rop, mpz_t n, unsigned long int k);
 //    void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
+
+    // MPQ
+    typedef struct { ...; } __mpq_struct;
+    typedef __mpq_struct *mpq_t;
+
+    void mpq_init (mpq_t x);
+    void mpq_clear (mpq_t x);
+
+    void mpq_canonicalize (mpq_t op);
+
+    void mpq_set (mpq_t rop, const mpq_t op);
+    void mpq_set_z (mpq_t rop, const mpz_t op);
+    void mpq_set_ui (mpq_t rop, unsigned long int op1, unsigned long int op2);
+    void mpq_set_si (mpq_t rop, signed long int op1, unsigned long int op2);
+    int mpq_set_str (mpq_t rop, const char *str, int base);
+
+    // void mpq_set_d (mpq_t rop, double op);
+    // void mpq_set_f (mpq_t rop, const mpf_t op);
+
+    mpz_t mpq_numref (const mpq_t op);
+    mpz_t mpq_denref (const mpq_t op);
+    void mpq_get_num (mpz_t numerator, const mpq_t rational);
+    void mpq_get_den (mpz_t denominator, const mpq_t rational);
+    void mpq_set_num (mpq_t rational, const mpz_t numerator);
+    void mpq_set_den (mpq_t rational, const mpz_t denominator);
+
+    char * mpq_get_str (char *str, int base, const mpq_t op);
 """)
 
 gmp = ffi.verify("#include <gmp.h>", libraries=['gmp', 'm'])
