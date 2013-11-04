@@ -1,6 +1,6 @@
 import sys
 import gc
-from _gmpy import mpz
+from gmpy_cffi import mpz
 
 def main(N):
     i = 0

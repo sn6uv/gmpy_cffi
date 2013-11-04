@@ -2,7 +2,7 @@ from __future__ import division
 
 import sys
 import pytest
-from _gmpy import mpz, MAX_UI
+from gmpy_cffi import mpz, MAX_UI
 
 class TestInit(object):
     small_ints = {-1, 0, 1, 123, -9876, sys.maxint, -sys.maxint - 1}
