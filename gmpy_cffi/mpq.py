@@ -5,6 +5,11 @@ from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.mpz import _pylong_to_mpz, mpz, _mpz_to_str, _new_mpz, _del_mpz, MAX_UI
 
 
+if sys.version > '3':
+    long = int
+    xrange = range
+
+
 cache_size = _incache = 100
 _cache = []
 
@@ -52,26 +57,27 @@ def _mpq_to_str(a, base):
         gmp.mpq_get_str(p, base, a)
         return ffi.string(p)
 
+
 class mpq(object):
     _mpq_str = None
 
     def __init__(self, n=0, m=1, base=None):
         """
         mpq() -> mpq(0,1)
-        
+
              If no argument is given, return mpq(0,1).
-        
+
         mpq(n) -> mpq
-        
+
              Return an 'mpq' object with a numeric value n. Decimal and
              Fraction values are converted exactly.
-        
+
         mpq(n,m) -> mpq
-        
+
              Return an 'mpq' object with a numeric value n/m.
-        
+
         mpq(s[, base=10]) -> mpq
-        
+
              Return an 'mpq' object from a string s made up of digits in
              the given base. s may be made up of two numbers in the same
              base separated by a '/' character.
@@ -112,7 +118,7 @@ class mpq(object):
         gmp.mpq_canonicalize(a)
 
     @classmethod
-    def  _from_c_mpq(cls, mpq):
+    def _from_c_mpq(cls, mpq):
         inst = object.__new__(cls)
         inst._mpq = ffi.gc(mpq, _del_mpq)
         return inst
@@ -193,35 +199,15 @@ class mpq(object):
     def __rrshift__(self, other):
         raise NotImplementedError
 
-    def __eq__(self, other):
-        if isinstance(other, mpq):
-            res = gmp.mpq_equal(self._mpq, other._mpq)
-        elif isinstance(other, (int, long)):
-            tmp_mpz = _new_mpz()
-            tmp_mpq = _new_mpq()
-            if -sys.maxint -1 <= other <= sys.maxint:
-                gmp.mpz_set_si(tmp_mpz, other)
-            elif sys.maxint < other <= MAX_UI:
-                gmp.mpz_set_ui(tmp_mpz, other)
-            else:
-                _pylong_to_mpz(other, tmp_mpz)
-            gmp.mpq_set_z(tmp_mpq, tmp_mpz)
-            res = gmp.mpq_equal(self._mpq, tmp_mpq)
-            _del_mpz(tmp_mpz)
-            _del_mpq(tmp_mpq)
-        else:
-            raise TypeError("Can't compare mpq with '%s'" % type(other))
-        return res
-
     def __cmp__(self, other):
         if isinstance(other, mpq):
             res = gmp.mpq_cmp(self._mpq, other._mpq)
         elif isinstance(other, (int, long)):
             tmp_mpz = _new_mpz()
             tmp_mpq = _new_mpq()
-            if -sys.maxint -1 <= other <= sys.maxint:
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
                 gmp.mpz_set_si(tmp_mpz, other)
-            elif sys.maxint < other <= MAX_UI:
+            elif sys.maxsize < other <= MAX_UI:
                 gmp.mpz_set_ui(tmp_mpz, other)
             else:
                 _pylong_to_mpz(other, tmp_mpz)

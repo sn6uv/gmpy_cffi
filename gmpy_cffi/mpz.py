@@ -1,11 +1,14 @@
 import logging
 import sys
 import array
-from types import NoneType
 
 from gmpy_cffi.interface import gmp, ffi
 
-MAX_UI = 2 * sys.maxint + 1
+if sys.version > '3':
+    long = int
+    xrange = range
+
+MAX_UI = 2 * sys.maxsize + 1
 #logging.basicConfig(filename='_gmpy.log', level=logging.DEBUG)
 #logging.basicConfig(level=logging.DEBUG)
 
@@ -152,9 +155,9 @@ class mpz(object):
             raise ValueError('Base only allowed for str, not for %s.' % type(n))
         elif isinstance(n, float):
             gmp.mpz_set_d(a, n)
-        elif -sys.maxint - 1 <= n <= sys.maxint:
+        elif -sys.maxsize - 1 <= n <= sys.maxsize:
             gmp.mpz_set_si(a, n)
-        elif sys.maxint < n <= MAX_UI:
+        elif sys.maxsize < n <= MAX_UI:
             gmp.mpz_set_ui(a, n)
         else:
             assert isinstance(n, long)
@@ -458,7 +461,7 @@ class mpz(object):
     def __pow__(self, power, modulo=None):
         if not isinstance(power, (int, long, mpz)):
             return NotImplemented
-        if not isinstance(modulo, (int, long, mpz, NoneType)):
+        if modulo is not None and not isinstance(modulo, (int, long, mpz)):
             return NotImplemented
 
         if power < 0:

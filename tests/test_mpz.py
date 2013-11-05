@@ -5,9 +5,13 @@ import pytest
 from gmpy_cffi import mpz, MAX_UI
 
 
+if sys.version > '3':
+    long = int
+
+
 class TestInit(object):
-    small_ints = {-1, 0, 1, 123, -9876, sys.maxint, -sys.maxint - 1}
-    big_ints = {sys.maxint + 1, -sys.maxint - 2, 2 * sys.maxint + 1, 2 * sys.maxint + 2}
+    small_ints = {-1, 0, 1, 123, -9876, sys.maxsize, -sys.maxsize - 1}
+    big_ints = {sys.maxsize + 1, -sys.maxsize - 2, 2 * sys.maxsize + 1, 2 * sys.maxsize + 2}
 
     @pytest.mark.parametrize('n', small_ints.union(big_ints))
     def test_init_int(self, n):
@@ -47,7 +51,7 @@ class TestInit(object):
 
 
 class TestMath(object):
-    numbers = {-1, 0, 1, sys.maxint, -sys.maxint - 1, MAX_UI, MAX_UI + 1}
+    numbers = {-1, 0, 1, sys.maxsize, -sys.maxsize - 1, MAX_UI, MAX_UI + 1}
 
     @pytest.mark.parametrize('b', numbers)
     def test_add(self, b):
@@ -144,7 +148,7 @@ class TestMath(object):
         assert mpz(1 << 100) >> mpz(b) == mpz((1 << 100) >> b)
         assert mpz(1 << 100) >> b == mpz((1 << 100) >> b)
 
-    @pytest.mark.parametrize('b', {0, 2, sys.maxint, MAX_UI})
+    @pytest.mark.parametrize('b', {0, 2, sys.maxsize, MAX_UI})
     def test_rshifts(self, b):
         assert b << mpz(1) == mpz(b << 1)
         assert b >> mpz(1) == mpz(b >> 1)
@@ -237,7 +241,6 @@ class TestMath(object):
         assert l[mpz(-1)] == l[-1]
         with pytest.raises(IndexError):
             l[mpz(10)]
-            print "mist"
 
     def test_nonzero(self):
         assert mpz(23)
