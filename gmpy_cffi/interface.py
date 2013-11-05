@@ -47,6 +47,8 @@ ffi.cdef("""
     void mpz_fdiv_q_2exp (mpz_t q, mpz_t n, mp_bitcnt_t b);
 //    int mpz_divisible_ui_p (mpz_t n, unsigned long int d);
 
+    void mpz_tdiv_q (mpz_t q, const mpz_t n, const mpz_t d);
+
     void mpz_powm (mpz_t rop, mpz_t base, mpz_t exp, mpz_t mod);
     void mpz_powm_ui (mpz_t rop, mpz_t base, unsigned long int exp, mpz_t mod);
     void mpz_pow_ui (mpz_t rop, mpz_t base, unsigned long int exp);
@@ -83,8 +85,8 @@ ffi.cdef("""
     void mpq_set_si (mpq_t rop, signed long int op1, unsigned long int op2);
     int mpq_set_str (mpq_t rop, const char *str, int base);
 
-    // void mpq_set_d (mpq_t rop, double op);
-    // void mpq_set_f (mpq_t rop, const mpf_t op);
+    void mpq_set_d (mpq_t rop, double op);
+    double mpq_get_d (mpq_t op);
 
     mpz_t mpq_numref (const mpq_t op);
     mpz_t mpq_denref (const mpq_t op);
@@ -94,6 +96,22 @@ ffi.cdef("""
     void mpq_set_den (mpq_t rational, const mpz_t denominator);
 
     char * mpq_get_str (char *str, int base, const mpq_t op);
+
+    void mpq_add (mpq_t sum, const mpq_t addend1, const mpq_t addend2);
+    void mpq_sub (mpq_t difference, const mpq_t minuend, const mpq_t subtrahend);
+    void mpq_mul (mpq_t product, const mpq_t multiplier, const mpq_t multiplicand);
+    void mpq_mul_2exp (mpq_t rop, const mpq_t op1, mp_bitcnt_t op2);
+    void mpq_div (mpq_t quotient, const mpq_t dividend, const mpq_t divisor);
+    void mpq_div_2exp (mpq_t rop, const mpq_t op1, mp_bitcnt_t op2);
+    void mpq_neg (mpq_t negated_operand, const mpq_t operand);
+    void mpq_abs (mpq_t rop, const mpq_t op);
+    void mpq_inv (mpq_t inverted_number, const mpq_t number);
+
+    int mpq_cmp (const mpq_t op1, const mpq_t op2);
+    int mpq_cmp_ui (const mpq_t op1, unsigned long int num2, unsigned long int den2);
+    int mpq_cmp_si (const mpq_t op1, long int num2, unsigned long int den2);
+    int mpq_sgn (const mpq_t op);
+    int mpq_equal (const mpq_t op1, const mpq_t op2);
 """)
 
 gmp = ffi.verify("#include <gmp.h>", libraries=['gmp', 'm'])
