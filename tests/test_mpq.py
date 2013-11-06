@@ -53,7 +53,7 @@ class TestInit(object):
     @pytest.mark.parametrize(('n', 'base'), {('0', -1), ('0', 1), ('0', 63), (0, 10)})
     def test_init_invalid_base(self, n, base):
         with pytest.raises(ValueError):
-            mpq(n, base=base)
+            mpq(n, base)
 
     @pytest.mark.parametrize('type_', {int, float, mpz, mpq, str})
     def test_init_type(self, type_):

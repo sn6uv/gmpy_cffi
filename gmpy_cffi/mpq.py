@@ -50,18 +50,26 @@ def _del_mpq(mpq):
 
 
 def _mpq_to_str(a, base):
-        l = (gmp.mpz_sizeinbase(gmp.mpq_numref(a), base) +
-             gmp.mpz_sizeinbase(gmp.mpq_denref(a), base) + 3)
-        p = ffi.new('char[]', l)
-        gmp.mpq_get_str(ffi.NULL, base, a)
-        gmp.mpq_get_str(p, base, a)
-        return ffi.string(p)
+    l = (gmp.mpz_sizeinbase(gmp.mpq_numref(a), base) +
+         gmp.mpz_sizeinbase(gmp.mpq_denref(a), base) + 3)
+    p = ffi.new('char[]', l)
+    gmp.mpq_get_str(ffi.NULL, base, a)
+    gmp.mpq_get_str(p, base, a)
+    return ffi.string(p)
+
+
+def _str_to_mpq(s, base, a):
+    if base == 0 or 2 <= base <= 62:
+        if gmp.mpq_set_str(a, s, base) == -1:
+            raise ValueError("Can't create mpq from %s with base %s" % (s, base))
+    else:
+        raise ValueError('base must be 0 or 2..62, not %s' % base)
 
 
 class mpq(object):
     _mpq_str = None
 
-    def __init__(self, n=0, m=1, base=None):
+    def __init__(self, *args):
         """
         mpq() -> mpq(0,1)
 
@@ -83,38 +91,78 @@ class mpq(object):
              base separated by a '/' character.
         """
 
-        if isinstance(n, self.__class__):
-            self._mpq = n._mpq
+        #TODO kwargs (base)
+
+        if len(args) == 1 and isinstance(args[0], self.__class__):
+            self._mpq = args[0]._mpq
             return
+
         a = self._mpq = ffi.gc(_new_mpq(), _del_mpq)
-        if isinstance(n, str):
-            if base is None:
-                base = 10
-            if base == 0 or 2 <= base <= 62:
-                if gmp.mpq_set_str(a, n, base) == -1:
-                    raise ValueError("Can't create mpq from %s with base %s" % (n, base))
-                return
+
+        if len(args) == 0:
+            gmp.mpq_set_ui(a, 0, 1)
+        elif len(args) == 1:
+            if isinstance(args[0], float):
+                gmp.mpq_set_d(a, args[0])
+            elif isinstance(args[0], (int, long)):
+                if -sys.maxsize - 1 <= args[0] <= sys.maxsize:
+                    gmp.mpq_set_si(a, args[0], 1)
+                elif sys.maxsize < args[0] <= MAX_UI:
+                    gmp.mpq_set_ui(a, args[0], 1)
+                else:
+                    assert isinstance(args[0], long)
+                    tmp = _new_mpz()
+                    _pylong_to_mpz(args[0], tmp)
+                    gmp.mpq_set_z(a, tmp)
+                    _del_mpz(tmp)
+            elif isinstance(args[0], mpz):
+                gmp.mpq_set_z(a, args[0]._mpz)
+            elif isinstance(args[0], str):
+                _str_to_mpq(args[0], 10, a)
             else:
-                raise ValueError('base must be 0 or 2..62, not %s' % base)
-        elif base is not None:
-            raise ValueError('Base only allowed for str, not for %s.' % type(n))
+                raise TypeError('mpq() requires numeric or string argument')
+        elif len(args) == 2:
+            if isinstance(args[0], str):
+                _str_to_mpq(args[0], args[1], a)
+            elif all(isinstance(arg, (int, long, mpz)) for arg in args):
+                # Set Numerator
+                if isinstance(args[0], mpz):
+                    gmp.mpq_set_num(a, args[0]._mpz)
+                else:
+                    num = _new_mpz()
+                    if -sys.maxsize - 1 <= args[0] <= sys.maxsize:
+                        gmp.mpz_set_si(num, args[0])
+                    elif sys.maxsize < args[0] <= MAX_UI:
+                        gmp.mpz_set_ui(num, args[0])
+                    else:
+                        assert isinstance(args[0], long)
+                        _pylong_to_mpz(args[0], num)
+                    gmp.mpq_set_num(a, num)
+                    _del_mpz(num)
 
-        if isinstance(n, float) or isinstance(m, float):
-            if not isinstance(m, (int, long)) and m == 1:
-                #TODO
+                # Set Denominator
+                if args[1] == 0:
+                    raise ZeroDivisionError("zero denominator in 'mpq'")
+
+                if isinstance(args[1], mpz):
+                    gmp.mpq_set_den(a, args[1]._mpz)
+                else:
+                    den = _new_mpz()
+                    if -sys.maxsize - 1 <= args[1] <= sys.maxsize:
+                        gmp.mpz_set_si(den, args[1])
+                    elif sys.maxsize < args[1] <= MAX_UI:
+                        gmp.mpz_set_ui(den, args[1])
+                    else:
+                        assert isinstance(args[1], long)
+                        _pylong_to_mpz(args[1], den)
+                    gmp.mpq_set_den(a, den)
+                    _del_mpz(den)
+            else:
                 raise NotImplementedError
-            gmp.mpq_set_d(a, n)
-            return
+        else:
+            raise TypeError("mpq() requires 0, 1 or 2 arguments")
 
-        assert isinstance(n, (int, long, mpz))
-        assert isinstance(m, (int, long, mpz))
-
-        if m == 0:
-            raise ZeroDivisionError("zero denominator in 'mpq'")
-
-        # TODO  Optimize this
-        gmp.mpq_set_num(a, mpz(n)._mpz)
-        gmp.mpq_set_den(a, mpz(m)._mpz)
+        # TODO only canonicalize when required (e.g. optimize mpq(42))
         gmp.mpq_canonicalize(a)
 
     @classmethod
