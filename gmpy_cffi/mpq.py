@@ -111,10 +111,8 @@ class mpq(object):
                     gmp.mpq_set_ui(a, args[0], 1)
                 else:
                     assert isinstance(args[0], long)
-                    tmp = _new_mpz()
+                    tmp = gmp.mpq_numref(a)
                     _pylong_to_mpz(args[0], tmp)
-                    gmp.mpq_set_z(a, tmp)
-                    _del_mpz(tmp)
             elif isinstance(args[0], mpz):
                 gmp.mpq_set_z(a, args[0]._mpz)
             elif isinstance(args[0], str):
@@ -129,7 +127,7 @@ class mpq(object):
                 if isinstance(args[0], mpz):
                     gmp.mpq_set_num(a, args[0]._mpz)
                 else:
-                    num = _new_mpz()
+                    num = gmp.mpq_numref(a)
                     if -sys.maxsize - 1 <= args[0] <= sys.maxsize:
                         gmp.mpz_set_si(num, args[0])
                     elif sys.maxsize < args[0] <= MAX_UI:
@@ -137,8 +135,6 @@ class mpq(object):
                     else:
                         assert isinstance(args[0], long)
                         _pylong_to_mpz(args[0], num)
-                    gmp.mpq_set_num(a, num)
-                    _del_mpz(num)
 
                 # Set Denominator
                 if args[1] == 0:
@@ -147,7 +143,7 @@ class mpq(object):
                 if isinstance(args[1], mpz):
                     gmp.mpq_set_den(a, args[1]._mpz)
                 else:
-                    den = _new_mpz()
+                    den = gmp.mpq_denref(a)
                     if -sys.maxsize - 1 <= args[1] <= sys.maxsize:
                         gmp.mpz_set_si(den, args[1])
                     elif sys.maxsize < args[1] <= MAX_UI:
@@ -155,8 +151,6 @@ class mpq(object):
                     else:
                         assert isinstance(args[1], long)
                         _pylong_to_mpz(args[1], den)
-                    gmp.mpq_set_den(a, den)
-                    _del_mpz(den)
             else:
                 raise NotImplementedError
         else:
@@ -269,30 +263,12 @@ class mpq(object):
 
     def __int__(self):
         res = _new_mpz()
-        num = _new_mpz()
-        den = _new_mpz()
-
-        gmp.mpq_get_num(num, self._mpq)
-        gmp.mpq_get_den(den, self._mpq)
-
-        gmp.mpz_tdiv_q(res, num, den)
-
-        _del_mpz(num)
-        _del_mpz(den)
+        gmp.mpz_tdiv_q(res, gmp.mpq_numref(self._mpq), gmp.mpq_denref(self._mpq))
         return int(mpz._from_c_mpz(res))
 
     def __long__(self):
         res = _new_mpz()
-        num = _new_mpz()
-        den = _new_mpz()
-
-        gmp.mpq_get_num(num, self._mpq)
-        gmp.mpq_get_den(den, self._mpq)
-
-        gmp.mpz_tdiv_q(res, num, den)
-
-        _del_mpz(num)
-        _del_mpz(den)
+        gmp.mpz_tdiv_q(res, gmp.mpq_numref(self._mpq), gmp.mpq_denref(self._mpq))
         return long(mpz._from_c_mpz(res))
 
     def __float__(self):
