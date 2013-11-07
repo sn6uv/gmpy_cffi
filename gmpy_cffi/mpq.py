@@ -232,20 +232,54 @@ class mpq(object):
         return tmp if self >= 0 else '-' + tmp
 
     def __add__(self, other):
-        res = _new_mpq()
         if isinstance(other, mpq):
+            res = _new_mpq()
             gmp.mpq_add(res, self._mpq, other._mpq)
+            return mpq._from_c_mpq(res)
+        elif isinstance(other, (int, long)):
+            res = _new_mpq()
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpq_set_si(res, other, 1)
+            elif sys.maxsize < other <= MAX_UI:
+                gmp.mpq_set_ui(res, other, 1)
+            else:
+                assert isinstance(other, long)
+                _pylong_to_mpz(other, gmp.mpq_numref(res))
+                gmp.mpz_set_ui(gmp.mpq_denref(res), 1)
+            gmp.mpq_add(res, self._mpq, res)
+            return mpq._from_c_mpq(res)
+        elif isinstance(other, mpz):
+            res = _new_mpq()
+            gmp.mpq_set_z(res, other._mpz)
+            gmp.mpq_add(res, self._mpq, res)
+            return mpq._from_c_mpq(res)
         else:
             raise NotImplementedError
-        return mpq._from_c_mpq(res)
 
     def __sub__(self, other):
-        res = _new_mpq()
         if isinstance(other, mpq):
+            res = _new_mpq()
             gmp.mpq_sub(res, self._mpq, other._mpq)
+            return mpq._from_c_mpq(res)
+        elif isinstance(other, (int, long)):
+            res = _new_mpq()
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpq_set_si(res, other, 1)
+            elif sys.maxsize < other <= MAX_UI:
+                gmp.mpq_set_ui(res, other, 1)
+            else:
+                assert isinstance(other, long)
+                _pylong_to_mpz(other, gmp.mpq_numref(res))
+                gmp.mpz_set_ui(gmp.mpq_denref(res), 1)
+            gmp.mpq_sub(res, self._mpq, res)
+            return mpq._from_c_mpq(res)
+        elif isinstance(other, mpz):
+            res = _new_mpq()
+            gmp.mpq_set_z(res, other._mpz)
+            gmp.mpq_sub(res, self._mpq, res)
+            return mpq._from_c_mpq(res)
         else:
             raise NotImplementedError
-        return mpq._from_c_mpq(res)
 
     def __rsub__(self, other):
         raise NotImplementedError

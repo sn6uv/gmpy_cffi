@@ -170,9 +170,19 @@ class TestMath(object):
 
     def test_add(self):
         assert mpq(1, 2) + mpq(1, 3) == mpq(5, 6)
+        assert mpq(1, 2) + 2 == mpq(5, 2)
+        assert mpq(1, 2) + sys.maxsize == mpq(2*sys.maxsize + 1, 2)
+        assert mpq(1, 2) + 2*sys.maxsize == mpq(4*sys.maxsize + 1, 2)
+        assert mpq(1, 2) + 3*sys.maxsize == mpq(6*sys.maxsize + 1, 2)
+        assert mpq(1, 2) + mpz(2) == mpq(5, 2)
 
     def test_sub(self):
         assert mpq(1, 2) - mpq(1, 3) == mpq(1, 6)
+        assert mpq(1, 2) - 2 == mpq(-3, 2)
+        assert mpq(1, 2) - sys.maxsize == mpq(1 - 2*sys.maxsize, 2)
+        assert mpq(1, 2) - 2*sys.maxsize == mpq(1 - 4*sys.maxsize, 2)
+        assert mpq(1, 2) - 3*sys.maxsize == mpq(1 - 6*sys.maxsize, 2)
+        assert mpq(1, 2) - mpz(2) == mpq(-3, 2)
 
     def test_mul(self):
         assert mpq(1, 2) * mpq(1, 3) == mpq(1, 6)
