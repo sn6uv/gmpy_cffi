@@ -1,5 +1,3 @@
-from __future__ import division
-
 import sys
 import pytest
 from gmpy_cffi import mpq, mpz
@@ -46,7 +44,7 @@ class TestInit(object):
     # Length 2
     @pytest.mark.parametrize(('n', 'd'), [(1, 1), (-1, 1), (1, -1), (-1, -1)])
     def test_init_sign(self, n, d):
-        assert mpq(n, d) == n // d
+        assert mpq(n, d) == n / d
 
     @pytest.mark.parametrize(('n', 'd'), int_pairs)
     def test_init_str(self, n, d):
