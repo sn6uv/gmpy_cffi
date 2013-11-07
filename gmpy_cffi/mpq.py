@@ -322,7 +322,7 @@ class mpq(object):
         return gmp.mpq_get_d(self._mpq)
 
     def __complex__(self):
-        float(self) + 0j
+        return float(self) + 0j
 
     def __abs__(self):
         res = _new_mpq()
