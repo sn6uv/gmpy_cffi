@@ -223,14 +223,6 @@ class mpq(object):
             tmp.append('1')
         return "mpq(%s,%s)" % tuple(tmp)
 
-    def __hex__(self):
-        tmp = '0x' + _mpq_to_str(abs(self)._mpq, 16).replace('/', '/0x')
-        return tmp if self >= 0 else '-' + tmp
-
-    def __oct__(self):
-        tmp = '0' + _mpq_to_str(abs(self._mpq), 16).replace('/', '/0')
-        return tmp if self >= 0 else '-' + tmp
-
     def __add__(self, other):
         if isinstance(other, mpq):
             res = _new_mpq()
@@ -255,6 +247,9 @@ class mpq(object):
             return mpq._from_c_mpq(res)
         else:
             raise NotImplementedError
+
+    # def __radd__(self, other):
+    #     raise NotImplementedError
 
     def __sub__(self, other):
         if isinstance(other, mpq):
@@ -281,8 +276,8 @@ class mpq(object):
         else:
             raise NotImplementedError
 
-    def __rsub__(self, other):
-        raise NotImplementedError
+    # def __rsub__(self, other):
+    #     raise NotImplementedError
 
     def __mul__(self, other):
         res = _new_mpq()
@@ -308,6 +303,9 @@ class mpq(object):
             return mpq._from_c_mpq(res)
         else:
             raise NotImplementedError
+
+    # def __rmul__(self, other):
+    #     raise NotImplementedError
 
     def __div__(self, other):
         if isinstance(other, mpq):
@@ -342,35 +340,38 @@ class mpq(object):
         else:
             raise NotImplementedError
 
-    def __floordiv__(self, other):
-        raise NotImplementedError
+    # def __rdiv__(self, other):
+    #     raise NotImplementedError
 
-    def __rfloordiv__(self, other):
-        raise NotImplementedError
+    # def __truediv__(self, other):
+    #     raise NotImplementedError
 
-    def __mod__(self, other):
-        raise NotImplementedError
+    # def __rtruediv__(self, other):
+    #     raise NotImplementedError
 
-    def __rmod__(self, other):
-        raise NotImplementedError
+    # def __floordiv__(self, other):
+    #     raise NotImplementedError
 
-    def __divmod__(self, other):
-        raise NotImplementedError
+    # def __rfloordiv__(self, other):
+    #     raise NotImplementedError
 
-    def __rdivmod__(self, other):
-        raise NotImplementedError
+    # def __mod__(self, other):
+    #     raise NotImplementedError
 
-    def __lshift__(self, other):
-        raise NotImplementedError
+    # def __rmod__(self, other):
+    #     raise NotImplementedError
 
-    def __rlshift__(self, other):
-        raise NotImplementedError
+    # def __divmod__(self, other):
+    #     raise NotImplementedError
 
-    def __rshift__(self, other):
-        raise NotImplementedError
+    # def __rdivmod__(self, other):
+    #     raise NotImplementedError
 
-    def __rrshift__(self, other):
-        raise NotImplementedError
+    # def __eq__(self, other):
+    #     raise NotImplementedError
+
+    # def __hash__(self):
+    #     raise NotImplementedError
 
     def __cmp__(self, other):
         if isinstance(other, mpq):
@@ -405,9 +406,6 @@ class mpq(object):
     def __float__(self):
         return gmp.mpq_get_d(self._mpq)
 
-    def __complex__(self):
-        return float(self) + 0j
-
     def __abs__(self):
         res = _new_mpq()
         gmp.mpq_abs(res, self._mpq)
@@ -418,26 +416,23 @@ class mpq(object):
         gmp.mpq_neg(res, self._mpq)
         return mpq._from_c_mpq(res)
 
+    # def __ceil__(self):
+    #     raise NotImplementedError
+
+    # def __floor__(self):
+    #     raise NotImplementedError
+
+    # def __round__(self, other):
+    #     raise NotImplementedError
+
     def __pos__(self):
         return self
-
-    def __invert__(self):
-        raise NotImplementedError
-
-    def __and__(self, other):
-        raise NotImplementedError
-
-    def __or__(self, other):
-        raise NotImplementedError
-
-    def __xor__(self, other):
-        raise NotImplementedError
 
     def __nonzero__(self):
         return gmp.mpq_sgn(self._mpq) != 0
 
-    def __pow__(self, other, modulo=None):
-        raise NotImplementedError
+    # def __pow__(self, other, modulo=None):
+    #     raise NotImplementedError
 
-    def __rpow__(self, other):
-        raise NotImplementedError
+    # def __rpow__(self, other):
+    #     raise NotImplementedError
