@@ -152,7 +152,54 @@ class mpq(object):
                         assert isinstance(args[1], long)
                         _pylong_to_mpz(args[1], den)
             else:
-                raise NotImplementedError
+                # Numerator
+                if isinstance(args[0], mpq):
+                    gmp.mpq_set(a, args[0]._mpq)
+                elif isinstance(args[0], float):
+                    gmp.mpq_set_d(a, args[0])
+                elif isinstance(args[0], (int, long)):
+                    if -sys.maxsize - 1 <= args[0] <= sys.maxsize:
+                        gmp.mpq_set_si(a, args[0], 1)
+                    elif sys.maxsize < args[0] <= MAX_UI:
+                        gmp.mpq_set_ui(a, args[0], 1)
+                    else:
+                        assert isinstance(args[0], long)
+                        num, den = gmp.mpq_numref(a), gmp.mpq_denref(a)
+                        _pylong_to_mpz(args[0], num)
+                        gmp.mpz_set_ui(den, 1)
+                elif isinstance(args[0], mpz):
+                    gmp.mpq_set_z(a, args[0]._mpz)
+                else:
+                    raise TypeError('mpq() requires numeric or string argument')
+
+                # Denominator
+                b = _new_mpq()
+                if isinstance(args[1], mpq):
+                    gmp.mpq_set(b, args[1]._mpq)
+                elif isinstance(args[1], float):
+                    gmp.mpq_set_d(b, args[1])
+                elif isinstance(args[1], (int, long)):
+                    if -sys.maxsize - 1 <= args[1] <= sys.maxsize:
+                        gmp.mpq_set_si(b, args[1], 1)
+                    elif sys.maxsize < args[1] <= MAX_UI:
+                        gmp.mpq_set_ui(b, args[1], 1)
+                    else:
+                        assert isinstance(args[1], long)
+                        num, den = gmp.mpq_numref(b), gmp.mpq_denref(b)
+                        _pylong_to_mpz(args[1], num)
+                        gmp.mpz_set_ui(den, 1)
+                elif isinstance(args[1], mpz):
+                    gmp.mpq_set_z(b, args[1]._mpz)
+                else:
+                    raise TypeError('mpq() requires numeric or string argument')
+
+                # Divide them
+                if gmp.mpq_sgn(b) == 0:
+                    _del_mpq(b)
+                    raise ZeroDivisionError
+
+                gmp.mpq_div(a, a, b)
+                _del_mpq(b)
         else:
             raise TypeError("mpq() requires 0, 1 or 2 arguments")
 
