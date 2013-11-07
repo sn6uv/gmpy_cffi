@@ -234,3 +234,17 @@ class TestMath(object):
         assert bool(mpq(1,2))
         assert bool(mpq(-1,2))
         assert not bool(mpq(0,1))
+
+
+class TestFormat(object):
+    def test_str(self):
+        assert str(mpq(1, 2)) == "1/2"
+        assert str(mpq(-1, 2)) == "-1/2"
+        assert str(mpq(2, 1)) == "2"
+        assert str(mpq(-2, 1)) == "-2"
+
+    def test_repr(self):
+        assert repr(mpq(1, 2)) == "mpq(1,2)"
+        assert repr(mpq(-1, 2)) == "mpq(-1,2)"
+        assert repr(mpq(2, 1)) == "mpq(2,1)"
+        assert repr(mpq(-2, 1)) == "mpq(-2,1)"
