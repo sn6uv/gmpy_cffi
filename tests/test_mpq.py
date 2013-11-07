@@ -166,3 +166,48 @@ class TestInit(object):
             mpq(1,2,3)
         with pytest.raises(TypeError):
             mpq(1,2,3,4)
+
+
+class TestMath(object):
+
+    def test_add(self):
+        assert mpq(1, 2) + mpq(1, 3) == mpq(5, 6)
+
+    def test_sub(self):
+        assert mpq(1, 2) - mpq(1, 3) == mpq(1, 6)
+
+    def test_mul(self):
+        assert mpq(1, 2) * mpq(1, 3) == mpq(1, 6)
+
+    def test_div(self):
+        assert mpq(1, 2) / mpq(1, 3) == mpq(3, 2)
+
+    def test_int(self):
+        assert int(mpq(1, 2)) == mpq(0, 1)
+        assert int(mpq(3, 2)) == mpq(1, 1)
+        assert int(mpq(-3, 2)) == mpq(-1, 1)
+
+    def test_long(self):
+        assert long(mpq(1, 2)) == mpq(0, 1)
+        assert long(mpq(3, 2)) == mpq(1, 1)
+        assert long(mpq(-3, 2)) == mpq(-1, 1)
+
+    def test_abs(self):
+        assert abs(mpq(1, 2)) == mpq(1, 2)
+        assert abs(mpq(-1, 2)) == mpq(1, 2)
+
+    def test_pos(self):
+        assert +mpq(1, 2) == mpq(1, 2)
+        assert +mpq(-1, 2) == mpq(-1, 2)
+
+    def test_neg(self):
+        assert -mpq(1, 2) == mpq(-1, 2)
+        assert -mpq(-1, 2) == mpq(1, 2)
+
+    def test_float(self):
+        assert float(mpq(1, 2)) == 0.5
+        assert float(mpq(-1, 2)) == -0.5
+
+    def test_complex(self):
+        assert complex(mpq(1, 2)) == 0.5 + 0j
+        assert complex(mpq(-1, 2)) == -0.5 + 0j
