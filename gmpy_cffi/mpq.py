@@ -350,7 +350,7 @@ class mpq(object):
         raise NotImplementedError
 
     def __nonzero__(self):
-        raise NotImplementedError
+        return gmp.mpq_sgn(self._mpq) != 0
 
     def __pow__(self, other, modulo=None):
         raise NotImplementedError

@@ -209,3 +209,8 @@ class TestMath(object):
     def test_complex(self):
         assert complex(mpq(1, 2)) == 0.5 + 0j
         assert complex(mpq(-1, 2)) == -0.5 + 0j
+
+    def test_nonzero(self):
+        assert bool(mpq(1,2))
+        assert bool(mpq(-1,2))
+        assert not bool(mpq(0,1))
