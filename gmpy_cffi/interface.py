@@ -14,6 +14,7 @@ ffi.cdef("""
     void mpz_init (mpz_t x);
     void mpz_clear (mpz_t x);
 
+    void mpz_set (mpz_t rop, const mpz_t op);
     void mpz_set_ui (mpz_t rop, unsigned long int op);
     void mpz_set_si (mpz_t rop, signed long int op);
     void mpz_set_d (mpz_t rop, double op);

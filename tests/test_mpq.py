@@ -176,9 +176,19 @@ class TestMath(object):
 
     def test_mul(self):
         assert mpq(1, 2) * mpq(1, 3) == mpq(1, 6)
+        assert mpq(1, 2) * 2 == mpq(1, 1)
+        assert mpq(1, 2) * sys.maxsize == mpq(sys.maxsize, 2)
+        assert mpq(1, 2) * (2*sys.maxsize) == mpq(sys.maxsize, 1)
+        assert mpq(1, 2) * (3*sys.maxsize) == mpq(3*sys.maxsize, 2)
+        assert mpq(1, 2) * mpz(2) == mpq(1, 1)
 
     def test_div(self):
         assert mpq(1, 2) / mpq(1, 3) == mpq(3, 2)
+        assert mpq(1, 2) / 2 == mpq(1, 4)
+        assert mpq(1, 2) / sys.maxsize == mpq(1, 2*sys.maxsize)
+        assert mpq(1, 2) / (2 * sys.maxsize) == mpq(1, 4 * sys.maxsize)
+        assert mpq(1, 2) / (3 * sys.maxsize) == mpq(1, 6 * sys.maxsize)
+        assert mpq(1, 2) / mpz(3) == mpq(1, 6)
 
     def test_int(self):
         assert int(mpq(1, 2)) == mpq(0, 1)

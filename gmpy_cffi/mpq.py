@@ -254,9 +254,59 @@ class mpq(object):
         res = _new_mpq()
         if isinstance(other, mpq):
             gmp.mpq_mul(res, self._mpq, other._mpq)
+            return mpq._from_c_mpq(res)
+        elif isinstance(other, (int, long)):
+            res = _new_mpq()
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpq_set_si(res, other, 1)
+            elif sys.maxsize < other <= MAX_UI:
+                gmp.mpq_set_ui(res, other, 1)
+            else:
+                assert isinstance(other, long)
+                _pylong_to_mpz(other, gmp.mpq_numref(res))
+                gmp.mpz_set_ui(gmp.mpq_denref(res), 1)
+            gmp.mpq_mul(res, res, self._mpq)
+            return mpq._from_c_mpq(res)
+        elif isinstance(other, mpz):
+            res = _new_mpq()
+            gmp.mpq_set_z(res, other._mpz)
+            gmp.mpq_mul(res, res, self._mpq)
+            return mpq._from_c_mpq(res)
         else:
             raise NotImplementedError
-        return mpq._from_c_mpq(res)
+
+    def __div__(self, other):
+        if isinstance(other, mpq):
+            if gmp.mpq_sgn(other._mpq) == 0:
+                raise ZeroDivisionError
+            res = _new_mpq()
+            gmp.mpq_inv(res, other._mpq)
+            gmp.mpq_mul(res, self._mpq, res)
+            return mpq._from_c_mpq(res)
+        elif isinstance(other, (int, long)):
+            if other == 0:
+                raise ZeroDivisionError
+            res = _new_mpq()
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpq_set_si(res, 1, other)
+            elif sys.maxsize < other <= MAX_UI:
+                gmp.mpq_set_ui(res, 1, other)
+            else:
+                assert isinstance(other, long)
+                _pylong_to_mpz(other, gmp.mpq_denref(res))
+                gmp.mpz_set_ui(gmp.mpq_numref(res), 1)
+            gmp.mpq_mul(res, res, self._mpq)
+            return mpq._from_c_mpq(res)
+        elif isinstance(other, mpz):
+            if gmp.mpz_sgn(other._mpz) == 0:
+                raise ZeroDivisionError
+            res = _new_mpq()
+            gmp.mpq_set_z(res, other._mpz)
+            gmp.mpq_inv(res, res)
+            gmp.mpq_mul(res, res, self._mpq)
+            return mpq._from_c_mpq(res)
+        else:
+            raise NotImplementedError
 
     def __floordiv__(self, other):
         raise NotImplementedError
