@@ -67,7 +67,7 @@ def _str_to_mpq(s, base, a):
 
 
 class mpq(object):
-    _mpq_str = None
+    _mpq_str = _numerator = _denominator = None
 
     def __init__(self, *args):
         """
@@ -205,6 +205,22 @@ class mpq(object):
 
         # TODO only canonicalize when required (e.g. optimize mpq(42))
         gmp.mpq_canonicalize(a)
+
+    @property
+    def numerator(self):
+        if self._numerator is None:
+            num = _new_mpz()
+            gmp.mpq_get_num(num, self._mpq)
+            self._numerator = mpz._from_c_mpz(num)
+        return self._numerator
+
+    @property
+    def denominator(self):
+        if self._denominator is None:
+            den = _new_mpz()
+            gmp.mpq_get_den(den, self._mpq)
+            self._denominator = mpz._from_c_mpz(den)
+        return self._denominator
 
     @classmethod
     def _from_c_mpq(cls, mpq):

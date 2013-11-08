@@ -359,3 +359,13 @@ class TestMod(object):
         assert divmod(mpq(5, 2), 2) == (mpz(1), mpq(1,2))
         assert divmod(mpq(5, 2), 2) == (mpz(1), mpq(1,2))
         assert divmod(mpz(2), mpq(3, 4)) == (mpz(2), mpq(1,2))
+
+
+class TestNumDen(object):
+    @pytest.mark.parametrize('n', [-2, -1, 0, 1, 2])
+    def test_num(self, n):
+        assert mpq(n, 3).numerator == mpz(n)
+
+    @pytest.mark.parametrize('n', [-2, -1, 1, 2])
+    def test_den(self, n):
+        assert mpq(3, n).denominator == mpz(abs(n))
