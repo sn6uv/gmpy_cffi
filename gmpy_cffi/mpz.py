@@ -364,6 +364,13 @@ class mpz(object):
             return NotImplemented
         return mpz(other) >> self
 
+    def __hash__(self):
+        # WTF When this returns -1, CPython silently changes it to -2
+        i = int(self)
+        if -sys.maxint-1 <= i <= sys.maxint:
+            return i
+        return (i + sys.maxsize + 1) % (2 * sys.maxsize + 2) - sys.maxsize - 1
+
     def __cmp__(self, other):
         if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
             return gmp.mpz_cmp_ui(self._mpz, other)

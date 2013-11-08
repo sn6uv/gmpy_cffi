@@ -298,3 +298,15 @@ class TestMath(object):
             2.0 ** mpz(2)
         with pytest.raises(TypeError):
             pow(mpz(2), 2, 2.0)
+
+class TestCmp(object):
+
+    @pytest.mark.xfail(reason='cpython __hash__ implementation bug (feature)')
+    def test_hash_neg1(self):
+        assert hash(mpz(-1)) == -1
+
+    def test_hash(self):
+        assert hash(mpz(1)) == 1
+        assert hash(mpz(-2)) == -2
+        assert hash(mpz(sys.maxint)) == sys.maxint
+        assert hash(mpz(sys.maxint+1)) == -sys.maxint - 1
