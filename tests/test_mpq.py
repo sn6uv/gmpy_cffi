@@ -271,6 +271,14 @@ class TestMath(object):
         assert bool(mpq(-1,2))
         assert not bool(mpq(0,1))
 
+    def test_floor(self):
+        assert mpq(1,2).__floor__() == mpz(0)
+        assert mpq(-1,2).__floor__() == mpz(-1)
+
+    def test_ceil(self):
+        assert mpq(1,2).__ceil__() == mpz(1)
+        assert mpq(-1,2).__ceil__() == mpz(0)
+
 
 class TestFormat(object):
     def test_str(self):

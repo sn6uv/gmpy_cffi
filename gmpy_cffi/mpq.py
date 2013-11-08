@@ -472,11 +472,15 @@ class mpq(object):
         gmp.mpq_neg(res, self._mpq)
         return mpq._from_c_mpq(res)
 
-    # def __ceil__(self):
-    #     raise NotImplementedError
+    def __ceil__(self):
+        res = _new_mpz()
+        gmp.mpz_cdiv_q(res, gmp.mpq_numref(self._mpq), gmp.mpq_denref(self._mpq))
+        return mpz._from_c_mpz(res)
 
-    # def __floor__(self):
-    #     raise NotImplementedError
+    def __floor__(self):
+        res = _new_mpz()
+        gmp.mpz_fdiv_q(res, gmp.mpq_numref(self._mpq), gmp.mpq_denref(self._mpq))
+        return mpz._from_c_mpz(res)
 
     # def __round__(self, other):
     #     raise NotImplementedError

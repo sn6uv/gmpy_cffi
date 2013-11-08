@@ -40,6 +40,8 @@ ffi.cdef("""
     void mpz_neg (mpz_t rop, mpz_t op);
     void mpz_abs (mpz_t rop, mpz_t op);
 
+    void mpz_cdiv_q (mpz_t q, mpz_t n, mpz_t d);
+
     void mpz_fdiv_q (mpz_t q, mpz_t n, mpz_t d);
     void mpz_fdiv_q_ui (mpz_t q, mpz_t n, unsigned long int d);
     void mpz_fdiv_r (mpz_t r, mpz_t n, mpz_t d);
