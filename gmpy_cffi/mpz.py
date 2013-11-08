@@ -186,61 +186,68 @@ class mpz(object):
         return tmp if self >= 0 else '-' + tmp
 
     def __add__(self, other):
-        res = _new_mpz()
-        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
-            gmp.mpz_add_ui(res, self._mpz, other)
-        else:
-            if isinstance(other, (int, long)):
-                oth = _new_mpz()
-                _pylong_to_mpz(other, oth)
-                gmp.mpz_add(res, self._mpz, oth)
-                _del_mpz(oth)
+        if isinstance(other, (int, long)):
+            res = _new_mpz()
+            if 0 <= other <= MAX_UI:
+                gmp.mpz_add_ui(res, self._mpz, other)
             else:
-                gmp.mpz_add(res, self._mpz, other._mpz)
-        return mpz._from_c_mpz(res)
+                if isinstance(other, (int, long)):
+                    _pylong_to_mpz(other, res)
+                    gmp.mpz_add(res, self._mpz, res)
+            return mpz._from_c_mpz(res)
+        elif isinstance(other, mpz):
+            res = _new_mpz()
+            gmp.mpz_add(res, self._mpz, other._mpz)
+            return mpz._from_c_mpz(res)
+        else:
+            raise NotImplementedError
+
     __radd__ = __add__
 
     def __sub__(self, other):
-        res = _new_mpz()
-        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
-            gmp.mpz_sub_ui(res, self._mpz, other)
-        else:
-            if isinstance(other, (int, long)):
-                oth = _new_mpz()
-                _pylong_to_mpz(other, oth)
-                gmp.mpz_sub(res, self._mpz, oth)
-                _del_mpz(oth)
+        if isinstance(other, (int, long)):
+            res = _new_mpz()
+            if 0 <= other <= MAX_UI:
+                gmp.mpz_sub_ui(res, self._mpz, other)
             else:
-                gmp.mpz_sub(res, self._mpz, other._mpz)
-        return mpz._from_c_mpz(res)
+                _pylong_to_mpz(other, res)
+                gmp.mpz_sub(res, self._mpz, res)
+            return mpz._from_c_mpz(res)
+        elif isinstance(other, mpz):
+            res = _new_mpz()
+            gmp.mpz_sub(res, self._mpz, other._mpz)
+            return mpz._from_c_mpz(res)
+        else:
+            raise NotImplementedError
 
     def __rsub__(self, other):
-        res = _new_mpz()
-        if 0 <= other <= MAX_UI:
-            gmp.mpz_ui_sub(res, other, self._mpz)
-        elif -MAX_UI <= other < 0:
-            gmp.mpz_add_ui(res, self._mpz, -other)
-            gmp.mpz_neg(res, res)
+        if isinstance(other, (int, long)):
+            res = _new_mpz()
+            if 0 <= other <= MAX_UI:
+                gmp.mpz_ui_sub(res, other, self._mpz)
+            else:
+                _pylong_to_mpz(other, res)
+                gmp.mpz_sub(res, res, self._mpz)
+            return mpz._from_c_mpz(res)
         else:
-            oth = _new_mpz()
-            _pylong_to_mpz(other, oth)
-            gmp.mpz_sub(res, oth, self._mpz)
-            _del_mpz(oth)
-        return mpz._from_c_mpz(res)
+            raise NotImplementedError
 
     def __mul__(self, other):
-        res = _new_mpz()
-        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
-            gmp.mpz_mul_ui(res, self._mpz, other)
-        else:
-            if isinstance(other, (int, long)):
-                oth = _new_mpz()
-                _pylong_to_mpz(other, oth)
-                gmp.mpz_mul(res, self._mpz, oth)
-                _del_mpz(oth)
+        if isinstance(other, (int, long)):
+            res = _new_mpz()
+            if 0 <= other <= MAX_UI:
+                gmp.mpz_mul_ui(res, self._mpz, other)
             else:
-                gmp.mpz_mul(res, self._mpz, other._mpz)
-        return mpz._from_c_mpz(res)
+                _pylong_to_mpz(other, res)
+                gmp.mpz_mul(res, res, self._mpz)
+            return mpz._from_c_mpz(res)
+        elif isinstance(other, mpz):
+            res = _new_mpz()
+            gmp.mpz_mul(res, self._mpz, other._mpz)
+            return mpz._from_c_mpz(res)
+        else:
+            raise NotImplementedError
+
     __rmul__ = __mul__
 
     def __floordiv__(self, other):
