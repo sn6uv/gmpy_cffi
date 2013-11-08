@@ -300,6 +300,9 @@ class TestCmp(object):
         assert mpq(1,2) > mpq(1,3)
         assert mpq(1,3) < mpq(1,2)
         assert mpq(1,2) == mpq(1,2)
+        assert mpq(1,2) >= mpq(1,3)
+        assert mpq(1,3) <= mpq(1,2)
+        assert mpq(1,2) != mpq(1,3)
 
     def test_cmp_mpz(self):
         assert mpq(3,2) > mpz(1)

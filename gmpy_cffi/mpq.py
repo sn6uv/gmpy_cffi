@@ -425,7 +425,7 @@ class mpq(object):
                 int(mpz._from_c_mpz(gmp.mpq_numref(self._mpq))),
                 int(mpz._from_c_mpz(gmp.mpq_denref(self._mpq)))))
 
-    def __cmp__(self, other):
+    def __cmp(self, other):
         if isinstance(other, mpq):
             res = gmp.mpq_cmp(self._mpq, other._mpq)
         elif isinstance(other, mpz):
@@ -452,8 +452,59 @@ class mpq(object):
             res = gmp.mpq_cmp(self._mpq, tmp_mpq)
             _del_mpq(tmp_mpq)
         else:
-            raise TypeError("Can't compare mpq with '%s'" % type(other))
+            return None
         return res
+
+    def __gt__(self, other):
+        c = self.__cmp(other)
+        if c is None:
+            return NotImplemented
+        return c > 0
+
+    def __lt__(self, other):
+        c = self.__cmp(other)
+        if c is None:
+            return NotImplemented
+        return c < 0
+
+    def __eq__(self, other):
+        if isinstance(other, mpq):
+            res = gmp.mpq_equal(self._mpq, other._mpq)
+        elif isinstance(other, mpz):
+            tmp_mpq = _new_mpq()
+            gmp.mpq_set_z(tmp_mpq, other._mpz)
+            res = gmp.mpq_equal(self._mpq, tmp_mpq)
+            _del_mpq(tmp_mpq)
+        elif isinstance(other, (int, long)):
+            tmp_mpz = _new_mpz()
+            tmp_mpq = _new_mpq()
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpz_set_si(tmp_mpz, other)
+            elif sys.maxsize < other <= MAX_UI:
+                gmp.mpz_set_ui(tmp_mpz, other)
+            else:
+                _pylong_to_mpz(other, tmp_mpz)
+            gmp.mpq_set_z(tmp_mpq, tmp_mpz)
+            res = gmp.mpq_equal(self._mpq, tmp_mpq)
+            _del_mpz(tmp_mpz)
+            _del_mpq(tmp_mpq)
+        elif isinstance(other, float):
+            tmp_mpq = _new_mpq()
+            gmp.mpq_set_d(tmp_mpq, other)
+            res = gmp.mpq_equal(self._mpq, tmp_mpq)
+            _del_mpq(tmp_mpq)
+        else:
+            return NotImplemented
+        return res != 0
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __ge__(self, other):
+        return self > other or self == other
+
+    def __le__(self, other):
+        return self < other or self == other
 
     def __int__(self):
         res = _new_mpz()
