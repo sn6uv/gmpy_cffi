@@ -297,6 +297,12 @@ class TestCmp(object):
         assert mpq(1,2) < mpz(1)
         assert mpq(2,1) == mpz(2)
 
+    def test_cmp_float(self):
+        assert mpq(3,2) > 1.3
+        assert mpq(1,2) < 0.6
+        assert mpq(1,2) == 0.5
+        assert mpq(3,2) == 1.5
+
     def test_cmp_int(self):
         assert mpq(3,2) > 1
         assert mpq(1,2) < 1
@@ -313,3 +319,12 @@ class TestCmp(object):
         assert mpq(6*sys.maxsize + 1, 2) > 3*sys.maxsize
         assert mpq(6*sys.maxsize - 1, 2) < 3*sys.maxsize
         assert mpq(3*sys.maxsize, 1) == 3*sys.maxsize
+
+    def test_hash(self):
+        import fractions
+        assert hash(mpq(1,2)) == hash(fractions.Fraction(1,2)) == hash(0.5)
+        assert hash(mpq(3,2)) == hash(fractions.Fraction(3,2)) == hash(1.5)
+        assert hash(mpq(3,1)) == hash(fractions.Fraction(3,1)) == 3
+        assert hash(mpq(0)) == hash(fractions.Fraction(0,1)) == hash(0.0) == 0
+        assert (hash(mpq(sys.maxsize + 1, sys.maxsize)) ==
+                hash(fractions.Fraction(sys.maxsize + 1, sys.maxsize)))

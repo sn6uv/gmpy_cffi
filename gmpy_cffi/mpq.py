@@ -405,15 +405,28 @@ class mpq(object):
     # def __rdivmod__(self, other):
     #     raise NotImplementedError
 
-    # def __eq__(self, other):
-    #     raise NotImplementedError
-
-    # def __hash__(self):
-    #     raise NotImplementedError
+    def __hash__(self):
+        """
+        Agrees with fractions.Fractions
+        """
+        # XXX since this method is expensive, consider caching the result
+        if self == int(self):
+            return int(self)
+        if self == float(self):
+            return hash(float(self))
+        else:
+            return hash((
+                int(mpz._from_c_mpz(gmp.mpq_numref(self._mpq))),
+                int(mpz._from_c_mpz(gmp.mpq_denref(self._mpq)))))
 
     def __cmp__(self, other):
         if isinstance(other, mpq):
             res = gmp.mpq_cmp(self._mpq, other._mpq)
+        elif isinstance(other, mpz):
+            tmp_mpq = _new_mpq()
+            gmp.mpq_set_z(tmp_mpq, other._mpz)
+            res = gmp.mpq_cmp(self._mpq, tmp_mpq)
+            _del_mpq(tmp_mpq)
         elif isinstance(other, (int, long)):
             tmp_mpz = _new_mpz()
             tmp_mpq = _new_mpq()
@@ -427,9 +440,9 @@ class mpq(object):
             res = gmp.mpq_cmp(self._mpq, tmp_mpq)
             _del_mpz(tmp_mpz)
             _del_mpq(tmp_mpq)
-        elif isinstance(other, mpz):
+        elif isinstance(other, float):
             tmp_mpq = _new_mpq()
-            gmp.mpq_set_z(tmp_mpq,  other._mpz)
+            gmp.mpq_set_d(tmp_mpq, other)
             res = gmp.mpq_cmp(self._mpq, tmp_mpq)
             _del_mpq(tmp_mpq)
         else:
