@@ -302,8 +302,11 @@ class TestMath(object):
 class TestCmp(object):
     def test_cmp_int(self):
         assert mpz(1) < 2
+        assert mpz(1) <= 2
         assert mpz(2) > 1
+        assert mpz(2) >= 1
         assert mpz(2) == 2
+        assert mpz(1) != 2
 
         assert mpz(sys.maxsize - 1) < sys.maxsize
         assert mpz(sys.maxsize + 1) > sys.maxsize

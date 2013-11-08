@@ -388,7 +388,7 @@ class mpz(object):
             return i
         return (i + sys.maxsize + 1) % (2 * sys.maxsize + 2) - sys.maxsize - 1
 
-    def __cmp__(self, other):
+    def __cmp(self, other):
         if isinstance(other, mpz):
             res = gmp.mpz_cmp(self._mpz, other._mpz)
         elif isinstance(other, (int, long)):
@@ -402,8 +402,35 @@ class mpz(object):
         elif isinstance(other, float):
             res = gmp.mpz_cmp_d(self._mpz, other)
         else:
-            raise TypeError("Can't compare mpz with '%s'" % type(other))
+            return None
         return res
+
+    def __lt__(self, other):
+        c = self.__cmp(other)
+        if c is None:
+            return NotImplemented
+        return c < 0
+
+    def __gt__(self, other):
+        c = self.__cmp(other)
+        if c is None:
+            return NotImplemented
+        return c > 0
+
+    def __eq__(self, other):
+        c = self.__cmp(other)
+        if c is None:
+            return NotImplemented
+        return c == 0
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __ge__(self, other):
+        return not self < other
+
+    def __le__(self, other):
+        return not self > other
 
     def __int__(self):
         if gmp.mpz_fits_slong_p(self._mpz):
