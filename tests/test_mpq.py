@@ -284,3 +284,32 @@ class TestFormat(object):
         assert repr(mpq(-1, 2)) == "mpq(-1,2)"
         assert repr(mpq(2, 1)) == "mpq(2,1)"
         assert repr(mpq(-2, 1)) == "mpq(-2,1)"
+
+
+class TestCmp(object):
+    def test_cmp_mpq(self):
+        assert mpq(1,2) > mpq(1,3)
+        assert mpq(1,3) < mpq(1,2)
+        assert mpq(1,2) == mpq(1,2)
+
+    def test_cmp_mpz(self):
+        assert mpq(3,2) > mpz(1)
+        assert mpq(1,2) < mpz(1)
+        assert mpq(2,1) == mpz(2)
+
+    def test_cmp_int(self):
+        assert mpq(3,2) > 1
+        assert mpq(1,2) < 1
+        assert mpq(2,1) == 2
+
+        assert mpq(2*sys.maxsize + 1, 2) > sys.maxsize
+        assert mpq(2*sys.maxsize - 1, 2) < sys.maxsize
+        assert mpq(sys.maxsize, 1) == sys.maxsize
+
+        assert mpq(4*sys.maxsize + 1, 2) > 2*sys.maxsize
+        assert mpq(4*sys.maxsize - 1, 2) < 2*sys.maxsize
+        assert mpq(2*sys.maxsize, 1) == 2*sys.maxsize
+
+        assert mpq(6*sys.maxsize + 1, 2) > 3*sys.maxsize
+        assert mpq(6*sys.maxsize - 1, 2) < 3*sys.maxsize
+        assert mpq(3*sys.maxsize, 1) == 3*sys.maxsize

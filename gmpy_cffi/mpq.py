@@ -427,6 +427,11 @@ class mpq(object):
             res = gmp.mpq_cmp(self._mpq, tmp_mpq)
             _del_mpz(tmp_mpz)
             _del_mpq(tmp_mpq)
+        elif isinstance(other, mpz):
+            tmp_mpq = _new_mpq()
+            gmp.mpq_set_z(tmp_mpq,  other._mpz)
+            res = gmp.mpq_cmp(self._mpq, tmp_mpq)
+            _del_mpq(tmp_mpq)
         else:
             raise TypeError("Can't compare mpq with '%s'" % type(other))
         return res
