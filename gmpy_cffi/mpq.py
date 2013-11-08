@@ -328,8 +328,7 @@ class mpq(object):
             if gmp.mpq_sgn(other._mpq) == 0:
                 raise ZeroDivisionError
             res = _new_mpq()
-            gmp.mpq_inv(res, other._mpq)
-            gmp.mpq_mul(res, self._mpq, res)
+            gmp.mpq_div(res, self._mpq, other._mpq)
             return mpq._from_c_mpq(res)
         elif isinstance(other, (int, long)):
             if other == 0:
@@ -350,8 +349,7 @@ class mpq(object):
                 raise ZeroDivisionError
             res = _new_mpq()
             gmp.mpq_set_z(res, other._mpz)
-            gmp.mpq_inv(res, res)
-            gmp.mpq_mul(res, res, self._mpq)
+            gmp.mpq_div(res, self._mpq, res)
             return mpq._from_c_mpq(res)
         else:
             return NotImplemented
@@ -378,8 +376,8 @@ class mpq(object):
             if gmp.mpq_sgn(self._mpq) == 0:
                 raise ZeroDivisionError
             res = _new_mpq()
-            gmp.mpq_inv(res, self._mpq)
-            gmp.mpz_mul(gmp.mpq_numref(res), gmp.mpq_numref(res), other._mpz)
+            gmp.mpq_set_z(res, other._mpz)
+            gmp.mpq_div(res, res, self._mpq)
             return mpq._from_c_mpq(res)
         else:
             return NotImplemented
