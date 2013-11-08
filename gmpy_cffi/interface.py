@@ -57,6 +57,7 @@ ffi.cdef("""
     void mpz_ui_pow_ui (mpz_t rop, unsigned long int base, unsigned long int exp);
 
     int mpz_cmp (mpz_t op1, mpz_t op2);
+    int mpz_cmp_d (const mpz_t op1, double op2);
     int mpz_cmp_ui (mpz_t op1, unsigned long int op2);
     int mpz_sgn (mpz_t op);
 

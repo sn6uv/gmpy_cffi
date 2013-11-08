@@ -372,17 +372,21 @@ class mpz(object):
         return (i + sys.maxsize + 1) % (2 * sys.maxsize + 2) - sys.maxsize - 1
 
     def __cmp__(self, other):
-        if isinstance(other, (int, long)) and 0 <= other <= MAX_UI:
-            return gmp.mpz_cmp_ui(self._mpz, other)
-        else:
-            if isinstance(other, (int, long)):
+        if isinstance(other, mpz):
+            res = gmp.mpz_cmp(self._mpz, other._mpz)
+        elif isinstance(other, (int, long)):
+            if 0 <= other <= MAX_UI:
+                res = gmp.mpz_cmp_ui(self._mpz, other)
+            else:
                 oth = _new_mpz()
                 _pylong_to_mpz(other, oth)
                 res = gmp.mpz_cmp(self._mpz, oth)
                 _del_mpz(oth)
-            else:
-                res = gmp.mpz_cmp(self._mpz, other._mpz)
-            return res
+        elif isinstance(other, float):
+            res = gmp.mpz_cmp_d(self._mpz, other)
+        else:
+            raise TypeError("Can't compare mpz with '%s'" % type(other))
+        return res
 
     def __int__(self):
         if gmp.mpz_fits_slong_p(self._mpz):

@@ -300,6 +300,32 @@ class TestMath(object):
             pow(mpz(2), 2, 2.0)
 
 class TestCmp(object):
+    def test_cmp_int(self):
+        assert mpz(1) < 2
+        assert mpz(2) > 1
+        assert mpz(2) == 2
+
+        assert mpz(sys.maxsize - 1) < sys.maxsize
+        assert mpz(sys.maxsize + 1) > sys.maxsize
+        assert mpz(sys.maxsize) == sys.maxsize
+
+        assert mpz(2*sys.maxsize - 1) < 2*sys.maxsize
+        assert mpz(2*sys.maxsize + 1) > 2*sys.maxsize
+        assert mpz(2*sys.maxsize) == 2*sys.maxsize
+
+        assert mpz(4*sys.maxsize - 1) < 4*sys.maxsize
+        assert mpz(4*sys.maxsize + 1) > 4*sys.maxsize
+        assert mpz(4*sys.maxsize) == 4*sys.maxsize
+
+    def test_cmp_float(self):
+        assert mpz(1) > 0.5
+        assert mpz(1) < 1.5
+        assert mpz(1) == 1.0
+
+    def test_cmp_mpz(self):
+        assert mpz(2) > mpz(1)
+        assert mpz(1) < mpz(2)
+        assert mpz(2) == mpz(2)
 
     @pytest.mark.xfail(reason='cpython __hash__ implementation bug (feature)')
     def test_hash_neg1(self):
