@@ -299,6 +299,7 @@ class TestMath(object):
         with pytest.raises(TypeError):
             pow(mpz(2), 2, 2.0)
 
+
 class TestCmp(object):
     def test_cmp_int(self):
         assert mpz(1) < 2

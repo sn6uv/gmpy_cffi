@@ -384,7 +384,7 @@ class mpz(object):
     def __hash__(self):
         # WTF When this returns -1, CPython silently changes it to -2
         i = int(self)
-        if -sys.maxint-1 <= i <= sys.maxint:
+        if -sys.maxint - 1 <= i <= sys.maxint:
             return i
         return (i + sys.maxsize + 1) % (2 * sys.maxsize + 2) - sys.maxsize - 1
 

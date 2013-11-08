@@ -3,7 +3,6 @@ import pytest
 from gmpy_cffi import mpq, mpz
 
 
-
 class TestInit(object):
     ints = [1, -1, 2, -123, 456, sys.maxsize, -sys.maxsize - 1, 2*sys.maxsize, -2*sys.maxsize]
     floats = [0.0, 1.0, 1.5, 1e15 + 0.9, -1.5e15 + 0.9]
@@ -36,7 +35,7 @@ class TestInit(object):
         with pytest.raises(TypeError):
             mpq(n)
 
-    @pytest.mark.parametrize('n', [1])# floats + [mpz(1), mpq(1, 2)])
+    @pytest.mark.parametrize('n', floats + [mpz(1), mpq(1, 2)])
     def test_init_zero_den(self, n):
         with pytest.raises(ZeroDivisionError):
             mpq(n, 0)
@@ -142,7 +141,7 @@ class TestInit(object):
         with pytest.raises(ZeroDivisionError):
             mpq(n, 0)
         with pytest.raises(ZeroDivisionError):
-             mpq(n, 0.0)
+            mpq(n, 0.0)
         with pytest.raises(ZeroDivisionError):
             mpq(n, mpz(0))
         with pytest.raises(ZeroDivisionError):
