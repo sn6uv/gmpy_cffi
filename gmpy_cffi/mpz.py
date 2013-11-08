@@ -251,30 +251,35 @@ class mpz(object):
     __rmul__ = __mul__
 
     def __floordiv__(self, other):
-        if other == 0:
-            raise ZeroDivisionError('mpz division by zero')
-        q = _new_mpz()
-        if isinstance(other, (int, long)) and 0 < other <= MAX_UI:
-            gmp.mpz_fdiv_q_ui(q, self._mpz, other)
-        else:
-            if isinstance(other, (int, long)):
-                oth = _new_mpz()
-                _pylong_to_mpz(other, oth)
-                gmp.mpz_fdiv_q(q, self._mpz, oth)
-                _del_mpz(oth)
+        if isinstance(other, (int, long)):
+            if other == 0:
+                raise ZeroDivisionError('mpz division by zero')
+            res = _new_mpz()
+            if 0 < other <= MAX_UI:
+                gmp.mpz_fdiv_q_ui(res, self._mpz, other)
             else:
-                gmp.mpz_fdiv_q(q, self._mpz, other._mpz)
-        return mpz._from_c_mpz(q)
+                _pylong_to_mpz(other, res)
+                gmp.mpz_fdiv_q(res, self._mpz, res)
+            return mpz._from_c_mpz(res)
+        elif isinstance(other, mpz):
+            if other == 0:
+                raise ZeroDivisionError('mpz division by zero')
+            res = _new_mpz()
+            gmp.mpz_fdiv_q(res, self._mpz, other._mpz)
+            return mpz._from_c_mpz(res)
+        else:
+            return NotImplemented
 
     def __rfloordiv__(self, other):
-        if self == 0:
-            raise ZeroDivisionError('mpz division by zero')
-        q = _new_mpz()
-        oth = _new_mpz()
-        _pylong_to_mpz(other, oth)
-        gmp.mpz_fdiv_q(q, oth, self._mpz)
-        _del_mpz(oth)
-        return mpz._from_c_mpz(q)
+        if isinstance(other, (int, long)):
+            if self == 0:
+                raise ZeroDivisionError('mpz division by zero')
+            res = _new_mpz()
+            _pylong_to_mpz(other, res)
+            gmp.mpz_fdiv_q(res, res, self._mpz)
+            return mpz._from_c_mpz(res)
+        else:
+            return NotImplemented
 
     __div__ = __floordiv__
     __rdiv__ = __rfloordiv__

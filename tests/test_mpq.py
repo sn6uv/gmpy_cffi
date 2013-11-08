@@ -193,10 +193,12 @@ class TestMath(object):
         assert mpq(1, 2) - mpz(2) == mpq(-3, 2)
 
     def test_rsub(self):
+        assert mpq(1, 3) - mpq(1, 2) == mpq(-1, 6)
         assert 2 - mpq(1, 2) == mpq(3, 2)
         assert sys.maxsize - mpq(1, 2) == mpq(2*sys.maxsize -1, 2)
         assert 2*sys.maxsize - mpq(1, 2) == mpq(4*sys.maxsize - 1, 2)
         assert 3*sys.maxsize - mpq(1, 2) == mpq(6*sys.maxsize - 1, 2)
+        assert mpz(2) - mpq(1, 2) == mpq(3, 2)
 
     def test_mul(self):
         assert mpq(1, 2) * mpq(1, 3) == mpq(1, 6)
@@ -204,6 +206,7 @@ class TestMath(object):
         assert mpq(1, 2) * sys.maxsize == mpq(sys.maxsize, 2)
         assert mpq(1, 2) * (2*sys.maxsize) == mpq(sys.maxsize, 1)
         assert mpq(1, 2) * (3*sys.maxsize) == mpq(3*sys.maxsize, 2)
+        assert mpq(1, 2) * (4*sys.maxsize) == mpq(2*sys.maxsize, 1)
         assert mpq(1, 2) * mpz(2) == mpq(1, 1)
 
     def test_rmul(self):
@@ -221,14 +224,17 @@ class TestMath(object):
         assert mpq(1, 2) / sys.maxsize == mpq(1, 2*sys.maxsize)
         assert mpq(1, 2) / (2 * sys.maxsize) == mpq(1, 4 * sys.maxsize)
         assert mpq(1, 2) / (3 * sys.maxsize) == mpq(1, 6 * sys.maxsize)
+        assert mpq(1, 2) / (4 * sys.maxsize) == mpq(1, 8 * sys.maxsize)
         assert mpq(1, 2) / mpz(3) == mpq(1, 6)
 
     def test_rdiv(self):
+        assert mpq(1, 3) / mpq(1, 2) == mpq(2, 3)
         assert 2 / mpq(3,2) == mpq(4,3)
         assert sys.maxsize / mpq(1,2) == mpq(2*sys.maxsize, 1)
         assert (2*sys.maxsize) / mpq(2, 1) == mpq(sys.maxsize, 1)
         assert (3*sys.maxsize) / mpq(2, 1) == mpq(3*sys.maxsize, 2)
         assert (4*sys.maxsize) / mpq(2, 1) == mpq(2*sys.maxsize, 1)
+        assert mpz(3) / mpq(1, 2) == mpq(6, 1)
 
     def test_int(self):
         assert int(mpq(1, 2)) == mpq(0, 1)

@@ -288,6 +288,11 @@ class mpq(object):
                 gmp.mpz_set_ui(gmp.mpq_denref(res), 1)
             gmp.mpq_sub(res, res, self._mpq)
             return mpq._from_c_mpq(res)
+        elif isinstance(other, mpz):
+            res = _new_mpq()
+            gmp.mpq_set_z(res, other._mpz)
+            gmp.mpq_sub(res, res, self._mpq)
+            return mpq._from_c_mpq(res)
         else:
             return NotImplemented
 
@@ -318,7 +323,7 @@ class mpq(object):
 
     __rmul__ = __mul__
 
-    def __div__(self, other):
+    def __floordiv__(self, other):
         if isinstance(other, mpq):
             if gmp.mpq_sgn(other._mpq) == 0:
                 raise ZeroDivisionError
@@ -351,7 +356,7 @@ class mpq(object):
         else:
             return NotImplemented
 
-    def __rdiv__(self, other):
+    def __rfloordiv__(self, other):
         if isinstance(other, (int, long)):
             if gmp.mpq_sgn(self._mpq) == 0:
                 raise ZeroDivisionError
@@ -369,19 +374,23 @@ class mpq(object):
                             gmp.mpq_numref(res), gmp.mpq_denref(self._mpq))
             gmp.mpq_canonicalize(res)
             return mpq._from_c_mpq(res)
+        elif isinstance(other, mpz):
+            if gmp.mpq_sgn(self._mpq) == 0:
+                raise ZeroDivisionError
+            res = _new_mpq()
+            gmp.mpq_inv(res, self._mpq)
+            gmp.mpz_mul(gmp.mpq_numref(res), gmp.mpq_numref(res), other._mpz)
+            return mpq._from_c_mpq(res)
         else:
             return NotImplemented
+
+    __div__ = __floordiv__
+    __rdiv__ = __rfloordiv__
 
     # def __truediv__(self, other):
     #     raise NotImplementedError
 
     # def __rtruediv__(self, other):
-    #     raise NotImplementedError
-
-    # def __floordiv__(self, other):
-    #     raise NotImplementedError
-
-    # def __rfloordiv__(self, other):
     #     raise NotImplementedError
 
     # def __mod__(self, other):
