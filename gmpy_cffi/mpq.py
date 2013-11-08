@@ -385,23 +385,29 @@ class mpq(object):
     __div__ = __floordiv__
     __rdiv__ = __rfloordiv__
 
-    # def __truediv__(self, other):
-    #     raise NotImplementedError
+    def __truediv__(self, other):
+        return NotImplemented
 
-    # def __rtruediv__(self, other):
-    #     raise NotImplementedError
+    def __rtruediv__(self, other):
+        return NotImplemented
 
-    # def __mod__(self, other):
-    #     raise NotImplementedError
+    def __mod__(self, other):
+        # XXX Optimize
+        return self - (self // other).__floor__() * other
 
-    # def __rmod__(self, other):
-    #     raise NotImplementedError
+    def __rmod__(self, other):
+        # XXX Optimize
+        return other - (other // self).__floor__() * self
 
-    # def __divmod__(self, other):
-    #     raise NotImplementedError
+    def __divmod__(self, other):
+        # XXX Optimize
+        div = (self // other).__floor__()
+        return (div, self - div * other)
 
-    # def __rdivmod__(self, other):
-    #     raise NotImplementedError
+    def __rdivmod__(self, other):
+        # XXX Optimize
+        div = (other // self).__floor__()
+        return (div, other - div * self)
 
     def __hash__(self):
         """

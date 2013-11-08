@@ -336,3 +336,23 @@ class TestCmp(object):
         assert hash(mpq(0)) == hash(fractions.Fraction(0,1)) == hash(0.0) == 0
         assert (hash(mpq(sys.maxsize + 1, sys.maxsize)) ==
                 hash(fractions.Fraction(sys.maxsize + 1, sys.maxsize)))
+
+
+class TestMod(object):
+    def test_mod(self):
+        assert mpq(5, 2) % mpq(1, 3) == mpq(1, 6)
+        assert mpq(5, 2) % 2 == mpq(1, 2)
+        assert mpq(5, 2) % mpz(2) == mpq(1, 2)
+
+    def test_rmod(self):
+        assert 2 % mpq(5, 2) == mpq(2, 1)
+        assert mpq(1, 3) % mpq(5, 2) == mpq(1, 3)
+        assert mpz(2) % mpq(5, 2) == mpq(2, 1)
+
+    def test_divmod(self):
+        # assert mpq(5, 2) % -2 == mpq(-3, 2)
+        assert divmod(mpq(5, 2), mpq(1,2)) == (mpz(5), mpq(0,1))
+        assert divmod(mpq(5, 2), mpz(2)) == (mpz(1), mpq(1,2))
+        assert divmod(mpq(5, 2), 2) == (mpz(1), mpq(1,2))
+        assert divmod(mpq(5, 2), 2) == (mpz(1), mpq(1,2))
+        assert divmod(mpz(2), mpq(3, 4)) == (mpz(2), mpq(1,2))
