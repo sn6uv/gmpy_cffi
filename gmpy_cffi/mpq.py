@@ -334,7 +334,9 @@ class mpq(object):
             if other == 0:
                 raise ZeroDivisionError
             res = _new_mpq()
-            if -sys.maxsize - 1 <= other <= sys.maxsize:
+            if -sys.maxsize - 1 <= other < 0:
+                gmp.mpq_set_si(res, -1, -other)
+            elif 0 < other <= sys.maxsize:
                 gmp.mpq_set_si(res, 1, other)
             elif sys.maxsize < other <= MAX_UI:
                 gmp.mpq_set_ui(res, 1, other)

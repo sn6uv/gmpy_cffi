@@ -221,6 +221,7 @@ class TestMath(object):
     def test_div(self):
         assert mpq(1, 2) / mpq(1, 3) == mpq(3, 2)
         assert mpq(1, 2) / 2 == mpq(1, 4)
+        assert mpq(1, 2) / -2 == mpq(-1, 4)
         assert mpq(1, 2) / sys.maxsize == mpq(1, 2*sys.maxsize)
         assert mpq(1, 2) / (2 * sys.maxsize) == mpq(1, 4 * sys.maxsize)
         assert mpq(1, 2) / (3 * sys.maxsize) == mpq(1, 6 * sys.maxsize)
@@ -350,7 +351,7 @@ class TestMod(object):
         assert mpz(2) % mpq(5, 2) == mpq(2, 1)
 
     def test_divmod(self):
-        # assert mpq(5, 2) % -2 == mpq(-3, 2)
+        assert mpq(5, 2) % -2 == mpq(-3, 2)
         assert divmod(mpq(5, 2), mpq(1,2)) == (mpz(5), mpq(0,1))
         assert divmod(mpq(5, 2), mpz(2)) == (mpz(1), mpq(1,2))
         assert divmod(mpq(5, 2), 2) == (mpz(1), mpq(1,2))
