@@ -33,6 +33,7 @@ ffi.cdef("""
     void mpz_sub_ui (mpz_t rop, mpz_t op1, unsigned long int op2);
     void mpz_ui_sub (mpz_t rop, unsigned long int op1, mpz_t op2);
     void mpz_mul (mpz_t rop, mpz_t op1, mpz_t op2);
+    void mpz_mul_si (mpz_t rop, mpz_t op1, long int op2);
     void mpz_mul_ui (mpz_t rop, mpz_t op1, unsigned long int op2);
     void mpz_submul (mpz_t rop, mpz_t op1, mpz_t op2);
     void mpz_mul_2exp (mpz_t rop, mpz_t op1, mp_bitcnt_t op2);
