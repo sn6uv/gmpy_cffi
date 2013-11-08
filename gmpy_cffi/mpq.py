@@ -246,23 +246,9 @@ class mpq(object):
             gmp.mpq_add(res, self._mpq, res)
             return mpq._from_c_mpq(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
-    def __radd__(self, other):
-        if isinstance(other, (int, long)):
-            res = _new_mpq()
-            if -sys.maxsize - 1 <= other <= sys.maxsize:
-                gmp.mpq_set_si(res, other, 1)
-            elif sys.maxsize < other <= MAX_UI:
-                gmp.mpq_set_ui(res, other, 1)
-            else:
-                assert isinstance(other, long)
-                _pylong_to_mpz(other, gmp.mpq_numref(res))
-                gmp.mpz_set_ui(gmp.mpq_denref(res), 1)
-            gmp.mpq_add(res, self._mpq, res)
-            return mpq._from_c_mpq(res)
-        else:
-            raise NotImplementedError
+    __radd__ = __add__
 
     def __sub__(self, other):
         if isinstance(other, mpq):
@@ -287,7 +273,7 @@ class mpq(object):
             gmp.mpq_sub(res, self._mpq, res)
             return mpq._from_c_mpq(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __rsub__(self, other):
         if isinstance(other, (int, long)):
@@ -303,7 +289,7 @@ class mpq(object):
             gmp.mpq_sub(res, res, self._mpq)
             return mpq._from_c_mpq(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __mul__(self, other):
         res = _new_mpq()
@@ -328,23 +314,9 @@ class mpq(object):
             gmp.mpq_mul(res, res, self._mpq)
             return mpq._from_c_mpq(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
-    def __rmul__(self, other):
-        if isinstance(other, (int, long)):
-            res = _new_mpq()
-            if -sys.maxsize - 1 <= other <= sys.maxsize:
-                gmp.mpq_set_si(res, other, 1)
-            elif sys.maxsize < other <= MAX_UI:
-                gmp.mpq_set_ui(res, other, 1)
-            else:
-                assert isinstance(other, long)
-                _pylong_to_mpz(other, gmp.mpq_numref(res))
-                gmp.mpz_set_ui(gmp.mpq_denref(res), 1)
-            gmp.mpq_mul(res, res, self._mpq)
-            return mpq._from_c_mpq(res)
-        else:
-            raise NotImplementedError
+    __rmul__ = __mul__
 
     def __div__(self, other):
         if isinstance(other, mpq):
@@ -377,7 +349,7 @@ class mpq(object):
             gmp.mpq_mul(res, res, self._mpq)
             return mpq._from_c_mpq(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __rdiv__(self, other):
         if isinstance(other, (int, long)):
@@ -398,7 +370,7 @@ class mpq(object):
             gmp.mpq_canonicalize(res)
             return mpq._from_c_mpq(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     # def __truediv__(self, other):
     #     raise NotImplementedError

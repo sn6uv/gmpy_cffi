@@ -200,7 +200,7 @@ class mpz(object):
             gmp.mpz_add(res, self._mpz, other._mpz)
             return mpz._from_c_mpz(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     __radd__ = __add__
 
@@ -218,7 +218,7 @@ class mpz(object):
             gmp.mpz_sub(res, self._mpz, other._mpz)
             return mpz._from_c_mpz(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __rsub__(self, other):
         if isinstance(other, (int, long)):
@@ -230,7 +230,7 @@ class mpz(object):
                 gmp.mpz_sub(res, res, self._mpz)
             return mpz._from_c_mpz(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     def __mul__(self, other):
         if isinstance(other, (int, long)):
@@ -246,7 +246,7 @@ class mpz(object):
             gmp.mpz_mul(res, self._mpz, other._mpz)
             return mpz._from_c_mpz(res)
         else:
-            raise NotImplementedError
+            return NotImplemented
 
     __rmul__ = __mul__
 
