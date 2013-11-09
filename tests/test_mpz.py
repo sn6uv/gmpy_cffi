@@ -299,6 +299,12 @@ class TestMath(object):
         with pytest.raises(TypeError):
             pow(mpz(2), 2, 2.0)
 
+    def test_mpz_mul_pypy_jit_bug(self):
+        # XXX causes core dump on pypy with jit enabled
+        x = mpz(1)
+        for i in range(10000):    # This bug occurs randomly, so repeat
+            assert x * x == x
+
 
 class TestCmp(object):
     def test_cmp_int(self):
