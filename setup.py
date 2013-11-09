@@ -28,5 +28,4 @@ setup(
     packages=['gmpy_cffi'],
     zip_safe=False,
     ext_modules=[gmpy_cffi.interface.ffi.verifier.get_extension()],
-    install_requires=['cffi'],
 )
