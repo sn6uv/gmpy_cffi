@@ -42,11 +42,10 @@ def _pylong_to_mpz(n, a):
     size = tmp.itemsize
     numb = (8 * size)
     mask = ~(~0 << numb)
-    while n > mask:
+    while n:
         v = n & mask
         n = n >> numb
         tmp.append(v)
-    tmp.append(n)
     addr, count = tmp.buffer_info()
     gmp.mpz_import(a, count, -1, size, 0, 0, ffi.cast('void *', addr))
     if neg:
