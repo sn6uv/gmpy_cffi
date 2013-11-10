@@ -1,14 +1,13 @@
 import logging
 import sys
-import array
 
 from gmpy_cffi.interface import gmp, ffi
+from gmpy_cffi.convert import _pyint_to_mpz, _pylong_to_mpz, _mpz_to_pylong, _mpz_to_str, MAX_UI
 
 if sys.version > '3':
     long = int
     xrange = range
 
-MAX_UI = 2 * sys.maxsize + 1
 #logging.basicConfig(filename='_gmpy.log', level=logging.DEBUG)
 #logging.basicConfig(level=logging.DEBUG)
 
@@ -51,70 +50,6 @@ def _del_mpz(mpz):
         gmp.mpz_clear(mpz)
 
 
-def _pylong_to_mpz(n, a):
-    """
-    Set `a` from `n`.
-
-    :type n: long
-    :type a: mpz_t
-    """
-
-    neg = n < 0
-    n = abs(n)
-    #tmp = ffi.new("uint64_t[]", (n.bit_length() + 63) // 64)
-    #count = len(tmp)
-    #for i in range(count):
-    #    n, v = divmod(n, 1 << 64)
-    #    tmp[i] = v
-    #gmp.mpz_import(a, count, -1, 8, 0, 0, tmp)
-    tmp = array.array('L')
-    divisor = 1 << (8 * tmp.itemsize)
-    while n:
-        n, v = divmod(n, divisor)
-        tmp.append(v)
-    addr, count = tmp.buffer_info()
-    gmp.mpz_import(a, count, -1, tmp.itemsize, 0, 0, ffi.cast('void *', addr))
-    if neg:
-        gmp.mpz_neg(a, a)
-
-
-def _mpz_to_pylong(a):
-    """
-    Convert a to a python long.
-
-    :type a: mpz_t
-    :rtype: long
-    """
-
-    size = ffi.sizeof('uint64_t')
-    numb = 8 * size
-    count = (gmp.mpz_sizeinbase(a, 2) + numb - 1) // numb
-    factor = 1 << numb
-    p = ffi.new('uint64_t[]', count)
-    gmp.mpz_export(p, ffi.NULL, 1, size, 0, 0, a)
-    res = 0
-    for n in p:
-        res = factor * res + n
-
-    return res * gmp.mpz_sgn(a)
-
-
-def _mpz_to_str(a, base):
-    """
-    Return string representation of a in base base.
-
-    :type a: mpz_t
-    :param base: 2..62
-    :type base: int
-    :rtype: str
-    """
-
-    l = gmp.mpz_sizeinbase(a, base) + 2
-    p = ffi.new('char[]', l)
-    gmp.mpz_get_str(p, base, a)
-    return ffi.string(p)
-
-
 class mpz(object):
     _mpz_str = None
 
@@ -155,13 +90,12 @@ class mpz(object):
             raise ValueError('Base only allowed for str, not for %s.' % type(n))
         elif isinstance(n, float):
             gmp.mpz_set_d(a, n)
-        elif -sys.maxsize - 1 <= n <= sys.maxsize:
-            gmp.mpz_set_si(a, n)
-        elif sys.maxsize < n <= MAX_UI:
-            gmp.mpz_set_ui(a, n)
+        elif isinstance(n, (int, long)):
+            _pyint_to_mpz(n, a)
+        elif isinstance(n, mpz):
+            pass
         else:
-            assert isinstance(n, long)
-            _pylong_to_mpz(n, a)
+            raise TypeError
 
     @classmethod
     def _from_c_mpz(cls, mpz):
@@ -191,9 +125,8 @@ class mpz(object):
             if 0 <= other <= MAX_UI:
                 gmp.mpz_add_ui(res, self._mpz, other)
             else:
-                if isinstance(other, (int, long)):
-                    _pylong_to_mpz(other, res)
-                    gmp.mpz_add(res, self._mpz, res)
+                _pyint_to_mpz(other, res)
+                gmp.mpz_add(res, self._mpz, res)
             return mpz._from_c_mpz(res)
         elif isinstance(other, mpz):
             res = _new_mpz()
@@ -478,10 +411,7 @@ class mpz(object):
         res = _new_mpz()
         if isinstance(other, (int, long)):
             oth = _new_mpz()
-            if 0 <= other <= MAX_UI:
-                gmp.mpz_set_ui(oth, other)
-            else:
-                _pylong_to_mpz(other, oth)
+            _pyint_to_mpz(other, oth)
             gmp.mpz_and(res, self._mpz, oth)
             _del_mpz(oth)
         else:
@@ -494,10 +424,7 @@ class mpz(object):
         res = _new_mpz()
         if isinstance(other, (int, long)):
             oth = _new_mpz()
-            if 0 <= other <= MAX_UI:
-                gmp.mpz_set_ui(oth, other)
-            else:
-                _pylong_to_mpz(other, oth)
+            _pyint_to_mpz(other, oth)
             gmp.mpz_ior(res, self._mpz, oth)
             _del_mpz(oth)
         else:
@@ -510,10 +437,7 @@ class mpz(object):
         res = _new_mpz()
         if isinstance(other, (int, long)):
             oth = _new_mpz()
-            if 0 <= other <= MAX_UI:
-                gmp.mpz_set_ui(oth, other)
-            else:
-                _pylong_to_mpz(other, oth)
+            _pyint_to_mpz(other, oth)
             gmp.mpz_xor(res, self._mpz, oth)
             _del_mpz(oth)
         else:
