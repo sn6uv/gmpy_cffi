@@ -39,12 +39,16 @@ def _pylong_to_mpz(n, a):
     #    tmp[i] = v
     #gmp.mpz_import(a, count, -1, 8, 0, 0, tmp)
     tmp = array.array('L')
-    divisor = 1 << (8 * tmp.itemsize)
-    while n:
-        n, v = divmod(n, divisor)
+    size = tmp.itemsize
+    numb = (8 * size)
+    mask = ~(~0 << numb)
+    while n > mask:
+        v = n & mask
+        n = n >> numb
         tmp.append(v)
+    tmp.append(n)
     addr, count = tmp.buffer_info()
-    gmp.mpz_import(a, count, -1, tmp.itemsize, 0, 0, ffi.cast('void *', addr))
+    gmp.mpz_import(a, count, -1, size, 0, 0, ffi.cast('void *', addr))
     if neg:
         gmp.mpz_neg(a, a)
 
