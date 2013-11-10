@@ -64,12 +64,11 @@ def _mpz_to_pylong(a):
     size = ffi.sizeof('uint64_t')
     numb = 8 * size
     count = (gmp.mpz_sizeinbase(a, 2) + numb - 1) // numb
-    factor = 1 << numb
     p = ffi.new('uint64_t[]', count)
     gmp.mpz_export(p, ffi.NULL, 1, size, 0, 0, a)
     res = 0
     for n in p:
-        res = factor * res + n
+        res = (res << numb) + n
 
     return res * gmp.mpz_sgn(a)
 
