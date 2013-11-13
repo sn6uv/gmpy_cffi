@@ -2,7 +2,7 @@ import sys
 import logging
 
 from gmpy_cffi.interface import gmp, ffi
-from gmpy_cffi.convert import _mpq_to_str, _str_to_mpq, _pyint_to_mpz, _pyint_to_mpq
+from gmpy_cffi.convert import _mpq_to_str, _str_to_mpq, _pyint_to_mpz, _pyint_to_mpq, MAX_UI
 from gmpy_cffi.mpz import mpz, _new_mpz, _del_mpz
 
 
@@ -450,8 +450,45 @@ class mpq(object):
     def __nonzero__(self):
         return gmp.mpq_sgn(self._mpq) != 0
 
-    # def __pow__(self, other, modulo=None):
-    #     raise NotImplementedError
+    def __pow__(self, other, modulo=None):
+        if modulo is not None:
+            raise TypeError("mpq.pow() no modulo allowed")
 
-    # def __rpow__(self, other):
-    #     raise NotImplementedError
+        if isinstance(other, mpq):
+            # XXX Returns mpfr
+            return NotImplemented
+        elif isinstance(other, (mpz, int, long)):
+            other = int(other)
+            if 0 <= other <= MAX_UI:
+                res = _new_mpq()
+                gmp.mpz_pow_ui(
+                    gmp.mpq_numref(res), gmp.mpq_numref(self._mpq), other)
+                gmp.mpz_pow_ui(
+                    gmp.mpq_denref(res), gmp.mpq_denref(self._mpq), other)
+                return mpq._from_c_mpq(res)
+            elif -MAX_UI <= other < 0:
+                if self == 0:
+                    raise ZeroDivisionError(
+                        "mpq.pow() 0 base to negative exponent")
+                res = _new_mpq()
+                gmp.mpz_pow_ui(
+                    gmp.mpq_numref(res), gmp.mpq_denref(self._mpq), -other)
+                gmp.mpz_pow_ui(
+                    gmp.mpq_denref(res), gmp.mpq_numref(self._mpq), -other)
+
+                # For Example mpq(-1,1)**-1 == mpq(1, -1) -> mpq(1, 1)
+                gmp.mpq_canonicalize(res)
+                return mpq._from_c_mpq(res)
+            else:
+                raise ValueError('mpz.pow with outragous exponent')
+        else:
+            return NotImplemented
+
+    def __rpow__(self, other):
+        # XXX Requires mpfr
+        if isinstance(other, (int, long)):
+            return NotImplemented
+        elif isinstance(other, mpz):
+            return NotImplemented
+        else:
+            return NotImplemented

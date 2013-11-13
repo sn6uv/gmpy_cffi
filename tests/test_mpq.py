@@ -255,6 +255,32 @@ class TestMath(object):
         with pytest.raises(ZeroDivisionError):
             mpz(1) // mpq(0, 1)
 
+    def test_pow(self):
+        assert mpq(2,3) ** 3 == mpq(2,3) ** mpz(3) == mpq(8,27)
+        assert mpq(-2,3) ** 2 == mpq(-2,3) ** mpz(2) == mpq(4,9)
+        assert mpq(-2,3) ** 3 == mpq(-2,3) ** mpz(3) == mpq(-8,27)
+        assert mpq(2,3) ** 0 == mpq(2,3) ** mpz(0) == mpq(0,1) ** 0 == mpq(1,1)
+
+        # XXX These Run out of memory - gmp: overflow in mpz type
+        # with pytest.raises(OverflowError):
+        #      mpq(2, 3) ** (2*sys.maxint + 1)
+        # with pytest.raises(OverflowError):
+        #      mpq(2, 3) ** -(2*sys.maxint + 1)
+
+    def test_pow_neg_exp(self):
+        assert mpq(2,3) ** -3 == mpq(27,8)
+        assert mpq(-2,3) ** -2 == mpq(9,4)
+        assert mpq(-2,3) ** -3 == mpq(-27,8)
+
+        with pytest.raises(ZeroDivisionError):
+            mpq(0,1) ** -3
+
+    def test_pow_big_exp(self):
+        with pytest.raises(ValueError):
+            mpq(2,3) ** (2 * sys.maxint + 2)
+        with pytest.raises(ValueError):
+            mpq(2,3) ** -(2 * sys.maxint + 2)
+
     def test_int(self):
         assert int(mpq(1, 2)) == mpq(0, 1)
         assert int(mpq(3, 2)) == mpq(1, 1)
