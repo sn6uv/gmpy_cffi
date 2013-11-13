@@ -227,6 +227,16 @@ class TestMath(object):
         assert mpq(1, 2) / (4 * sys.maxsize) == mpq(1, 8 * sys.maxsize)
         assert mpq(1, 2) / mpz(3) == mpq(1, 6)
 
+    def test_zerodiv(self):
+        with pytest.raises(ZeroDivisionError):
+            mpq(1, 2) // mpq(0, 1)
+        with pytest.raises(ZeroDivisionError):
+            mpq(1, 2) // mpz(0)
+        with pytest.raises(ZeroDivisionError):
+            mpq(1, 2) // 0
+        with pytest.raises(ZeroDivisionError):
+            mpq(1, 2) // 0L
+
     def test_rdiv(self):
         assert mpq(1, 3) / mpq(1, 2) == mpq(2, 3)
         assert 2 / mpq(3,2) == mpq(4,3)
@@ -235,6 +245,12 @@ class TestMath(object):
         assert (3*sys.maxsize) / mpq(2, 1) == mpq(3*sys.maxsize, 2)
         assert (4*sys.maxsize) / mpq(2, 1) == mpq(2*sys.maxsize, 1)
         assert mpz(3) / mpq(1, 2) == mpq(6, 1)
+
+    def test_zerordiv(self):
+        with pytest.raises(ZeroDivisionError):
+            1 // mpq(0, 1)
+        with pytest.raises(ZeroDivisionError):
+            mpz(1) // mpq(0, 1)
 
     def test_int(self):
         assert int(mpq(1, 2)) == mpq(0, 1)
