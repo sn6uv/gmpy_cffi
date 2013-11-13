@@ -3,6 +3,9 @@ import pytest
 from gmpy_cffi import mpq, mpz
 
 
+invalids = [(), [], set(), dict(), lambda x: x**2]
+
+
 class TestInit(object):
     ints = [1, -1, 2, -123, 456, sys.maxsize, -sys.maxsize - 1, 2*sys.maxsize, -2*sys.maxsize]
     floats = [0.0, 1.0, 1.5, 1e15 + 0.9, -1.5e15 + 0.9]
@@ -30,7 +33,7 @@ class TestInit(object):
     def test_init_type(self, type_):
         assert mpq(type_(1)) == 1
 
-    @pytest.mark.parametrize('n', [[], set([])])
+    @pytest.mark.parametrize('n', invalids)
     def test_init_single_invalid(self, n):
         with pytest.raises(TypeError):
             mpq(n)
@@ -126,12 +129,12 @@ class TestInit(object):
         assert mpq(0.6, 0.5) == mpq(5404319552844595,4503599627370496)
         assert mpq(0.6, 0.6) == mpq(1, 1)
 
-    @pytest.mark.parametrize('n', [[], set([])])
+    @pytest.mark.parametrize('n', invalids)
     def test_init_single_num(self, n):
         with pytest.raises(TypeError):
             mpq(n, 1)
 
-    @pytest.mark.parametrize('d', [[], set([])])
+    @pytest.mark.parametrize('d', invalids)
     def test_init_single_den(self, d):
         with pytest.raises(TypeError):
             mpq(1, d)
@@ -295,6 +298,21 @@ class TestMath(object):
         assert mpq(1,2).__ceil__() == mpz(1)
         assert mpq(-1,2).__ceil__() == mpz(0)
 
+    @pytest.mark.parametrize('n', invalids)
+    def test_invalid_type_math(self, n):
+        with pytest.raises(TypeError):
+            mpq(1, 2) + n
+        with pytest.raises(TypeError):
+            mpq(1, 2) - n
+        with pytest.raises(TypeError):
+            n - mpq(1, 2)
+        with pytest.raises(TypeError):
+            mpq(1, 2) * n
+        with pytest.raises(TypeError):
+            mpq(1, 2) // n
+        with pytest.raises(TypeError):
+            n // mpq(1, 2)
+
 
 class TestFormat(object):
     def test_str(self):
@@ -355,6 +373,18 @@ class TestCmp(object):
         assert hash(mpq(0)) == hash(fractions.Fraction(0,1)) == hash(0.0) == 0
         assert (hash(mpq(sys.maxsize + 1, sys.maxsize)) ==
                 hash(fractions.Fraction(sys.maxsize + 1, sys.maxsize)))
+
+    @pytest.mark.xfail(sys.version_info < (3,), reason="python2 comparison")
+    @pytest.mark.parametrize('n', invalids)
+    def test_invalid_type_math(self, n):
+        with pytest.raises(TypeError):
+            mpq(1, 2) > n
+        with pytest.raises(TypeError):
+            mpq(1, 2) < n
+        with pytest.raises(TypeError):
+            mpq(1, 2) == n
+        with pytest.raises(TypeError):
+            mpq(1, 2) != n
 
 
 class TestMod(object):

@@ -9,6 +9,9 @@ if sys.version > '3':
     long = int
 
 
+invalids = [(), [], set(), dict(), lambda x: x**2]
+
+
 class TestInit(object):
     small_ints = [-1, 0, 1, 123, -9876, sys.maxsize, -sys.maxsize - 1]
     big_ints = [sys.maxsize + 1, -sys.maxsize - 2, 2 * sys.maxsize + 1, 2 * sys.maxsize + 2]
@@ -48,6 +51,11 @@ class TestInit(object):
     @pytest.mark.parametrize('type_', [int, float, mpz, str])
     def test_init_type(self, type_):
         assert mpz(type_(1)) == 1
+
+    @pytest.mark.parametrize('n', invalids)
+    def test_init_invalid(self, n):
+        with pytest.raises(TypeError):
+            mpz(n)
 
 
 class TestMath(object):
@@ -305,6 +313,36 @@ class TestMath(object):
         for i in range(10000):    # This bug occurs randomly, so repeat
             assert x * x == x
 
+    @pytest.mark.parametrize('n', invalids)
+    def test_invalid_op(self, n):
+        with pytest.raises(TypeError):
+            mpz(1) - n
+        with pytest.raises(TypeError):
+            mpz(1) + n
+        with pytest.raises(TypeError):
+            mpz(1) // n
+        with pytest.raises(TypeError):
+            mpz(1) / n
+        with pytest.raises(TypeError):
+            mpz(1) % n
+        with pytest.raises(TypeError):
+            divmod(mpz(1), n)
+
+    @pytest.mark.parametrize('n', invalids)
+    def test_invalid_rop(self, n):
+        with pytest.raises(TypeError):
+            n - mpz(1)
+        with pytest.raises(TypeError):
+            n + mpz(1)
+        with pytest.raises(TypeError):
+            n // mpz(1)
+        with pytest.raises(TypeError):
+            n / mpz(1)
+        with pytest.raises(TypeError):
+            n % mpz(1)
+        with pytest.raises(TypeError):
+            divmod(n, mpz(1))
+
 
 class TestCmp(object):
     def test_cmp_int(self):
@@ -336,6 +374,18 @@ class TestCmp(object):
         assert mpz(2) > mpz(1)
         assert mpz(1) < mpz(2)
         assert mpz(2) == mpz(2)
+
+    @pytest.mark.xfail(sys.version_info < (3,), reason="python2 comparison")
+    @pytest.mark.parametrize('n', invalids)
+    def test_invalid_cmp(self, n):
+        with pytest.raises(TypeError):
+            mpz(1) > n
+        with pytest.raises(TypeError):
+            mpz(1) < n
+        with pytest.raises(TypeError):
+            mpz(1) == n
+        with pytest.raises(TypeError):
+            mpz(1) != n
 
     @pytest.mark.xfail(reason='cpython __hash__ implementation bug (feature)')
     def test_hash_neg1(self):

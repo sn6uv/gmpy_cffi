@@ -92,8 +92,6 @@ class mpz(object):
             gmp.mpz_set_d(a, n)
         elif isinstance(n, (int, long)):
             _pyint_to_mpz(n, a)
-        elif isinstance(n, mpz):
-            pass
         else:
             raise TypeError
 
