@@ -454,10 +454,7 @@ class mpq(object):
         if modulo is not None:
             raise TypeError("mpq.pow() no modulo allowed")
 
-        if isinstance(other, mpq):
-            # XXX Returns mpfr
-            return NotImplemented
-        elif isinstance(other, (mpz, int, long)):
+        if isinstance(other, (mpz, int, long)):
             other = int(other)
             if 0 <= other <= MAX_UI:
                 res = _new_mpq()
@@ -489,6 +486,8 @@ class mpq(object):
         if isinstance(other, (int, long)):
             return NotImplemented
         elif isinstance(other, mpz):
+            return NotImplemented
+        elif isinstance(other, mpq):
             return NotImplemented
         else:
             return NotImplemented
