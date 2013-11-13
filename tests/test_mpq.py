@@ -275,6 +275,10 @@ class TestMath(object):
         with pytest.raises(ZeroDivisionError):
             mpq(0,1) ** -3
 
+    def test_pow_mod(self):
+        with pytest.raises(TypeError):
+            pow(mpq(2,1), 2, 2)
+
     def test_pow_big_exp(self):
         with pytest.raises(ValueError):
             mpq(2,3) ** (2 * sys.maxint + 2)
@@ -338,6 +342,10 @@ class TestMath(object):
             mpq(1, 2) // n
         with pytest.raises(TypeError):
             n // mpq(1, 2)
+        with pytest.raises(TypeError):
+            mpq(1, 2) ** n
+        with pytest.raises(TypeError):
+            n ** mpq(1, 2)
 
 
 class TestFormat(object):
