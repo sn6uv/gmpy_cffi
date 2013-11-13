@@ -416,7 +416,7 @@ class TestCmp(object):
         assert (hash(mpq(sys.maxsize + 1, sys.maxsize)) ==
                 hash(fractions.Fraction(sys.maxsize + 1, sys.maxsize)))
 
-    @pytest.mark.xfail(sys.version_info < (3,), reason="python2 comparison")
+    @pytest.mark.xfail("sys.version_info < (3,)", reason="python2 comparison")
     @pytest.mark.parametrize('n', invalids)
     def test_invalid_type_math(self, n):
         with pytest.raises(TypeError):

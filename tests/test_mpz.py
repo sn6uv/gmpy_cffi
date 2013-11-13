@@ -375,7 +375,7 @@ class TestCmp(object):
         assert mpz(1) < mpz(2)
         assert mpz(2) == mpz(2)
 
-    @pytest.mark.xfail(sys.version_info < (3,), reason="python2 comparison")
+    @pytest.mark.xfail("sys.version_info < (3,)", reason="python2 comparison")
     @pytest.mark.parametrize('n', invalids)
     def test_invalid_cmp(self, n):
         with pytest.raises(TypeError):
