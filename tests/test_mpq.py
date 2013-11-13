@@ -1,6 +1,7 @@
 import sys
 import pytest
 from gmpy_cffi import mpq, mpz
+from math import sqrt
 
 
 invalids = [(), [], set(), dict(), lambda x: x**2]
@@ -255,25 +256,30 @@ class TestMath(object):
         with pytest.raises(ZeroDivisionError):
             mpz(1) // mpq(0, 1)
 
-    def test_pow(self):
+    def test_pow_int(self):
         assert mpq(2,3) ** 3 == mpq(2,3) ** mpz(3) == mpq(8,27)
         assert mpq(-2,3) ** 2 == mpq(-2,3) ** mpz(2) == mpq(4,9)
         assert mpq(-2,3) ** 3 == mpq(-2,3) ** mpz(3) == mpq(-8,27)
         assert mpq(2,3) ** 0 == mpq(2,3) ** mpz(0) == mpq(0,1) ** 0 == mpq(1,1)
-
         # XXX These Run out of memory - gmp: overflow in mpz type
         # with pytest.raises(OverflowError):
         #      mpq(2, 3) ** (2*sys.maxint + 1)
         # with pytest.raises(OverflowError):
         #      mpq(2, 3) ** -(2*sys.maxint + 1)
-
-    def test_pow_neg_exp(self):
         assert mpq(2,3) ** -3 == mpq(27,8)
         assert mpq(-2,3) ** -2 == mpq(9,4)
         assert mpq(-2,3) ** -3 == mpq(-27,8)
-
         with pytest.raises(ZeroDivisionError):
             mpq(0,1) ** -3
+
+    @pytest.mark.xfail(reason="mpfr not yet implemented")
+    def test_rpow_mpq(self):
+        assert 1 ** mpq(1,1) == mpfr('1.0')
+        assert 2**mpq(1,2) == mpz(2) ** (1,2) == mpfr('1.4142135623730951') == mpfr(sqrt(2))
+        assert sys.maxsize ** mpq(1,2) == mpfr(sqrt(sys.maxsize))
+        assert mpq(2, 3) ** mpq(5,7) == mpfr('0.74854950799570052')
+        assert (-2) ** mpq(1,2) == mpfr('nan')
+        assert 0 ** mpq(-1,3) == mpfr('inf')
 
     def test_pow_mod(self):
         with pytest.raises(TypeError):
@@ -284,6 +290,8 @@ class TestMath(object):
             mpq(2,3) ** (2 * sys.maxint + 2)
         with pytest.raises(ValueError):
             mpq(2,3) ** -(2 * sys.maxint + 2)
+        with pytest.raises(ValueError):
+            mpq(2,3) ** mpz(2 * sys.maxint + 2)
 
     def test_int(self):
         assert int(mpq(1, 2)) == mpq(0, 1)
