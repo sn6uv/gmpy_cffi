@@ -199,11 +199,30 @@ ffi.cdef("""
     // int mpfr_fits_intmax_p (mpfr_t op, mpfr_rnd_t rnd);
 
     /* Comparison functions */
+    int mpfr_cmp (mpfr_t op1, mpfr_t op2);
+    int mpfr_cmp_ui (mpfr_t op1, unsigned long int op2);
+    int mpfr_cmp_si (mpfr_t op1, long int op2);
+    int mpfr_cmp_d (mpfr_t op1, double op2);
+    // int mpfr_cmp_ld (mpfr_t op1, long double op2);
+    int mpfr_cmp_z (mpfr_t op1, mpz_t op2);
+    int mpfr_cmp_q (mpfr_t op1, mpq_t op2);
+    // int mpfr_cmp_f (mpfr_t op1, mpf_t op2);
+    // int mpfr_cmp_ui_2exp (mpfr_t op1, unsigned long int op2, mpfr_exp_t e);
+    // int mpfr_cmp_si_2exp (mpfr_t op1, long int op2, mpfr_exp_t e);
+    // int mpfr_cmpabs (mpfr_t op1, mpfr_t op2);
     int mpfr_nan_p (mpfr_t op);
     int mpfr_inf_p (mpfr_t op);
     int mpfr_number_p (mpfr_t op);
     int mpfr_zero_p (mpfr_t op);
     int mpfr_regular_p (mpfr_t op);
+    // int mpfr_sgn (mpfr_t op);
+    // int mpfr_greater_p (mpfr_t op1, mpfr_t op2);
+    // int mpfr_greaterequal_p (mpfr_t op1, mpfr_t op2);
+    // int mpfr_less_p (mpfr_t op1, mpfr_t op2);
+    // int mpfr_lessequal_p (mpfr_t op1, mpfr_t op2);
+    // int mpfr_equal_p (mpfr_t op1, mpfr_t op2);
+    // int mpfr_unordered_p (mpfr_t op1, mpfr_t op2);
+    // int mpfr_lessgreater_p (mpfr_t op1, mpfr_t op2);
 
     int mpfr_signbit (mpfr_t op);
 
