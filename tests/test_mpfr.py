@@ -29,6 +29,7 @@ class TestInit(object):
 
     def test_init_mpq(self):
         assert mpfr(mpq(2,3)) == mpfr('0.66666666666666663')
+        assert mpfr(mpq(2,5),80) == mpfr('0.40000000000000000000000008',80)
 
 
 class TestMath(object):

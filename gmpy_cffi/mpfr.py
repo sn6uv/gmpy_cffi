@@ -24,18 +24,31 @@ def _init_cache():
 _init_cache()
 
 
-def _new_mpfr():
+def _new_mpfr(prec=0):
     """Return an initialized mpfr_t."""
     global _incache
+
+    if isinstance(prec, (int, long)):
+        if not (prec == 0 or gmp.MPFR_PREC_MIN <= prec <= gmp.MPFR_PREC_MAX):
+            raise ValueError( "invalid prec %i (wanted %s <= prec <= %s)" % (
+                    prec, gmp.MPFR_PREC_MIN, gmp.MPFR_PREC_MAX))
+    else:
+        raise TypeError('an integer is required')
 
     if _incache:
         _incache -= 1
         # Set default precision
-        gmp.mpfr_set_prec(_cache[_incache], gmp.mpfr_get_default_prec())
+        if prec == 0:
+            gmp.mpfr_set_prec(_cache[_incache], gmp.mpfr_get_default_prec())
+        else:
+            gmp.mpfr_set_prec(_cache[_incache], prec)
         return _cache[_incache]
     else:
         mpfr = ffi.new("mpfr_t")
-        gmp.mpfr_init(mpfr)
+        if prec == 0:
+            gmp.mpfr_init(mpfr)
+        else:
+            gmp.mpfr_init2(mpfr, prec)
         return mpfr
 
 
@@ -79,11 +92,22 @@ class mpfr(object):
             self._mpfr = args[0]._mpfr
             return
 
-        a = self._mpfr = ffi.gc(_new_mpfr(), _del_mpfr)
+        if len(args) > 3:
+            raise TypeError("mpfr() requires 0 to 3 arguments")
+
+        if len(args) == 2:
+            a = self._mpfr = ffi.gc(_new_mpfr(prec=args[1]), _del_mpfr)
+        else:
+            a = self._mpfr = ffi.gc(_new_mpfr(), _del_mpfr)
 
         if len(args) == 0:
             gmp.mpfr_set_zero(a, 1)
-        elif len(args) == 1 or len(args) == 2:
+        elif len(args) == 3:
+            if isinstance(args[0], str):
+                _str_to_mpfr(args[0], args[2], a)
+            else:
+                raise TypeError('function takes at most 2 arguments (%i given)' % len(args))
+        else:
             if isinstance(args[0], str):
                 _str_to_mpfr(args[0], 10, a)
             elif isinstance(args[0], float):
@@ -94,27 +118,6 @@ class mpfr(object):
                 gmp.mpfr_set_z(a, args[0]._mpz, gmp.MPFR_RNDN)
             elif isinstance(args[0], mpq):
                 gmp.mpfr_set_q(a, args[0]._mpq, gmp.MPFR_RNDN)
-            if len(args) == 2:
-                self._round(args[1])
-        elif len(args) == 3:
-            if isinstance(args[0], str):
-                _str_to_mpfr(args[0], args[2], a)
-                self._round(args[1])
-            else:
-                raise TypeError('function takes at most 2 arguments (%i given)' % len(args))
-        else:
-            raise TypeError("mpfr() requires 0 to 3 arguments")
-
-    def _round(self, prec):
-        if isinstance(prec, (int, long)):
-            if prec == 0:
-                pass
-            elif gmp.MPFR_PREC_MIN <= prec <= gmp.MPFR_PREC_MAX:
-                gmp.mpfr_prec_round(self._mpfr, prec, gmp.MPFR_RNDN)
-            else:
-                raise ValueError("can't round to precision %i" % prec)
-        else:
-            raise TypeError('an integer is required')
 
     def __str__(self):
         if self._mpfr_str is None:
