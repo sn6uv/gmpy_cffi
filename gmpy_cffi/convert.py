@@ -1,5 +1,6 @@
 import sys
 import array
+from math import log10
 
 from gmpy_cffi.interface import gmp, ffi
 
@@ -115,3 +116,14 @@ def _str_to_mpq(s, base, a):
             raise ValueError("Can't create mpq from %s with base %s" % (s, base))
     else:
         raise ValueError('base must be 0 or 2..62, not %s' % base)
+
+
+def _mpfr_to_str(a):
+    precision = int(log10(2) * gmp.mpfr_get_prec(a) + 2)
+    buf = ffi.new('char []', precision + 10)
+    fmtstr = "%.{0}Rg".format(precision)
+    buflen = gmp.mpfr_sprintf(buf, fmtstr, a)
+    pybuf = ffi.string(buf)
+    if '.' not in pybuf:
+        pybuf = pybuf + '.0'
+    return "mpfr('%s')" % pybuf
