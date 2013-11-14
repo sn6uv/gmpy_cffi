@@ -150,23 +150,23 @@ ffi.cdef("""
     int mpfr_asprintf (char **str, const char *template, ...);
 
     // int mpfr_set (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
-    // int mpfr_set_ui (mpfr_t rop, unsigned long int op, mpfr_rnd_t rnd);
-    // int mpfr_set_si (mpfr_t rop, long int op, mpfr_rnd_t rnd);
+    int mpfr_set_ui (mpfr_t rop, unsigned long int op, mpfr_rnd_t rnd);
+    int mpfr_set_si (mpfr_t rop, long int op, mpfr_rnd_t rnd);
     // int mpfr_set_uj (mpfr_t rop, uintmax_t op, mpfr_rnd_t rnd);
     // int mpfr_set_sj (mpfr_t rop, intmax_t op, mpfr_rnd_t rnd);
     // int mpfr_set_flt (mpfr_t rop, float op, mpfr_rnd_t rnd);
     int mpfr_set_d (mpfr_t rop, double op, mpfr_rnd_t rnd);
     // int mpfr_set_ld (mpfr_t rop, long double op, mpfr_rnd_t rnd);
     // int mpfr_set_decimal64 (mpfr_t rop, _Decimal64 op, mpfr_rnd_t rnd);
-    // int mpfr_set_z (mpfr_t rop, mpz_t op, mpfr_rnd_t rnd);
-    // int mpfr_set_q (mpfr_t rop, mpq_t op, mpfr_rnd_t rnd);
+    int mpfr_set_z (mpfr_t rop, mpz_t op, mpfr_rnd_t rnd);
+    int mpfr_set_q (mpfr_t rop, mpq_t op, mpfr_rnd_t rnd);
     // int mpfr_set_f (mpfr_t rop, mpf_t op, mpfr_rnd_t rnd);
     // int mpfr_set_ui_2exp (mpfr_t rop, unsigned long int op, mpfr_exp_t e, mpfr_rnd_t rnd);
     // int mpfr_set_si_2exp (mpfr_t rop, long int op, mpfr_exp_t e, mpfr_rnd_t rnd);
     // int mpfr_set_uj_2exp (mpfr_t rop, uintmax_t op, intmax_t e, mpfr_rnd_t rnd);
     // int mpfr_set_sj_2exp (mpfr_t rop, intmax_t op, intmax_t e, mpfr_rnd_t rnd);
     // int mpfr_set_z_2exp (mpfr_t rop, mpz_t op, mpfr_exp_t e, mpfr_rnd_t rnd);
-    // int mpfr_set_str (mpfr_t rop, const char *s, int base, mpfr_rnd_t rnd);
+    int mpfr_set_str (mpfr_t rop, const char *s, int base, mpfr_rnd_t rnd);
     // int mpfr_strtofr (mpfr_t rop, const char *nptr, char **endptr, int base, mpfr_rnd_t rnd);
     // void mpfr_set_nan (mpfr_t x);
     // void mpfr_set_inf (mpfr_t x, int sign);
@@ -206,6 +206,16 @@ ffi.cdef("""
     int mpfr_regular_p (mpfr_t op);
 
     int mpfr_signbit (mpfr_t op);
+
+    // void mpfr_set_default_rounding_mode (mpfr_rnd_t rnd);
+    // mpfr_rnd_t mpfr_get_default_rounding_mode (void);
+    int mpfr_prec_round (mpfr_t x, mpfr_prec_t prec, mpfr_rnd_t rnd);
+    // mpfr_can_round (mpfr_t b, mpfr_exp_t err, mpfr_rnd_t rnd1, mpfr_rnd_t rnd2, mpfr_prec_t prec);
+    mpfr_prec_t mpfr_min_prec (mpfr_t x);
+    // char * mpfr_print_rnd_mode (mpfr_rnd_t rnd);
+
+    #define MPFR_PREC_MIN ...
+    #define MPFR_PREC_MAX ...
 """)
 
 gmp = ffi.verify("""
