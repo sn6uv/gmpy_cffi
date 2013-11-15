@@ -452,3 +452,19 @@ class mpfr(object):
         res = gmp.mpfr_get_d(tmp_mpfr, gmp.MPFR_RNDN)
         _del_mpfr(tmp_mpfr)
         return res
+
+    def __float__(self):
+        return gmp.mpfr_get_d(self._mpfr, gmp.MPFR_RNDN)
+
+    def __int__(self):
+        if not gmp.mpfr_number_p(self._mpfr):
+            raise ValueError("Cannot convert '%s' to int" % self)
+        elif gmp.mpfr_fits_slong_p(self._mpfr, gmp.MPFR_RNDN):
+            return gmp.mpfr_get_si(self._mpfr, gmp.MPFR_RNDN)
+        elif gmp.mpfr_fits_ulong_p(self._mpfr, gmp.MPFR_RNDN):
+            return gmp.mpfr_get_ui(self._mpfr, gmp.MPFR_RNDN)
+        else:
+            # TODO
+            raise OverflowError
+
+    __long__ = __int__

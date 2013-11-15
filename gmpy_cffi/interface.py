@@ -177,8 +177,8 @@ ffi.cdef("""
     double mpfr_get_d (mpfr_t op, mpfr_rnd_t rnd);
     // long double mpfr_get_ld (mpfr_t op, mpfr_rnd_t rnd);
     // _Decimal64 mpfr_get_decimal64 (mpfr_t op, mpfr_rnd_t rnd);
-    // long mpfr_get_si (mpfr_t op, mpfr_rnd_t rnd);
-    // unsigned long mpfr_get_ui (mpfr_t op, mpfr_rnd_t rnd);
+    long mpfr_get_si (mpfr_t op, mpfr_rnd_t rnd);
+    unsigned long mpfr_get_ui (mpfr_t op, mpfr_rnd_t rnd);
     // intmax_t mpfr_get_sj (mpfr_t op, mpfr_rnd_t rnd);
     // uintmax_t mpfr_get_uj (mpfr_t op, mpfr_rnd_t rnd);
     // double mpfr_get_d_2exp (long *exp, mpfr_t op, mpfr_rnd_t rnd);
@@ -189,8 +189,8 @@ ffi.cdef("""
     // int mpfr_get_f (mpf_t rop, mpfr_t op, mpfr_rnd_t rnd);
     char * mpfr_get_str (char *str, mpfr_exp_t *expptr, int b, size_t n, mpfr_t op, mpfr_rnd_t rnd);
     void mpfr_free_str (char *str);
-    // int mpfr_fits_ulong_p (mpfr_t op, mpfr_rnd_t rnd);
-    // int mpfr_fits_slong_p (mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_fits_ulong_p (mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_fits_slong_p (mpfr_t op, mpfr_rnd_t rnd);
     // int mpfr_fits_uint_p (mpfr_t op, mpfr_rnd_t rnd);
     // int mpfr_fits_sint_p (mpfr_t op, mpfr_rnd_t rnd);
     // int mpfr_fits_ushort_p (mpfr_t op, mpfr_rnd_t rnd);

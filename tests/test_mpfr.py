@@ -155,3 +155,18 @@ class TestMath(object):
         assert math.trunc(mpfr('inf')) == float('inf')
         assert math.trunc(mpfr('-inf')) == float('-inf')
         assert math.isnan(math.trunc(mpfr('nan')))
+
+
+class TestConv(object):
+    @pytest.mark.parametrize('n', ['1.5', '0.0', '-0.0', 'inf', '-inf', 'nan'])
+    def test_float(self, n):
+        if n == 'nan': # float('nan') != float('nan')
+            assert math.isnan(float(mpfr(n)))
+        else:
+            assert float(mpfr(n)) == float(n)
+
+    def test_int(self):
+        assert int(mpfr(1.4)) == 1
+        assert int(mpfr(1.6)) == 2
+        assert int(mpfr(-1.4)) == -1
+        assert int(mpfr(-1.6)) == -2
