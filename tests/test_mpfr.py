@@ -1,4 +1,7 @@
+from __future__ import division
+
 import sys
+import math
 import pytest
 
 from gmpy_cffi import mpfr, mpq, mpz
@@ -51,3 +54,104 @@ class TestMath(object):
         assert str(mpfr('nan')) == 'nan'
         assert str(mpfr('+inf')) == 'inf'
         assert str(mpfr('-inf')) == '-inf'
+
+    def test_add(self):
+        assert mpfr('0.5') + mpfr('1.5') == mpfr('2.0')
+        assert mpfr('0.5') + 1.5 == mpfr('2.0')
+        assert mpfr('0.5') + mpq(3,2) == mpfr('2.0')
+        assert mpfr('0.5') + mpz(1) == mpfr('1.5')
+        assert mpfr('0.5') + 1 == mpfr('1.5')
+
+    def test_sub(self):
+        assert mpfr('1.5') - mpfr('0.5') == mpfr('1.0')
+        assert mpfr('1.5') - 0.5 == mpfr('1.0')
+        assert mpfr('1.5') - mpq(1,2) == mpfr('1.0')
+        assert mpfr('1.5') - mpz(1) == mpfr('0.5')
+        assert mpfr('1.5') - 1 == mpfr('0.5')
+
+    def test_rsub(self):
+        assert 1.5 - mpfr('0.5') == mpfr('1.0')
+        assert mpq(3,2) - mpfr('0.5') == mpfr('1.0')
+        assert mpz(1) - mpfr('0.5') == mpfr('0.5')
+        assert 1 - mpfr('0.5') == mpfr('0.5')
+
+    def test_mul(self):
+        assert mpfr('0.5') * mpfr('1.5') == mpfr('0.75')
+        assert mpfr('0.5') * 1.5 == mpfr('0.75')
+        assert mpfr('0.5') * mpq(3,2) == mpfr('0.75')
+        assert mpfr('0.5') * mpz(3) == mpfr('1.5')
+        assert mpfr('0.5') * 3 == mpfr('1.5')
+
+    def test_truediv(self):
+        assert mpfr('1.5') / mpfr('0.5') == mpfr('3.0')
+        assert mpfr('1.5') / 0.5 == mpfr('3.0')
+        assert mpfr('1.5') / mpq(3,2) == mpfr('1.0')
+        assert mpfr('4.5') / mpz(3) == mpfr('1.5')
+        assert mpfr('4.5') / 3 == mpfr('1.5')
+
+    def test_rtruediv(self):
+        assert 1.5 / mpfr('0.5') == mpfr('3.0')
+        assert mpq(3,2) / mpfr('0.5') == mpfr('3.0')
+        assert mpz(3) / mpfr('1.5') == mpfr('2.0')
+        assert 3 / mpfr('1.5') == mpfr('2.0')
+
+    def test_pow(self):
+        assert mpfr('2.5') ** mpfr('1.5') == mpfr('3.9528470752104741')
+        assert mpfr('2.5') ** 1.5 == mpfr('3.9528470752104741')
+        assert mpfr('2.5') ** mpq(3,2) == mpfr('3.9528470752104741')
+        assert mpfr('2.5') ** mpz(3) == mpfr('15.625')
+        assert mpfr('2.5') ** 3 == mpfr('15.625')
+
+    def test_rpow(self):
+        assert 1.5 ** mpfr('2.5') == mpfr('2.7556759606310752')
+        assert mpq(3,2) ** mpfr('2.5') == mpfr('2.7556759606310752')
+        assert mpz(3) ** mpfr('2.5') == mpfr('15.588457268119896')
+        assert 3 ** mpfr('2.5') == mpfr('15.588457268119896')
+
+    def test_neg(self):
+        assert -mpfr(1.5) == mpfr(-1.5)
+        assert -mpfr(-1.5) == mpfr(1.5)
+        assert -mpfr('0') == mpfr('-0')
+        assert -mpfr('-0') == mpfr('0')
+        assert -mpfr('inf') == mpfr('-inf')
+        assert -mpfr('-inf') == mpfr('inf')
+        assert -mpfr('nan') == mpfr('nan')
+
+    def test_pos(self):
+        assert +mpfr(1.5) == mpfr(1.5)
+        assert +mpfr(-1.5) == mpfr(-1.5)
+        assert +mpfr('0') == mpfr('0')
+        assert +mpfr('-0') == mpfr('-0')
+        assert +mpfr('inf') == mpfr('inf')
+        assert +mpfr('-inf') == mpfr('-inf')
+        assert +mpfr('nan') == mpfr('nan')
+
+    def test_abs(self):
+        assert abs(mpfr(1.5)) == mpfr(1.5)
+        assert abs(mpfr(-1.5)) == mpfr(1.5)
+        assert abs(mpfr('0')) == mpfr('0')
+        assert abs(mpfr('-0')) == mpfr('0')
+        assert abs(mpfr('inf')) == mpfr('inf')
+        assert abs(mpfr('-inf')) == mpfr('inf')
+        assert abs(mpfr('nan')) == mpfr('nan')
+
+    def test_floor(self):
+        assert math.floor(mpfr(1.5)) == 1.0
+        assert math.floor(mpfr(-1.5)) == -2.0
+        assert math.floor(mpfr('inf')) == float('inf')
+        assert math.floor(mpfr('-inf')) == float('-inf')
+        assert math.isnan(math.floor(mpfr('nan')))
+
+    def test_ceil(self):
+        assert math.ceil(mpfr(1.5)) == 2.0
+        assert math.ceil(mpfr(-1.5)) == -1.0
+        assert math.ceil(mpfr('inf')) == float('inf')
+        assert math.ceil(mpfr('-inf')) == float('-inf')
+        assert math.isnan(math.ceil(mpfr('nan')))
+
+    def test_trunc(self):
+        assert math.trunc(mpfr(1.5)) == 1.0
+        assert math.trunc(mpfr(-1.5)) == -1.0
+        assert math.trunc(mpfr('inf')) == float('inf')
+        assert math.trunc(mpfr('-inf')) == float('-inf')
+        assert math.isnan(math.trunc(mpfr('nan')))

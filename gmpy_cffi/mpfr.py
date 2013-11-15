@@ -62,6 +62,23 @@ def _del_mpfr(mpfr):
         gmp.mpfr_clear(mpfr)
 
 
+def _min_prec(*args):
+    """
+    Calculates the minimum precision of a given args
+
+    returns None if precision is infinite
+    """
+    precs = []
+    for arg in args:
+        if isinstance(arg, mpfr):
+            precs.append(gmp.mpfr_get_prec(arg._mpfr))
+        elif isinstance(arg, float):
+            precs.append(53)
+    if precs:
+        return min(precs)
+    return None
+
+
 class mpfr(object):
     _mpfr_str = _repr_str = None
     """
@@ -136,6 +153,12 @@ class mpfr(object):
     def precision(self):
         return gmp.mpfr_get_prec(self._mpfr)
 
+    @classmethod
+    def _from_c_mpfr(cls, mpfr):
+        inst = object.__new__(cls)
+        inst._mpfr = ffi.gc(mpfr, _del_mpfr)
+        return inst
+
     def __cmp(self, other):
         if isinstance(other, mpfr):
             return gmp.mpfr_cmp(self._mpfr, other._mpfr)
@@ -184,3 +207,248 @@ class mpfr(object):
 
     def __le__(self, other):
         return not self > other
+
+    def __add__(self, other):
+        res = _new_mpfr(prec=_min_prec(self, other))
+        if isinstance(other, mpfr):
+            gmp.mpfr_add(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, mpq):
+            gmp.mpfr_add_q(res, self._mpfr, other._mpq, gmp.MPFR_RNDN)
+        elif isinstance(other, mpz):
+            gmp.mpfr_add_z(res, self._mpfr, other._mpz, gmp.MPFR_RNDN)
+        elif isinstance(other, float):
+            gmp.mpfr_add_d(res, self._mpfr, other, gmp.MPFR_RNDN)
+        elif isinstance(other, (int, long)):
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpfr_add_si(res, self._mpfr, other, gmp.MPFR_RNDN)
+            elif 0 <= other <= MAX_UI:
+                gmp.mpfr_add_ui(res, self._mpfr, other, gmp.MPFR_RNDN)
+            else:
+                tmp_mpz = _new_mpz()
+                _pylong_to_mpz(other, tmp_mpz)
+                gmp.mpfr_add_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
+                _del_mpz(tmp_mpz)
+        else:
+            raise TypeError
+        return mpfr._from_c_mpfr(res)
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        res = _new_mpfr(prec=_min_prec(self, other))
+        if isinstance(other, mpfr):
+            gmp.mpfr_sub(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, mpq):
+            gmp.mpfr_sub_q(res, self._mpfr, other._mpq, gmp.MPFR_RNDN)
+        elif isinstance(other, mpz):
+            gmp.mpfr_sub_z(res, self._mpfr, other._mpz, gmp.MPFR_RNDN)
+        elif isinstance(other, float):
+            gmp.mpfr_sub_d(res, self._mpfr, other, gmp.MPFR_RNDN)
+        elif isinstance(other, (int, long)):
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpfr_sub_si(res, self._mpfr, other, gmp.MPFR_RNDN)
+            elif 0 <= other <= MAX_UI:
+                gmp.mpfr_sub_ui(res, self._mpfr, other, gmp.MPFR_RNDN)
+            else:
+                tmp_mpz = _new_mpz()
+                _pylong_to_mpz(other, tmp_mpz)
+                gmp.mpfr_sub_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
+                _del_mpz(tmp_mpz)
+        else:
+            raise TypeError
+        return mpfr._from_c_mpfr(res)
+
+    def __rsub__(self, other):
+        res = _new_mpfr(prec=_min_prec(self, other))
+        if isinstance(other, mpq):
+            # There is no mpfr_q_sub
+            gmp.mpfr_sub_q(res, self._mpfr, other._mpq, gmp.MPFR_RNDN)
+            gmp.mpfr_neg(res, res, gmp.MPFR_RNDN)
+        elif isinstance(other, mpz):
+            gmp.mpfr_z_sub(res, other._mpz, self._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, float):
+            gmp.mpfr_d_sub(res, other, self._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, (int, long)):
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpfr_si_sub(res, other, self._mpfr, gmp.MPFR_RNDN)
+            elif 0 <= other <= MAX_UI:
+                gmp.mpfr_ui_sub(res, other, self._mpfr, gmp.MPFR_RNDN)
+            else:
+                tmp_mpz = _new_mpz()
+                _pylong_to_mpz(other, tmp_mpz)
+                gmp.mpfr_z_sub(res, tmp_mpz, self._mpfr, gmp.MPFR_RNDN)
+                _del_mpz(tmp_mpz)
+        else:
+            raise TypeError
+        return mpfr._from_c_mpfr(res)
+
+    def __mul__(self, other):
+        res = _new_mpfr(prec=_min_prec(self, other))
+        if isinstance(other, mpfr):
+            gmp.mpfr_mul(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, mpq):
+            gmp.mpfr_mul_q(res, self._mpfr, other._mpq, gmp.MPFR_RNDN)
+        elif isinstance(other, mpz):
+            gmp.mpfr_mul_z(res, self._mpfr, other._mpz, gmp.MPFR_RNDN)
+        elif isinstance(other, float):
+            gmp.mpfr_mul_d(res, self._mpfr, other, gmp.MPFR_RNDN)
+        elif isinstance(other, (int, long)):
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpfr_mul_si(res, self._mpfr, other, gmp.MPFR_RNDN)
+            elif 0 <= other <= MAX_UI:
+                gmp.mpfr_mul_ui(res, self._mpfr, other, gmp.MPFR_RNDN)
+            else:
+                tmp_mpz = _new_mpz()
+                _pylong_to_mpz(other, tmp_mpz)
+                gmp.mpfr_mul_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
+                _del_mpz(tmp_mpz)
+        else:
+            raise TypeError
+        return mpfr._from_c_mpfr(res)
+
+    __rmul__ = __mul__
+
+    def __truediv__(self, other):
+        if other == 0:
+            raise ZeroDivisionError
+        res = _new_mpfr(prec=_min_prec(self, other))
+        if isinstance(other, mpfr):
+            gmp.mpfr_div(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, mpq):
+            gmp.mpfr_div_q(res, self._mpfr, other._mpq, gmp.MPFR_RNDN)
+        elif isinstance(other, mpz):
+            gmp.mpfr_div_z(res, self._mpfr, other._mpz, gmp.MPFR_RNDN)
+        elif isinstance(other, float):
+            gmp.mpfr_div_d(res, self._mpfr, other, gmp.MPFR_RNDN)
+        elif isinstance(other, (int, long)):
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpfr_div_si(res, self._mpfr, other, gmp.MPFR_RNDN)
+            elif 0 <= other <= MAX_UI:
+                gmp.mpfr_div_ui(res, self._mpfr, other, gmp.MPFR_RNDN)
+            else:
+                tmp_mpz = _new_mpz()
+                _pylong_to_mpz(other, tmp_mpz)
+                gmp.mpfr_div_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
+                _del_mpz(tmp_mpz)
+        else:
+            raise TypeError
+        return mpfr._from_c_mpfr(res)
+
+    __div__ = __truediv__
+
+    def __rtruediv__(self, other):
+        if self == 0:
+            raise ZeroDivisionError
+        res = _new_mpfr(prec=_min_prec(self, other))
+        if isinstance(other, mpq):
+            # There is no mpfr_q_div
+            gmp.mpfr_set_q(res, other._mpq, gmp.MPFR_RNDN)
+            gmp.mpfr_div(res, res, self._mpfr, gmp.MPFR_RNDN)
+            pass
+        elif isinstance(other, mpz):
+            # There is no mpfr_z_div
+            gmp.mpfr_set_z(res, other._mpz, gmp.MPFR_RNDN)
+            gmp.mpfr_div(res, res, self._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, float):
+            gmp.mpfr_d_div(res, other, self._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, (int, long)):
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpfr_si_div(res, other, self._mpfr, gmp.MPFR_RNDN)
+            elif 0 <= other <= MAX_UI:
+                gmp.mpfr_ui_div(res, other, self._mpfr, gmp.MPFR_RNDN)
+            else:
+                pass
+                tmp_mpz = _new_mpz()
+                _pylong_to_mpz(other, tmp_mpz)
+                gmp.mpfr_div_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
+                gmp.mpfr_set_z(res, tmp_mpz, gmp.MPFR_RNDN)
+                _del_mpz(tmp_mpz)
+        else:
+            raise TypeError
+        return mpfr._from_c_mpfr(res)
+
+    def __pow__(self, other):
+        res = _new_mpfr(prec=_min_prec(self, other))
+        if isinstance(other, mpfr):
+            gmp.mpfr_pow(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, mpq):
+            # There is no mpfr_pow_q
+            gmp.mpfr_set_q(res, other._mpq, gmp.MPFR_RNDN)
+            gmp.mpfr_pow(res, self._mpfr, res, gmp.MPFR_RNDN)
+        elif isinstance(other, mpz):
+            gmp.mpfr_pow_z(res, self._mpfr, other._mpz, gmp.MPFR_RNDN)
+        elif isinstance(other, float):
+            # There is no mpfr_pow_d
+            gmp.mpfr_set_d(res, other, gmp.MPFR_RNDN)
+            gmp.mpfr_pow(res, self._mpfr, res, gmp.MPFR_RNDN)
+        elif isinstance(other, (int, long)):
+            if -sys.maxsize - 1 <= other <= sys.maxsize:
+                gmp.mpfr_pow_si(res, self._mpfr, other, gmp.MPFR_RNDN)
+            elif 0 <= other <= MAX_UI:
+                gmp.mpfr_pow_ui(res, self._mpfr, other, gmp.MPFR_RNDN)
+            else:
+                tmp_mpz = _new_mpz()
+                _pylong_to_mpz(other, tmp_mpz)
+                gmp.mpfr_pow_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
+                _del_mpz(tmp_mpz)
+        else:
+            raise TypeError
+        return mpfr._from_c_mpfr(res)
+
+    def __rpow__(self, other):
+        res = _new_mpfr(prec=_min_prec(self, other))
+        if isinstance(other, mpfr):
+            gmp.mpfr_pow(res, other._mpfr, self._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, mpq):
+            # There is no mpfr_pow_q
+            gmp.mpfr_set_q(res, other._mpq, gmp.MPFR_RNDN)
+            gmp.mpfr_pow(res, res, self._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, mpz):
+            # There is no mpfr_pow_z
+            gmp.mpfr_set_z(res, other._mpz, gmp.MPFR_RNDN)
+            gmp.mpfr_pow(res, res, self._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, float):
+            # There is no mpfr_pow_d
+            gmp.mpfr_set_d(res, other, gmp.MPFR_RNDN)
+            gmp.mpfr_pow(res, res, self._mpfr, gmp.MPFR_RNDN)
+        elif isinstance(other, (int, long)):
+            # There is no mpfr_si_pow
+            _pyint_to_mpfr(other, res)
+            gmp.mpfr_pow(res, res, self._mpfr, gmp.MPFR_RNDN)
+        else:
+            raise TypeError
+        return mpfr._from_c_mpfr(res)
+
+    def __pos__(self):
+        return self
+
+    def __neg__(self):
+        res = _new_mpfr(prec=_min_prec(self))
+        gmp.mpfr_neg(res, self._mpfr, gmp.MPFR_RNDN)
+        return mpfr._from_c_mpfr(res)
+
+    def __abs__(self):
+        res = _new_mpfr(prec=_min_prec(self))
+        gmp.mpfr_abs(res, self._mpfr, gmp.MPFR_RNDN)
+        return mpfr._from_c_mpfr(res)
+
+    def __floor__(self):
+        tmp_mpfr = _new_mpfr(prec=_min_prec(self))
+        gmp.mpfr_floor(tmp_mpfr, self._mpfr)
+        res = gmp.mpfr_get_d(tmp_mpfr, gmp.MPFR_RNDN)
+        _del_mpfr(tmp_mpfr)
+        return res
+
+    def __ceil__(self):
+        tmp_mpfr = _new_mpfr(prec=_min_prec(self))
+        gmp.mpfr_ceil(tmp_mpfr, self._mpfr)
+        res = gmp.mpfr_get_d(tmp_mpfr, gmp.MPFR_RNDN)
+        _del_mpfr(tmp_mpfr)
+        return res
+
+    def __trunc__(self):
+        tmp_mpfr = _new_mpfr(prec=_min_prec(self))
+        gmp.mpfr_trunc(tmp_mpfr, self._mpfr)
+        res = gmp.mpfr_get_d(tmp_mpfr, gmp.MPFR_RNDN)
+        _del_mpfr(tmp_mpfr)
+        return res
