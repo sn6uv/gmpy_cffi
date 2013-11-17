@@ -198,6 +198,24 @@ class TestConv(object):
         assert int(mpfr(-1.4)) == -1
         assert int(mpfr(-1.6)) == -2
 
+    @pytest.mark.parametrize('n', invalids)
+    def test_invalid_math(self, n):
+        with pytest.raises(TypeError):
+            mpfr('1.5') + n
+        with pytest.raises(TypeError):
+            mpfr('1.5') - n
+        with pytest.raises(TypeError):
+            n - mpfr('1.5')
+        with pytest.raises(TypeError):
+            mpfr('1.5') * n
+        with pytest.raises(TypeError):
+            mpfr('1.5') / n
+        with pytest.raises(TypeError):
+            n / mpfr('1.5')
+        with pytest.raises(TypeError):
+            mpfr('1.5') ** n
+        with pytest.raises(TypeError):
+            n ** mpfr('1.5')
 
 class TestCmp(object):
     @pytest.mark.parametrize(('a', 'b'), [
@@ -228,3 +246,19 @@ class TestCmp(object):
     def test_ne(self):
         assert mpfr(1.4) != mpfr(1.5)
         assert mpfr(1.5) != mpfr(-1.5)
+
+    @pytest.mark.xfail("sys.version_info < (3,)", reason="python2 comparison")
+    @pytest.mark.parametrize('n', invalids)
+    def test_invalid_cmp(self, n):
+        with pytest.raises(TypeError):
+            mpfr('1.5') > n
+        with pytest.raises(TypeError):
+            mpfr('1.5') < n
+        with pytest.raises(TypeError):
+            mpfr('1.5') == n
+        with pytest.raises(TypeError):
+            mpfr('1.5') >= n
+        with pytest.raises(TypeError):
+            mpfr('1.5') <= n
+        with pytest.raises(TypeError):
+            mpfr('1.5') != n
