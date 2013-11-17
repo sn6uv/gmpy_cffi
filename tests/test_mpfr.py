@@ -214,10 +214,19 @@ class TestConv(object):
             assert float(mpfr(n)) == float(n)
 
     def test_int(self):
+        assert int(mpfr(0.0)) == 0
         assert int(mpfr(1.4)) == 1
         assert int(mpfr(1.6)) == 2
         assert int(mpfr(-1.4)) == -1
         assert int(mpfr(-1.6)) == -2
+
+    def test_invalid_cmp(self):
+        with pytest.raises(ValueError):
+            int(mpfr('inf'))
+        with pytest.raises(ValueError):
+            int(mpfr('-inf'))
+        with pytest.raises(ValueError):
+            int(mpfr('nan'))
 
     @pytest.mark.parametrize('n', invalids)
     def test_invalid_math(self, n):
