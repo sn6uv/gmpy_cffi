@@ -428,20 +428,6 @@ class mpfr(object):
         gmp.mpfr_abs(res, self._mpfr, gmp.MPFR_RNDN)
         return mpfr._from_c_mpfr(res)
 
-    def __floor__(self):
-        tmp_mpfr = _new_mpfr(prec=_min_prec(self))
-        gmp.mpfr_floor(tmp_mpfr, self._mpfr)
-        res = gmp.mpfr_get_d(tmp_mpfr, gmp.MPFR_RNDN)
-        _del_mpfr(tmp_mpfr)
-        return res
-
-    def __ceil__(self):
-        tmp_mpfr = _new_mpfr(prec=_min_prec(self))
-        gmp.mpfr_ceil(tmp_mpfr, self._mpfr)
-        res = gmp.mpfr_get_d(tmp_mpfr, gmp.MPFR_RNDN)
-        _del_mpfr(tmp_mpfr)
-        return res
-
     def __trunc__(self):
         tmp_mpfr = _new_mpfr(prec=_min_prec(self))
         gmp.mpfr_trunc(tmp_mpfr, self._mpfr)
