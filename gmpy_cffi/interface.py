@@ -123,9 +123,9 @@ ffi.cdef("""
     typedef __mpfr_struct *mpfr_t;
 
     // FIXME - actual type depends on_MPFR_PREC_FORMAT
-    typedef int mpfr_prec_t;
+    typedef long int mpfr_prec_t;
     // FIXME - actual type depends on _MPFR_EXP_FORMAT
-    typedef int mpfr_exp_t;
+    typedef long int mpfr_exp_t;
 
     typedef enum {
       MPFR_RNDN=0,  /* round to nearest, with ties to even */
