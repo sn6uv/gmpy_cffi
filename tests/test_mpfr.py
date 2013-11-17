@@ -34,6 +34,15 @@ class TestInit(object):
         assert mpfr(mpq(2,3)) == mpfr('0.66666666666666663')
         assert mpfr(mpq(2,5),80) == mpfr('0.40000000000000000000000008',80)
 
+    def test_init_mpfr(self):
+        assert mpfr(mpfr('1.5')) == mpfr('1.5')
+
+    def test_invalid_nargs(self):
+        with pytest.raises(TypeError):
+            mpfr(1,2,3,4)
+        with pytest.raises(TypeError):  # String expected
+            mpfr(1,2,3)
+
 
 class TestMath(object):
     def test_repr(self):

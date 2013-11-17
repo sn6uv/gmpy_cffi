@@ -395,9 +395,7 @@ class mpfr(object):
 
     def __rpow__(self, other):
         res = _new_mpfr(prec=_min_prec(self, other))
-        if isinstance(other, mpfr):
-            gmp.mpfr_pow(res, other._mpfr, self._mpfr, gmp.MPFR_RNDN)
-        elif isinstance(other, mpq):
+        if isinstance(other, mpq):
             # There is no mpfr_pow_q
             gmp.mpfr_set_q(res, other._mpq, gmp.MPFR_RNDN)
             gmp.mpfr_pow(res, res, self._mpfr, gmp.MPFR_RNDN)
