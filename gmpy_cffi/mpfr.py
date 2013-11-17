@@ -112,7 +112,7 @@ class mpfr(object):
         if len(args) > 3:
             raise TypeError("mpfr() requires 0 to 3 arguments")
 
-        if len(args) == 2:
+        if len(args) >= 2:
             a = self._mpfr = ffi.gc(_new_mpfr(prec=args[1]), _del_mpfr)
         else:
             a = self._mpfr = ffi.gc(_new_mpfr(), _del_mpfr)
