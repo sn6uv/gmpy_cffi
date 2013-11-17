@@ -220,6 +220,11 @@ class TestConv(object):
         assert int(mpfr(-1.4)) == -1
         assert int(mpfr(-1.6)) == -2
 
+        # Increased precision is required to get the exact result
+        assert int(mpfr(sys.maxsize, 100)) == sys.maxsize
+        assert int(mpfr(2*sys.maxsize, 100)) == 2*sys.maxsize
+        assert int(mpfr(3*sys.maxsize, 100)) == 3*sys.maxsize
+
     def test_invalid_cmp(self):
         with pytest.raises(ValueError):
             int(mpfr('inf'))

@@ -3,7 +3,7 @@ import sys
 from gmpy_cffi.mpz import mpz, _new_mpz, _del_mpz
 from gmpy_cffi.mpq import mpq
 from gmpy_cffi.interface import gmp, ffi
-from gmpy_cffi.convert import _mpfr_to_str, _str_to_mpfr, _pyint_to_mpfr, _pylong_to_mpz, MAX_UI
+from gmpy_cffi.convert import _mpfr_to_str, _str_to_mpfr, _pyint_to_mpfr, _pylong_to_mpz, MAX_UI, _mpz_to_pylong
 
 
 if sys.version > '3':
@@ -446,7 +446,10 @@ class mpfr(object):
         elif gmp.mpfr_fits_ulong_p(self._mpfr, gmp.MPFR_RNDN):
             return gmp.mpfr_get_ui(self._mpfr, gmp.MPFR_RNDN)
         else:
-            # TODO
-            raise OverflowError
+            tmp_mpz = _new_mpz()
+            gmp.mpfr_get_z(tmp_mpz, self._mpfr, gmp.MPFR_RNDN)
+            res = _mpz_to_pylong(tmp_mpz)
+            _del_mpz(tmp_mpz)
+            return res
 
     __long__ = __int__

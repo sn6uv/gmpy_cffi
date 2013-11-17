@@ -185,7 +185,7 @@ ffi.cdef("""
     // long double mpfr_get_ld_2exp (long *exp, mpfr_t op, mpfr_rnd_t rnd);
     // int mpfr_frexp (mpfr_exp_t *exp, mpfr_t y, mpfr_t x, mpfr_rnd_t rnd);
     // mpfr_exp_t mpfr_get_z_2exp (mpz_t rop, mpfr_t op);
-    // int mpfr_get_z (mpz_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_get_z (mpz_t rop, mpfr_t op, mpfr_rnd_t rnd);
     // int mpfr_get_f (mpf_t rop, mpfr_t op, mpfr_rnd_t rnd);
     char * mpfr_get_str (char *str, mpfr_exp_t *expptr, int b, size_t n, mpfr_t op, mpfr_rnd_t rnd);
     void mpfr_free_str (char *str);
