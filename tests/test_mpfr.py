@@ -192,6 +192,18 @@ class TestMath(object):
         assert math.trunc(mpfr('-inf')) == float('-inf')
         assert math.isnan(math.trunc(mpfr('nan')))
 
+    def test_divzero(self):
+        with pytest.raises(ZeroDivisionError):
+            mpfr(1.0) / mpq(0,1)
+        with pytest.raises(ZeroDivisionError):
+            mpfr(1.0) / mpz(0)
+        with pytest.raises(ZeroDivisionError):
+            mpfr(1.0) / 0
+        with pytest.raises(ZeroDivisionError):
+            mpfr(1.0) / 0.0
+        with pytest.raises(ZeroDivisionError):
+            1 / mpfr(0.0)
+
 
 class TestConv(object):
     @pytest.mark.parametrize('n', ['1.5', '0.0', '-0.0', 'inf', '-inf', 'nan'])
