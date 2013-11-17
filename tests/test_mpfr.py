@@ -20,7 +20,19 @@ class TestInit(object):
     def test_init_str(self):
         assert mpfr('0.5') == mpfr(0.5)
         assert mpfr('1.5f99c8', 0, 16) == mpfr('1.3734402656555176')
+        assert mpfr('1.10011', 0, 2) == mpfr('1.59375')
+        assert mpfr('F.kl24v', 0, 62) == mpfr('15.754171055622642')
         assert mpfr('1.5f99c8', 10, 16) == mpfr('1.373',10)
+
+        with pytest.raises(ValueError):
+            # invalid digits
+            mpfr('1.5f99c8h', 0, 16)
+        with pytest.raises(ValueError):
+            # base for mpfr() must be 0 or in the interval 2 ... 62
+            mpfr('1.2145', 10, 1)
+        with pytest.raises(ValueError):
+            # base for mpfr() must be 0 or in the interval 2 ... 62
+            mpfr('1.2145', 10, 63)
 
     @pytest.mark.parametrize('n', ints)
     def test_init_int(self, n):
@@ -43,6 +55,13 @@ class TestInit(object):
         with pytest.raises(TypeError):  # String expected
             mpfr(1,2,3)
 
+    def test_invalid_prec(self):
+        assert mpfr(1.5, 0) == mpfr('1.5')      # Zero precision uses default
+        with pytest.raises(ValueError):
+            mpfr(1.5, 1)
+        assert mpfr(1.5, 2) == mpfr('1.5',2)
+        with pytest.raises(ValueError):
+            mpfr(1.5, 10**20)
 
 class TestMath(object):
     def test_repr(self):
