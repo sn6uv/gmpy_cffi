@@ -197,3 +197,34 @@ class TestConv(object):
         assert int(mpfr(1.6)) == 2
         assert int(mpfr(-1.4)) == -1
         assert int(mpfr(-1.6)) == -2
+
+
+class TestCmp(object):
+    @pytest.mark.parametrize(('a', 'b'), [
+        (mpfr(1.5), 1.4), (mpfr(1.1), 1), (mpfr(1.1), mpz(1)), (mpfr(1.6), mpq(3,2)),
+        (mpfr('1.0e19'), sys.maxsize), (mpfr('2.0e19'), 2*sys.maxsize), (mpfr('3.0e19'), 3*sys.maxsize)])
+    def test_gt(self, a, b):
+        assert a > b
+
+    @pytest.mark.parametrize(('a', 'b'), [
+        (mpfr(1.4), 1.5), (mpfr(0.9), 1), (mpfr(0.9), mpz(1)), (mpfr(1.4), mpq(3,2)),
+        (mpfr('0.5e19'), sys.maxsize), (mpfr('1.5e19'), 2*sys.maxsize), (mpfr('2.0e19'), 3*sys.maxsize)])
+    def test_lt(self, a, b):
+        assert a < b
+
+    @pytest.mark.parametrize(('a', 'b'), [
+        (mpfr(1.5), 1.5), (mpfr(1.0), 1), (mpfr(1.0), mpz(1)), (mpfr(1.5), mpq(3,2))])
+    def test_eq(self, a, b):
+        assert a == b
+
+    def test_ge(self):
+        assert mpfr(1.5) >= mpfr(1.5)
+        assert mpfr(1.5) >= mpfr(1.4)
+
+    def test_le(self):
+        assert mpfr(1.5) <= mpfr(1.5)
+        assert mpfr(1.5) <= mpfr(1.6)
+
+    def test_ne(self):
+        assert mpfr(1.4) != mpfr(1.5)
+        assert mpfr(1.5) != mpfr(-1.5)

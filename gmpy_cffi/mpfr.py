@@ -170,7 +170,7 @@ class mpfr(object):
                 return gmp.mpfr_cmp_ui(self._mpfr, other)
             else:
                 tmp_mpz = _new_mpz()
-                pylong_to_mpz(other, tmp_mpz)
+                _pylong_to_mpz(other, tmp_mpz)
                 result = gmp.mpfr_cmp_z(self._mpfr, tmp_mpz)
                 _del_mpz(tmp_mpz)
                 return result
