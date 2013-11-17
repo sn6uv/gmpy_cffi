@@ -1,6 +1,7 @@
 import sys
 import logging
 
+import gmpy_cffi
 from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.convert import _mpq_to_str, _str_to_mpq, _pyint_to_mpz, _pyint_to_mpq, MAX_UI
 from gmpy_cffi.mpz import mpz, _new_mpz, _del_mpz
@@ -454,7 +455,10 @@ class mpq(object):
         if modulo is not None:
             raise TypeError("mpq.pow() no modulo allowed")
 
-        if isinstance(other, (mpz, int, long)):
+        if isinstance(other, mpq):
+            # XXX Optimize
+            return self ** gmpy_cffi.mpfr(other)
+        elif isinstance(other, (mpz, int, long)):
             other = int(other)
             if 0 <= other <= MAX_UI:
                 res = _new_mpq()
@@ -481,13 +485,8 @@ class mpq(object):
         else:
             return NotImplemented
 
-    def __rpow__(self, other):
-        # XXX Requires mpfr
-        if isinstance(other, (int, long)):
-            return NotImplemented
-        elif isinstance(other, mpz):
-            return NotImplemented
-        elif isinstance(other, mpq):
-            return NotImplemented
-        else:
-            return NotImplemented
+    def __rpow__(self, other, modulo=None):
+        if modulo is not None:
+            raise TypeError("mpq.pow() no modulo allowed")
+
+        return other ** gmpy_cffi.mpfr(self)
