@@ -61,6 +61,9 @@ class TestMath(object):
         assert mpfr('0.5') + mpq(3,2) == mpfr('2.0')
         assert mpfr('0.5') + mpz(1) == mpfr('1.5')
         assert mpfr('0.5') + 1 == mpfr('1.5')
+        assert mpfr('1.2e19') + sys.maxsize == mpfr('2.1223372036854776e+19')
+        assert mpfr('1.2e19') + 2*sys.maxsize == mpfr('3.0446744073709552e+19')
+        assert mpfr('1.2e19') + 3*sys.maxsize == mpfr('3.9670116110564327e+19')
 
     def test_sub(self):
         assert mpfr('1.5') - mpfr('0.5') == mpfr('1.0')
@@ -68,12 +71,18 @@ class TestMath(object):
         assert mpfr('1.5') - mpq(1,2) == mpfr('1.0')
         assert mpfr('1.5') - mpz(1) == mpfr('0.5')
         assert mpfr('1.5') - 1 == mpfr('0.5')
+        assert mpfr('3.2e19') - sys.maxsize == mpfr('2.2776627963145224e+19')
+        assert mpfr('3.2e19') - 2 * sys.maxsize == mpfr('1.3553255926290448e+19')
+        assert mpfr('3.2e19') - 3 * sys.maxsize == mpfr('4.3298838894356726e+18')
 
     def test_rsub(self):
         assert 1.5 - mpfr('0.5') == mpfr('1.0')
         assert mpq(3,2) - mpfr('0.5') == mpfr('1.0')
         assert mpz(1) - mpfr('0.5') == mpfr('0.5')
         assert 1 - mpfr('0.5') == mpfr('0.5')
+        assert sys.maxsize - mpfr('1.2e19') == mpfr('-2.7766279631452242e+18')
+        assert 2*sys.maxsize - mpfr('1.2e19') == mpfr('6.4467440737095516e+18')
+        assert 3*sys.maxsize - mpfr('1.2e19') == mpfr('1.5670116110564327e+19')
 
     def test_mul(self):
         assert mpfr('0.5') * mpfr('1.5') == mpfr('0.75')
@@ -81,6 +90,9 @@ class TestMath(object):
         assert mpfr('0.5') * mpq(3,2) == mpfr('0.75')
         assert mpfr('0.5') * mpz(3) == mpfr('1.5')
         assert mpfr('0.5') * 3 == mpfr('1.5')
+        assert mpfr('1.5') * sys.maxsize == mpfr('1.3835058055282164e+19')
+        assert mpfr('1.5') * (2 * sys.maxsize) == mpfr('2.7670116110564327e+19')
+        assert mpfr('1.5') * (3 * sys.maxsize) == mpfr('4.1505174165846491e+19')
 
     def test_truediv(self):
         assert mpfr('1.5') / mpfr('0.5') == mpfr('3.0')
@@ -88,12 +100,18 @@ class TestMath(object):
         assert mpfr('1.5') / mpq(3,2) == mpfr('1.0')
         assert mpfr('4.5') / mpz(3) == mpfr('1.5')
         assert mpfr('4.5') / 3 == mpfr('1.5')
+        assert mpfr('1.5e19') / sys.maxsize == mpfr('1.6263032587282567')
+        assert mpfr('1.5e19') / (2 * sys.maxsize) == mpfr('0.81315162936412833')
+        assert mpfr('1.5e19') / (3 * sys.maxsize) == mpfr('0.54210108624275222')
 
     def test_rtruediv(self):
         assert 1.5 / mpfr('0.5') == mpfr('3.0')
         assert mpq(3,2) / mpfr('0.5') == mpfr('3.0')
         assert mpz(3) / mpfr('1.5') == mpfr('2.0')
         assert 3 / mpfr('1.5') == mpfr('2.0')
+        assert sys.maxsize / mpfr(1.5e19) == mpfr('0.61489146912365167')
+        assert (2 * sys.maxsize) / mpfr(1.5e19) == mpfr('1.2297829382473033')
+        assert (3 * sys.maxsize) / mpfr(1.5e19) == mpfr('1.8446744073709551')
 
     def test_pow(self):
         assert mpfr('2.5') ** mpfr('1.5') == mpfr('3.9528470752104741')
@@ -101,12 +119,21 @@ class TestMath(object):
         assert mpfr('2.5') ** mpq(3,2) == mpfr('3.9528470752104741')
         assert mpfr('2.5') ** mpz(3) == mpfr('15.625')
         assert mpfr('2.5') ** 3 == mpfr('15.625')
+        assert mpfr('1.5') ** sys.maxsize == mpfr('inf')
+        assert mpfr('1.5') ** (2 * sys.maxsize) == mpfr('inf')
+        assert mpfr('1.5') ** (3 * sys.maxsize) == mpfr('inf')
+        assert mpfr('1.0') ** sys.maxsize == mpfr('1.0')
+        assert mpfr('1.0') ** (2 * sys.maxsize) == mpfr('1.0')
+        assert mpfr('1.0') ** (3 * sys.maxsize) == mpfr('1.0')
 
     def test_rpow(self):
         assert 1.5 ** mpfr('2.5') == mpfr('2.7556759606310752')
         assert mpq(3,2) ** mpfr('2.5') == mpfr('2.7556759606310752')
         assert mpz(3) ** mpfr('2.5') == mpfr('15.588457268119896')
         assert 3 ** mpfr('2.5') == mpfr('15.588457268119896')
+        assert sys.maxsize ** mpfr(1.5) == mpfr('2.8011385487393072e+28')
+        assert (2 * sys.maxsize) ** mpfr(1.5) == mpfr('7.9228162514264338e+28')
+        assert (3 * sys.maxsize) ** mpfr(1.5) == mpfr('1.4555142856368689e+29')
 
     def test_neg(self):
         assert -mpfr(1.5) == mpfr(-1.5)

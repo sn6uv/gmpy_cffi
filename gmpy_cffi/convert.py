@@ -126,7 +126,7 @@ def _pyint_to_mpfr(n, a):
     else:
         assert isinstance(n, long)
         tmp_mpz = ffi.new('mpz_t')
-        gmp.mpfz_init(tmp_mpz)
+        gmp.mpz_init(tmp_mpz)
         _pylong_to_mpz(n, tmp_mpz)
         gmp.mpfr_set_z(a, tmp_mpz, gmp.MPFR_RNDN)
         gmp.mpz_clear(tmp_mpz)

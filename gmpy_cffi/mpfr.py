@@ -3,9 +3,8 @@ import sys
 from gmpy_cffi.mpz import mpz, _new_mpz, _del_mpz
 from gmpy_cffi.mpq import mpq
 from gmpy_cffi.interface import gmp, ffi
-from gmpy_cffi.convert import _mpfr_to_str, _str_to_mpfr, _pyint_to_mpfr, _pylong_to_mpz
+from gmpy_cffi.convert import _mpfr_to_str, _str_to_mpfr, _pyint_to_mpfr, _pylong_to_mpz, MAX_UI
 
-# from gmpy_cffi.convert import _pyint_to_mpz, _pylong_to_mpz, _mpz_to_pylong, _mpz_to_str, MAX_UI
 
 if sys.version > '3':
     long = int
@@ -357,11 +356,10 @@ class mpfr(object):
             elif 0 <= other <= MAX_UI:
                 gmp.mpfr_ui_div(res, other, self._mpfr, gmp.MPFR_RNDN)
             else:
-                pass
                 tmp_mpz = _new_mpz()
                 _pylong_to_mpz(other, tmp_mpz)
-                gmp.mpfr_div_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
                 gmp.mpfr_set_z(res, tmp_mpz, gmp.MPFR_RNDN)
+                gmp.mpfr_div(res, res, self._mpfr, gmp.MPFR_RNDN)
                 _del_mpz(tmp_mpz)
         else:
             raise TypeError
