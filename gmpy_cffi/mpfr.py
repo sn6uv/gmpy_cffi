@@ -120,6 +120,7 @@ class mpfr(object):
             gmp.mpfr_set_zero(a, 1)
         elif len(args) == 3:
             if isinstance(args[0], str):
+                print "hi"
                 _str_to_mpfr(args[0], args[2], a)
             else:
                 raise TypeError('function takes at most 2 arguments (%i given)' % len(args))
@@ -134,6 +135,8 @@ class mpfr(object):
                 gmp.mpfr_set_z(a, args[0]._mpz, gmp.MPFR_RNDN)
             elif isinstance(args[0], mpq):
                 gmp.mpfr_set_q(a, args[0]._mpq, gmp.MPFR_RNDN)
+            else:
+                raise TypeError('cannot construct mpfr from %s.' % args[0])
 
     def __str__(self):
         if self._mpfr_str is None:

@@ -111,11 +111,14 @@ def _mpq_to_str(a, base):
 
 
 def _str_to_mpq(s, base, a):
-    if base == 0 or 2 <= base <= 62:
-        if gmp.mpq_set_str(a, s, base) == -1:
-            raise ValueError("Can't create mpq from %s with base %s" % (s, base))
+    if isinstance(base, (int, long)):
+        if base == 0 or 2 <= base <= 62:
+            if gmp.mpq_set_str(a, s, base) == -1:
+                raise ValueError("Can't create mpq from %s with base %s" % (s, base))
+        else:
+            raise ValueError('base must be 0 or 2..62, not %s' % base)
     else:
-        raise ValueError('base must be 0 or 2..62, not %s' % base)
+        raise TypeError('an integer is required')
 
 
 def _pyint_to_mpfr(n, a):
@@ -144,9 +147,12 @@ def _mpfr_to_str(a):
 
 
 def _str_to_mpfr(s, base, a):
-    if isinstance(base, (int, long)) and 2 <= base <= 62:
-        if gmp.mpfr_set_str(a, s, base, gmp.MPFR_RNDN) == -1:
-            raise ValueError(
-                "Can't create mpfr from %s with base %s" % (s, base))
+    if isinstance(base, (int, long)):
+        if base == 0 or 2 <= base <= 62:
+            if gmp.mpfr_set_str(a, s, base, gmp.MPFR_RNDN) == -1:
+                raise ValueError(
+                    "Can't create mpfr from %s with base %s" % (s, base))
+        else:
+            raise ValueError('base must be 0 or 2..62, not %s' % base)
     else:
-        raise ValueError('base must be 0 or 2..62, not %s' % base)
+        raise TypeError('an integer is required')

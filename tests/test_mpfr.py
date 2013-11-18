@@ -66,6 +66,29 @@ class TestInit(object):
         with pytest.raises(ValueError):
             mpfr(1.5, 10**20)
 
+    @pytest.mark.parametrize('n', invalids)
+    def test_init_invalid(self, n):
+        with pytest.raises(TypeError):
+            mpfr(n)
+        with pytest.raises(TypeError):
+            mpfr(1, n)
+        with pytest.raises(TypeError):
+            mpfr(n, 0)
+        with pytest.raises(TypeError):
+            mpfr(n, 53)
+        with pytest.raises(TypeError):
+            mpfr('1', n)
+        with pytest.raises(TypeError):
+            mpfr('1', n, 10)
+        with pytest.raises(TypeError):
+            mpfr('1', 53, n)
+        with pytest.raises(TypeError):
+            mpfr('1', 0, n)
+        with pytest.raises(TypeError):
+            mpfr(n, 0, 10)
+        with pytest.raises(TypeError):
+            mpfr(n, 53, 10)
+
 class TestMath(object):
     def test_repr(self):
         assert repr(mpfr(1.5)) == "mpfr('1.5')"
