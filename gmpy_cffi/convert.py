@@ -20,7 +20,7 @@ def _pyint_to_mpz(n, a):
     elif sys.maxsize < n <= MAX_UI:
         gmp.mpz_set_ui(a, n)
     else:
-        _pylong_to_mpz(n, a)
+        gmp.mpz_set_str(a, hex(n).rstrip('L'), 0)
 
 
 def _pylong_to_mpz(n, a):
@@ -30,27 +30,7 @@ def _pylong_to_mpz(n, a):
     :type n: long
     :type a: mpz_t
     """
-
-    neg = n < 0
-    n = abs(n)
-    #tmp = ffi.new("uint64_t[]", (n.bit_length() + 63) // 64)
-    #count = len(tmp)
-    #for i in range(count):
-    #    n, v = divmod(n, 1 << 64)
-    #    tmp[i] = v
-    #gmp.mpz_import(a, count, -1, 8, 0, 0, tmp)
-    tmp = array.array('L')
-    size = tmp.itemsize
-    numb = (8 * size)
-    mask = ~(~0 << numb)
-    while n:
-        v = n & mask
-        n = n >> numb
-        tmp.append(v)
-    addr, count = tmp.buffer_info()
-    gmp.mpz_import(a, count, -1, size, 0, 0, ffi.cast('void *', addr))
-    if neg:
-        gmp.mpz_neg(a, a)
+    gmp.mpz_set_str(a, hex(n).rstrip('L'), 0)
 
 
 def _mpz_to_pylong(a):
