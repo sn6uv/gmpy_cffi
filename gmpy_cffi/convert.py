@@ -1,5 +1,6 @@
 import sys
 import array
+from math import log10
 
 from gmpy_cffi.interface import gmp, ffi
 
@@ -110,8 +111,48 @@ def _mpq_to_str(a, base):
 
 
 def _str_to_mpq(s, base, a):
-    if base == 0 or 2 <= base <= 62:
-        if gmp.mpq_set_str(a, s, base) == -1:
-            raise ValueError("Can't create mpq from %s with base %s" % (s, base))
+    if isinstance(base, (int, long)):
+        if base == 0 or 2 <= base <= 62:
+            if gmp.mpq_set_str(a, s, base) == -1:
+                raise ValueError("Can't create mpq from %s with base %s" % (s, base))
+        else:
+            raise ValueError('base must be 0 or 2..62, not %s' % base)
     else:
-        raise ValueError('base must be 0 or 2..62, not %s' % base)
+        raise TypeError('an integer is required')
+
+
+def _pyint_to_mpfr(n, a):
+    if -sys.maxsize - 1 <= n <= sys.maxsize:
+        gmp.mpfr_set_si(a, n, gmp.MPFR_RNDN)
+    elif sys.maxsize < n <= MAX_UI:
+        gmp.mpfr_set_ui(a, n, gmp.MPFR_RNDN)
+    else:
+        assert isinstance(n, long)
+        tmp_mpz = ffi.new('mpz_t')
+        gmp.mpz_init(tmp_mpz)
+        _pylong_to_mpz(n, tmp_mpz)
+        gmp.mpfr_set_z(a, tmp_mpz, gmp.MPFR_RNDN)
+        gmp.mpz_clear(tmp_mpz)
+
+
+def _mpfr_to_str(a):
+    precision = int(log10(2) * gmp.mpfr_get_prec(a) + 2)
+    buf = ffi.new('char []', precision + 10)
+    fmtstr = "%.{0}Rg".format(precision)
+    buflen = gmp.mpfr_sprintf(buf, fmtstr, a)
+    pybuf = ffi.string(buf)
+    if gmp.mpfr_number_p(a) and '.' not in pybuf:
+        pybuf = pybuf + '.0'
+    return pybuf
+
+
+def _str_to_mpfr(s, base, a):
+    if isinstance(base, (int, long)):
+        if base == 0 or 2 <= base <= 62:
+            if gmp.mpfr_set_str(a, s, base, gmp.MPFR_RNDN) == -1:
+                raise ValueError(
+                    "Can't create mpfr from %s with base %s" % (s, base))
+        else:
+            raise ValueError('base must be 0 or 2..62, not %s' % base)
+    else:
+        raise TypeError('an integer is required')

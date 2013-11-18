@@ -1,6 +1,6 @@
 import sys
 import pytest
-from gmpy_cffi import mpq, mpz
+from gmpy_cffi import mpq, mpz, mpfr
 from math import sqrt
 
 
@@ -272,10 +272,9 @@ class TestMath(object):
         with pytest.raises(ZeroDivisionError):
             mpq(0,1) ** -3
 
-    @pytest.mark.xfail(reason="mpfr not yet implemented")
     def test_rpow_mpq(self):
         assert 1 ** mpq(1,1) == mpfr('1.0')
-        assert 2**mpq(1,2) == mpz(2) ** (1,2) == mpfr('1.4142135623730951') == mpfr(sqrt(2))
+        assert 2**mpq(1,2) == mpz(2) ** mpq(1,2) == mpfr('1.4142135623730951') == mpfr(sqrt(2))
         assert sys.maxsize ** mpq(1,2) == mpfr(sqrt(sys.maxsize))
         assert mpq(2, 3) ** mpq(5,7) == mpfr('0.74854950799570052')
         assert (-2) ** mpq(1,2) == mpfr('nan')
@@ -284,6 +283,8 @@ class TestMath(object):
     def test_pow_mod(self):
         with pytest.raises(TypeError):
             pow(mpq(2,1), 2, 2)
+        with pytest.raises(TypeError):
+            pow(2, mpq(2,1), 2)
 
     def test_pow_big_exp(self):
         with pytest.raises(ValueError):
