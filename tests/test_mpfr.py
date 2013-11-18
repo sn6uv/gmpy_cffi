@@ -2,6 +2,7 @@ from __future__ import division
 
 import sys
 import math
+import random
 import pytest
 
 from gmpy_cffi import mpfr, mpq, mpz
@@ -9,6 +10,8 @@ from math import sqrt
 
 
 invalids = [(), [], set(), dict(), lambda x: x**2]
+small_floats = [random.random() for _ in range(5)]
+large_floats = [random.uniform(sys.float_info.min, sys.float_info.max) for _ in range(5)]
 
 
 class TestInit(object):
@@ -225,12 +228,14 @@ class TestMath(object):
 
 
 class TestConv(object):
-    @pytest.mark.parametrize('n', ['1.5', '0.0', '-0.0', 'inf', '-inf', 'nan'])
+    def test_float_special(self):
+        assert math.isnan(float(mpfr('nan')))
+        assert float(mpfr('inf')) == float('inf')
+        assert float(mpfr('-inf')) == float('-inf')
+
+    @pytest.mark.parametrize('n', small_floats + large_floats)
     def test_float(self, n):
-        if n == 'nan': # float('nan') != float('nan')
-            assert math.isnan(float(mpfr(n)))
-        else:
-            assert float(mpfr(n)) == float(n)
+        assert float(mpfr(n)) == n
 
     def test_int(self):
         assert int(mpfr(0.0)) == 0
@@ -316,3 +321,13 @@ class TestCmp(object):
             mpfr('1.5') <= n
         with pytest.raises(TypeError):
             mpfr('1.5') != n
+
+    def test_hash_special(self):
+        assert hash(mpfr()) == hash(mpfr(0.0, 100)) == 0
+        assert hash(mpfr('inf')) == hash(float('inf'))
+        assert hash(mpfr('-inf')) == hash(float('-inf'))
+        assert hash(mpfr('nan')) == hash(float('nan'))
+
+    @pytest.mark.parametrize('n', small_floats + large_floats)
+    def test_hash(self, n):
+        assert hash(mpfr(n)) == hash(n)

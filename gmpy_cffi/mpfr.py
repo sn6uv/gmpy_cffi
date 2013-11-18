@@ -207,6 +207,10 @@ class mpfr(object):
     def __le__(self, other):
         return not self > other
 
+    def __hash__(self):
+        # XXX Optimize (see gmpy / how floats are hashed within python)
+        return hash(float(self))
+
     def __add__(self, other):
         res = _new_mpfr(prec=_min_prec(self, other))
         if isinstance(other, mpfr):
