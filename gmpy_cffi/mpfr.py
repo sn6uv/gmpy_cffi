@@ -29,8 +29,8 @@ def _new_mpfr(prec=0):
 
     if isinstance(prec, (int, long)):
         if not (prec == 0 or gmp.MPFR_PREC_MIN <= prec <= gmp.MPFR_PREC_MAX):
-            raise ValueError( "invalid prec %i (wanted %s <= prec <= %s)" % (
-                    prec, gmp.MPFR_PREC_MIN, gmp.MPFR_PREC_MAX))
+            raise ValueError("invalid prec %i (wanted %s <= prec <= %s)" % (
+                prec, gmp.MPFR_PREC_MIN, gmp.MPFR_PREC_MAX))
     else:
         raise TypeError('an integer is required')
 
@@ -120,7 +120,6 @@ class mpfr(object):
             gmp.mpfr_set_zero(a, 1)
         elif len(args) == 3:
             if isinstance(args[0], str):
-                print "hi"
                 _str_to_mpfr(args[0], args[2], a)
             else:
                 raise TypeError('function takes at most 2 arguments (%i given)' % len(args))
