@@ -5,7 +5,7 @@ import math
 import random
 import pytest
 
-from gmpy_cffi import mpfr, mpq, mpz
+from gmpy_cffi import mpfr, mpq, mpz, isinf, isnan
 from math import sqrt
 
 
@@ -354,3 +354,25 @@ class TestCmp(object):
     @pytest.mark.parametrize('n', small_floats + large_floats)
     def test_hash(self, n):
         assert hash(mpfr(n)) == hash(n)
+
+
+class TestOther(object):
+    def test_isinf(self):
+        assert not isinf(mpfr(1.5))
+        assert not isinf(mpz(1))
+        assert not isinf(mpq(1,3))
+        assert isinf(mpfr('inf'))
+        assert isinf(mpfr('-inf'))
+        assert not isinf(mpfr('nan'))
+        with pytest.raises(TypeError):
+            isinf([])
+
+    def test_isnan(self):
+        assert not isnan(mpfr(1.5))
+        assert not isnan(mpz(1))
+        assert not isnan(mpq(1,3))
+        assert not isnan(mpfr('inf'))
+        assert not isnan(mpfr('-inf'))
+        assert isnan(mpfr('nan'))
+        with pytest.raises(TypeError):
+            isnan([])

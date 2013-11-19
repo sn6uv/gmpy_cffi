@@ -1,4 +1,5 @@
 import sys
+import math
 
 from gmpy_cffi.mpz import mpz, _new_mpz, _del_mpz
 from gmpy_cffi.mpq import mpq
@@ -76,6 +77,38 @@ def _min_prec(*args):
     if precs:
         return min(precs)
     return None
+
+
+def isinf(x):
+    """
+    isinf(x) -> boolean
+
+    Return True if x is +Infinity or -Infinity.
+    """
+    if isinstance(x, mpfr):
+        return bool(gmp.mpfr_inf_p(x._mpfr))
+    elif isinstance(x, float):
+        return math.isinf(x)
+    elif isinstance(x, (int, long, mpz, mpq)):
+        return False
+    else:
+        raise TypeError('isinf() argument type not supported')
+
+
+def isnan(x):
+    """
+    isnan(x) -> boolean
+
+    Return True if x is NaN (Not-A-Number).
+    """
+    if isinstance(x, mpfr):
+        return bool(gmp.mpfr_nan_p(x._mpfr))
+    elif isinstance(x, float):
+        return math.is_nan(x)
+    elif isinstance(x, (int, long, mpz, mpq)):
+        return False
+    else:
+        raise TypeError('isinf() argument type not supported')
 
 
 class mpfr(object):
