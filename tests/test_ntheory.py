@@ -1,6 +1,6 @@
 import pytest
 
-from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, lcm
+from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm
 
 
 class Test_ntheory(object):
@@ -45,6 +45,14 @@ class Test_ntheory(object):
         assert gcd(323, 340) == gcd(mpz(323), 340) == gcd(323, mpz(340)) == gcd(mpz(323), mpz(340)) == mpz(17)
         with pytest.raises(TypeError):
             gcd(mpq(1.5), 2)
+        with pytest.raises(TypeError):
+            gcd(3)
+
+    def test_gcdext(self):
+        assert gcdext(15, 25) == (mpz(5), mpz(2), mpz(-1))
+        assert gcdext(323, 340) == gcdext(mpz(323), 340) == gcdext(323, mpz(340)) == gcdext(mpz(323), mpz(340)) == (mpz(17), mpz(-1), mpz(1))
+        with pytest.raises(TypeError):
+            gcdext(mpq(1.5), 2)
         with pytest.raises(TypeError):
             gcd(3)
 
