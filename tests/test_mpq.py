@@ -1,17 +1,24 @@
 import sys
 import pytest
+import itertools
 from gmpy_cffi import mpq, mpz, mpfr
 from math import sqrt
 
 
+PY3 = sys.version_info >= (3, 0)
+
+
+if PY3:
+    long = int
+
+
+floats = [0.0, 1.0, 1.5, 1e15 + 0.9, -1.5e15 + 0.9]
 invalids = [(), [], set(), dict(), lambda x: x**2]
+ints = [1, -1, 2, -123, 456, sys.maxsize, -sys.maxsize - 1, 2*sys.maxsize, -2*sys.maxsize]
+int_pairs = [(i,j) for i in ints for j in ints]
 
 
 class TestInit(object):
-    ints = [1, -1, 2, -123, 456, sys.maxsize, -sys.maxsize - 1, 2*sys.maxsize, -2*sys.maxsize]
-    floats = [0.0, 1.0, 1.5, 1e15 + 0.9, -1.5e15 + 0.9]
-    int_pairs = [(i,j) for i in ints for j in ints]
-
     # Length 0
     def test_init_empty(self):
         assert mpq() == mpq(0, 1)
@@ -239,7 +246,7 @@ class TestMath(object):
         with pytest.raises(ZeroDivisionError):
             mpq(1, 2) // 0
         with pytest.raises(ZeroDivisionError):
-            mpq(1, 2) // 0L
+            mpq(1, 2) // long(0)
 
     def test_rdiv(self):
         assert mpq(1, 3) / mpq(1, 2) == mpq(2, 3)

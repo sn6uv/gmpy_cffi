@@ -5,7 +5,7 @@ import pytest
 from gmpy_cffi import mpz, MAX_UI
 
 
-PY3 = sys.version_info >= (3,0)
+PY3 = sys.version_info >= (3, 0)
 
 
 if PY3:

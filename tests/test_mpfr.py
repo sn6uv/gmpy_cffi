@@ -9,6 +9,9 @@ from gmpy_cffi import mpfr, mpq, mpz, isinf, isnan
 from math import sqrt
 
 
+PY3 = sys.version_info >= (3, 0)
+
+
 invalids = [(), [], set(), dict(), lambda x: x**2]
 small_floats = [random.random() for _ in range(5)]
 large_floats = [random.uniform(sys.float_info.min, sys.float_info.max) for _ in range(5)]
@@ -88,6 +91,7 @@ class TestInit(object):
             mpfr(n, 0, 10)
         with pytest.raises(TypeError):
             mpfr(n, 53, 10)
+
 
 class TestMath(object):
     def test_repr(self):
@@ -219,16 +223,32 @@ class TestMath(object):
     def test_floor(self):
         assert math.floor(mpfr(1.5)) == 1.0
         assert math.floor(mpfr(-1.5)) == -2.0
-        assert math.floor(mpfr('inf')) == float('inf')
-        assert math.floor(mpfr('-inf')) == float('-inf')
-        assert math.isnan(math.floor(mpfr('nan')))
+        if PY3:
+            with pytest.raises(OverflowError):
+                math.floor(mpfr('inf'))
+            with pytest.raises(OverflowError):
+                math.floor(mpfr('-inf'))
+            with pytest.raises(ValueError):
+                math.floor(mpfr('nan'))
+        else:
+            assert math.floor(mpfr('inf')) == float('inf')
+            assert math.floor(mpfr('-inf')) == float('-inf')
+            assert math.isnan(math.floor(mpfr('nan')))
 
     def test_ceil(self):
         assert math.ceil(mpfr(1.5)) == 2.0
         assert math.ceil(mpfr(-1.5)) == -1.0
-        assert math.ceil(mpfr('inf')) == float('inf')
-        assert math.ceil(mpfr('-inf')) == float('-inf')
-        assert math.isnan(math.ceil(mpfr('nan')))
+        if PY3:
+            with pytest.raises(OverflowError):
+                math.ceil(mpfr('inf'))
+            with pytest.raises(OverflowError):
+                math.ceil(mpfr('-inf'))
+            with pytest.raises(ValueError):
+                math.floor(mpfr('nan'))
+        else:
+            assert math.ceil(mpfr('inf')) == float('inf')
+            assert math.ceil(mpfr('-inf')) == float('-inf')
+            assert math.isnan(math.ceil(mpfr('nan')))
 
     def test_trunc(self):
         assert math.trunc(mpfr(1.5)) == 1.0
@@ -298,6 +318,7 @@ class TestConv(object):
             mpfr('1.5') ** n
         with pytest.raises(TypeError):
             n ** mpfr('1.5')
+
 
 class TestCmp(object):
     @pytest.mark.parametrize(('a', 'b'), [
