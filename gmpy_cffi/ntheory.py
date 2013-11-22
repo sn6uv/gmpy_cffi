@@ -211,3 +211,31 @@ def fib2(n):
     res, res1 = _new_mpz(), _new_mpz()
     gmp.mpz_fib2_ui(res, res1, n)
     return (mpz._from_c_mpz(res), mpz._from_c_mpz(res1))
+
+
+def lucas(n):
+    """
+    lucas(n) -> mpz
+
+    Return the n-th Lucas number.
+    """
+    n = _check_int('lucas', 'n', n)
+    if n < 0:
+        raise ValueError('Lucas of negative number')
+    res = _new_mpz()
+    gmp.mpz_lucnum_ui(res, n)
+    return mpz._from_c_mpz(res)
+
+
+def lucas2(n):
+    """
+    lucas2(n) -> tuple
+
+    Return a 2-tuple with the (n-1)-th and n-th Lucas numbers.
+    """
+    n = _check_int('lucas2', 'n', n)
+    if n < 0:
+        raise ValueError('Lucas of negative number')
+    res, res1 = _new_mpz(), _new_mpz()
+    gmp.mpz_lucnum2_ui(res, res1, n)
+    return (mpz._from_c_mpz(res), mpz._from_c_mpz(res1))

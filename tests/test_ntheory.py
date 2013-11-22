@@ -1,6 +1,6 @@
 import pytest
 
-from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert, jacobi, legendre, kronecker, fac, bincoef, fib, fib2
+from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert, jacobi, legendre, kronecker, fac, bincoef, fib, fib2, lucas, lucas2
 
 
 class Test_ntheory(object):
@@ -130,3 +130,17 @@ class Test_ntheory(object):
             fib2(-3)
         with pytest.raises(TypeError):
             fib2(45894575342551390123)
+
+    def test_lucas(self):
+        assert lucas(14) == mpz(843)
+        with pytest.raises(ValueError):
+            lucas(-1)
+        with pytest.raises(TypeError):
+            lucas(45894575342551390123)
+
+    def test_lucas2(self):
+        assert lucas2(15) == (mpz(1364), mpz(843))
+        with pytest.raises(ValueError):
+            lucas2(-1)
+        with pytest.raises(TypeError):
+            lucas2(45894575342551390123)
