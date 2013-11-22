@@ -383,9 +383,9 @@ class TestCmp(object):
         with pytest.raises(TypeError):
             mpz(1) < n
         with pytest.raises(TypeError):
-            mpz(1) == n
+            mpz(1) >= n
         with pytest.raises(TypeError):
-            mpz(1) != n
+            mpz(1) <= n
 
     @pytest.mark.xfail(reason='cpython __hash__ implementation bug (feature)')
     def test_hash_neg1(self):
@@ -394,5 +394,5 @@ class TestCmp(object):
     def test_hash(self):
         assert hash(mpz(1)) == 1
         assert hash(mpz(-2)) == -2
-        assert hash(mpz(sys.maxint)) == sys.maxint
-        assert hash(mpz(sys.maxint+1)) == -sys.maxint - 1
+        assert hash(mpz(sys.maxsize)) == sys.maxsize
+        assert hash(mpz(sys.maxsize+1)) == -sys.maxsize - 1
