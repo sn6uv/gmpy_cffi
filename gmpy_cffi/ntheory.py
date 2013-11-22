@@ -4,6 +4,15 @@ from gmpy_cffi.interface import gmp
 from gmpy_cffi.mpz import mpz, _new_mpz
 
 
+PY3 = sys.version_info >= (3, 0)
+
+
+if PY3:
+    long = int
+    xrange = range
+
+
+
 def is_prime(x, n=25):
     """
     is_prime(x[, n=25]) -> bool
