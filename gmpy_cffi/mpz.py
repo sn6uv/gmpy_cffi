@@ -451,6 +451,8 @@ class mpz(object):
     def __nonzero__(self):
         return gmp.mpz_cmp_ui(self._mpz, 0) != 0
 
+    __bool__ = __nonzero__
+
     def __pow__(self, power, modulo=None):
         if not isinstance(power, (int, long, mpz)):
             return NotImplemented

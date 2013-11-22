@@ -451,6 +451,8 @@ class mpq(object):
     def __nonzero__(self):
         return gmp.mpq_sgn(self._mpq) != 0
 
+    __bool__ = __nonzero__
+
     def __pow__(self, other, modulo=None):
         if modulo is not None:
             raise TypeError("mpq.pow() no modulo allowed")
