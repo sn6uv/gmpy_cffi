@@ -159,3 +159,57 @@ def fac(n):
     res = _new_mpz()
     gmp.mpz_fac_ui(res, n)
     return mpz._from_c_mpz(res)
+
+
+def bincoef(x, n):
+    """
+    bincoef(x, n) -> mpz
+
+    Return the binomial coefficient ('x over n'). n >= 0.
+    """
+    if isinstance(n, mpz):
+        n = int(n)
+    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
+        raise ValueError("bincoef() expected n to be an integer")
+    if n < 0:
+        raise ValueError('binomial coefficient with negative k')
+    res = _new_mpz()
+    if isinstance(x, mpz):
+        gmp.mpz_bin_ui(res, x._mpz, n)
+    elif isinstance(x, (int, long)) and -sys.maxsize - 1 <= x <= sys.maxsize:
+        gmp.mpz_bin_uiui(res, x, n)
+    return mpz._from_c_mpz(res)
+
+
+def fib(n):
+    """
+    fib(n) -> mpz
+
+    Return the n-th Fibonacci number.
+    """
+    if isinstance(n, mpz):
+        n = int(n)
+    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
+        raise ValueError("fib() expected an integer")
+    if n < 0:
+        raise ValueError('Fibonacci of negative number')
+    res = _new_mpz()
+    gmp.mpz_fib_ui(res, n)
+    return mpz._from_c_mpz(res)
+
+
+def fib2(n):
+    """
+    fib2(n) -> tuple
+
+    Return a 2-tuple with the (n-1)-th and n-th Fibonacci numbers.
+    """
+    if isinstance(n, mpz):
+        n = int(n)
+    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
+        raise ValueError("fib2() expected an integer")
+    if n < 0:
+        raise ValueError('Fibonacci of negative number')
+    res, res1 = _new_mpz(), _new_mpz()
+    gmp.mpz_fib2_ui(res, res1, n)
+    return (mpz._from_c_mpz(res), mpz._from_c_mpz(res1))

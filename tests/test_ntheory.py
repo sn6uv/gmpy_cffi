@@ -1,6 +1,6 @@
 import pytest
 
-from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert, jacobi, legendre, kronecker, fac
+from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert, jacobi, legendre, kronecker, fac, bincoef, fib, fib2
 
 
 class Test_ntheory(object):
@@ -108,3 +108,25 @@ class Test_ntheory(object):
             fac(45894575342551390123)
         # GNU MP: Cannot allocate memory (size=429440431952)
         # fac(3435523455234)
+
+    def test_bincoef(self):
+        assert bincoef(1, 4) == mpz(0)
+        assert bincoef(19, 3) == mpz(969)
+        with pytest.raises(ValueError):
+            bincoef(1, -3)
+        with pytest.raises(ValueError):
+            bincoef(1, 2534253426342543253426)
+
+    def test_fib(self):
+        assert fib(4) == mpz(3)
+        with pytest.raises(ValueError):
+            fib(-3)
+        with pytest.raises(ValueError):
+            fib(45894575342551390123)
+
+    def test_fib2(self):
+        assert fib2(4) == (mpz(3), mpz(2))
+        with pytest.raises(ValueError):
+            fib2(-3)
+        with pytest.raises(ValueError):
+            fib2(45894575342551390123)

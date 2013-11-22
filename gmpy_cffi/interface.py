@@ -95,10 +95,10 @@ ffi.cdef("""
     // void mpz_2fac_ui (mpz_t rop, unsigned long int n);
     // void mpz_mfac_uiui (mpz_t rop, unsigned long int n, unsigned long int m);
     // void mpz_primorial_ui (mpz_t rop, unsigned long int n);
-    // void mpz_bin_ui (mpz_t rop, const mpz_t n, unsigned long int k);
-    // void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
-    // void mpz_fib_ui (mpz_t fn, unsigned long int n);
-    // void mpz_fib2_ui (mpz_t fn, mpz_t fnsub1, unsigned long int n);
+    void mpz_bin_ui (mpz_t rop, const mpz_t n, unsigned long int k);
+    void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
+    void mpz_fib_ui (mpz_t fn, unsigned long int n);
+    void mpz_fib2_ui (mpz_t fn, mpz_t fnsub1, unsigned long int n);
     // void mpz_lucnum_ui (mpz_t ln, unsigned long int n);
     // void mpz_lucnum2_ui (mpz_t ln, mpz_t lnsub1, unsigned long int n);
     
