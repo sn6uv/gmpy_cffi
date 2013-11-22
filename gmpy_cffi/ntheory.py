@@ -12,7 +12,6 @@ if PY3:
     xrange = range
 
 
-
 def is_prime(x, n=25):
     """
     is_prime(x[, n=25]) -> bool
@@ -80,4 +79,30 @@ def gcd(a, b):
 
     res = _new_mpz()
     gmp.mpz_gcd(res, a._mpz, b._mpz)
+    return mpz._from_c_mpz(res)
+
+
+def lcm(a, b):
+    """
+    lcm(a, b) -> mpz
+
+    Return the lowest common multiple of integers a and b.
+    """
+
+    if isinstance(a, mpz):
+        pass
+    elif isinstance(a, (int, long)):
+        a = mpz(a)
+    else:
+        raise TypeError('lcm() expected integer a got %s' % type(a))
+
+    if isinstance(b, mpz):
+        pass
+    elif isinstance(b, (int, long)):
+        b = mpz(b)
+    else:
+        raise TypeError('lcm() expected integer b got %s' % type(b))
+
+    res = _new_mpz()
+    gmp.mpz_lcm(res, a._mpz, b._mpz)
     return mpz._from_c_mpz(res)
