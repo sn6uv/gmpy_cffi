@@ -1,6 +1,6 @@
 import pytest
 
-from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert, jacobi, legendre, kronecker
+from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert, jacobi, legendre, kronecker, fac
 
 
 class Test_ntheory(object):
@@ -98,3 +98,13 @@ class Test_ntheory(object):
         assert kronecker(0, 3) == 0
         assert kronecker(3, -1) == 1
         assert kronecker(3, 2) == -1
+
+    def test_fac(self):
+        assert fac(0) == 1
+        assert fac(10) == mpz(3628800)
+        with pytest.raises(ValueError):
+            fac(-1)
+        with pytest.raises(ValueError):
+            fac(45894575342551390123)
+        # GNU MP: Cannot allocate memory (size=429440431952)
+        # fac(3435523455234)

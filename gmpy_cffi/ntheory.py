@@ -31,7 +31,7 @@ def is_prime(x, n=25):
     to n Miller-Rabin tests are performed.
     """
     x = _check_mpz('is_prime', 'x', x)
-    if not (isinstance(n, int) and n <= sys.maxsize):
+    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
         raise TypeError('is_prime() expected integer n got %s' % type(n))
     if n <= 0:
         raise ValueError("is_prime repitition count must be positive")
@@ -140,3 +140,22 @@ def kronecker(x, y):
     x = _check_mpz('kronecker', 'x', x)
     y = _check_mpz('kronecker', 'y', y)
     return gmp.mpz_kronecker(x._mpz, y._mpz)
+
+
+def fac(n):
+    """
+    fac(n) -> mpz
+
+    Return the exact factorial of n.
+
+    See factorial(n) to get the floating-point approximation.
+    """
+    if isinstance(n, mpz):
+        n = int(n)
+    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
+        raise ValueError("fac() requires an 'int' argument")
+    if n < 0:
+        raise ValueError('fac() of negative number')
+    res = _new_mpz()
+    gmp.mpz_fac_ui(res, n)
+    return mpz._from_c_mpz(res)

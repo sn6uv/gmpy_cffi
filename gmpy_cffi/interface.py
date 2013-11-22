@@ -91,7 +91,7 @@ ffi.cdef("""
     // int mpz_kronecker_ui (const mpz_t a, unsigned long b);
     // int mpz_si_kronecker (long a, const mpz_t b);
     // int mpz_ui_kronecker (unsigned long a, const mpz_t b);
-    // void mpz_fac_ui (mpz_t rop, unsigned long int n);
+    void mpz_fac_ui (mpz_t rop, unsigned long int n);
     // void mpz_2fac_ui (mpz_t rop, unsigned long int n);
     // void mpz_mfac_uiui (mpz_t rop, unsigned long int n, unsigned long int m);
     // void mpz_primorial_ui (mpz_t rop, unsigned long int n);
