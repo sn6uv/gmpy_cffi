@@ -22,6 +22,15 @@ def _check_mpz(function_name, value_name, value):
             function_name, value_name, type(value)))
 
 
+def _check_int(function_name, value_name, value):
+    if isinstance(value, mpz):
+        value = int(value)
+    if not (isinstance(value, (int, long)) and -sys.maxsize - 1 <= value <= sys.maxsize):
+        raise TypeError('%s() expected integer %s got %s' % (
+            function_name, value_name, type(value)))
+    return value
+
+
 def is_prime(x, n=25):
     """
     is_prime(x[, n=25]) -> bool
@@ -31,8 +40,7 @@ def is_prime(x, n=25):
     to n Miller-Rabin tests are performed.
     """
     x = _check_mpz('is_prime', 'x', x)
-    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
-        raise TypeError('is_prime() expected integer n got %s' % type(n))
+    n = _check_int('is_prime', 'n', n)
     if n <= 0:
         raise ValueError("is_prime repitition count must be positive")
     return gmp.mpz_probab_prime_p(x._mpz, n) != 0
@@ -150,10 +158,7 @@ def fac(n):
 
     See factorial(n) to get the floating-point approximation.
     """
-    if isinstance(n, mpz):
-        n = int(n)
-    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
-        raise ValueError("fac() requires an 'int' argument")
+    n = _check_int('fac', 'n', n)
     if n < 0:
         raise ValueError('fac() of negative number')
     res = _new_mpz()
@@ -167,10 +172,7 @@ def bincoef(x, n):
 
     Return the binomial coefficient ('x over n'). n >= 0.
     """
-    if isinstance(n, mpz):
-        n = int(n)
-    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
-        raise ValueError("bincoef() expected n to be an integer")
+    n = _check_int('bincoef', 'n', n)
     if n < 0:
         raise ValueError('binomial coefficient with negative k')
     res = _new_mpz()
@@ -178,6 +180,8 @@ def bincoef(x, n):
         gmp.mpz_bin_ui(res, x._mpz, n)
     elif isinstance(x, (int, long)) and -sys.maxsize - 1 <= x <= sys.maxsize:
         gmp.mpz_bin_uiui(res, x, n)
+    else:
+        raise TypeError
     return mpz._from_c_mpz(res)
 
 
@@ -187,10 +191,7 @@ def fib(n):
 
     Return the n-th Fibonacci number.
     """
-    if isinstance(n, mpz):
-        n = int(n)
-    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
-        raise ValueError("fib() expected an integer")
+    n = _check_int('fib', 'n', n)
     if n < 0:
         raise ValueError('Fibonacci of negative number')
     res = _new_mpz()
@@ -204,10 +205,7 @@ def fib2(n):
 
     Return a 2-tuple with the (n-1)-th and n-th Fibonacci numbers.
     """
-    if isinstance(n, mpz):
-        n = int(n)
-    if not (isinstance(n, (int, long)) and -sys.maxsize - 1 <= n <= sys.maxsize):
-        raise ValueError("fib2() expected an integer")
+    n = _check_int('fib2', 'n', n)
     if n < 0:
         raise ValueError('Fibonacci of negative number')
     res, res1 = _new_mpz(), _new_mpz()

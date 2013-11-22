@@ -104,7 +104,7 @@ class Test_ntheory(object):
         assert fac(10) == mpz(3628800)
         with pytest.raises(ValueError):
             fac(-1)
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             fac(45894575342551390123)
         # GNU MP: Cannot allocate memory (size=429440431952)
         # fac(3435523455234)
@@ -114,19 +114,19 @@ class Test_ntheory(object):
         assert bincoef(19, 3) == mpz(969)
         with pytest.raises(ValueError):
             bincoef(1, -3)
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             bincoef(1, 2534253426342543253426)
 
     def test_fib(self):
         assert fib(4) == mpz(3)
         with pytest.raises(ValueError):
             fib(-3)
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             fib(45894575342551390123)
 
     def test_fib2(self):
         assert fib2(4) == (mpz(3), mpz(2))
         with pytest.raises(ValueError):
             fib2(-3)
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             fib2(45894575342551390123)
