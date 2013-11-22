@@ -84,9 +84,9 @@ ffi.cdef("""
     void mpz_lcm (mpz_t rop, const mpz_t op1, const mpz_t op2);
     // void mpz_lcm_ui (mpz_t rop, const mpz_t op1, unsigned long op2);
     int mpz_invert (mpz_t rop, const mpz_t op1, const mpz_t op2);
-    // int mpz_jacobi (const mpz_t a, const mpz_t b);
-    // int mpz_legendre (const mpz_t a, const mpz_t p);
-    // int mpz_kronecker (const mpz_t a, const mpz_t b);
+    int mpz_jacobi (const mpz_t a, const mpz_t b);
+    int mpz_legendre (const mpz_t a, const mpz_t p);
+    int mpz_kronecker (const mpz_t a, const mpz_t b);
     // int mpz_kronecker_si (const mpz_t a, long b);
     // int mpz_kronecker_ui (const mpz_t a, unsigned long b);
     // int mpz_si_kronecker (long a, const mpz_t b);

@@ -103,3 +103,40 @@ def invert(x, m):
     if gmp.mpz_invert(res, x._mpz, m._mpz) == 0:
         raise ZeroDivisionError
     return mpz._from_c_mpz(res)
+
+
+def jacobi(x, y):
+    """
+    jacobi(x, y) -> mpz
+
+    Return the Jacobi symbol (x|y). y must be odd and >0.
+    """
+    x = _check_mpz('jacobi', 'x', x)
+    y = _check_mpz('jacobi', 'y', y)
+    if y <= 0 or not (y % 2):
+        raise ValueError('jacobi() expected y to be positive and odd')
+    return gmp.mpz_legendre(x._mpz, y._mpz)
+
+
+def legendre(x, y):
+    """
+    legendre(x, y) -> mpz
+
+    Return the Legendre symbol (x|y). y is assumed to be an odd prime.
+    """
+    x = _check_mpz('legendre', 'x', x)
+    y = _check_mpz('legendre', 'y', y)
+    if y <= 0 or not (y % 2):
+        raise ValueError('legendre() expected y to be positive and odd')
+    return gmp.mpz_legendre(x._mpz, y._mpz)
+
+
+def kronecker(x, y):
+    """
+    kronecker(x, y) -> mpz
+
+    Return the Kronecker-Jacobi symbol (x|y)
+    """
+    x = _check_mpz('kronecker', 'x', x)
+    y = _check_mpz('kronecker', 'y', y)
+    return gmp.mpz_kronecker(x._mpz, y._mpz)

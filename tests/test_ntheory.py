@@ -1,6 +1,6 @@
 import pytest
 
-from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert
+from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert, jacobi, legendre, kronecker
 
 
 class Test_ntheory(object):
@@ -73,3 +73,28 @@ class Test_ntheory(object):
             invert(4, 6)
         with pytest.raises(ZeroDivisionError):
             invert(4, 0)
+
+    def test_jacobi(self):
+        assert jacobi(7, 3) == 1
+        assert jacobi(5, 3) == -1
+        assert jacobi(0, 3) == 0
+        with pytest.raises(ValueError):
+            jacobi(3, -1)
+        with pytest.raises(ValueError):
+            jacobi(3, 2)
+
+    def test_legendre(self):
+        assert legendre(7, 3) == 1
+        assert legendre(5, 3) == -1
+        assert legendre(0, 3) == 0
+        with pytest.raises(ValueError):
+            legendre(3, -1)
+        with pytest.raises(ValueError):
+            legendre(3, 2)
+
+    def test_kronecker(self):
+        assert kronecker(7, 3) == 1
+        assert kronecker(5, 3) == -1
+        assert kronecker(0, 3) == 0
+        assert kronecker(3, -1) == 1
+        assert kronecker(3, 2) == -1
