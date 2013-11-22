@@ -284,4 +284,4 @@ ffi.cdef("""
 gmp = ffi.verify("""
     #include <gmp.h>
     #include <mpfr.h>
-""", libraries=['gmp', 'mpfr', 'm'])
+""", libraries=['gmp', 'mpfr'])
