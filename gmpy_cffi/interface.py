@@ -75,6 +75,34 @@ ffi.cdef("""
 //    void mpz_bin_ui (mpz_t rop, mpz_t n, unsigned long int k);
 //    void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
 
+    // Number Theoretic Functions
+    // int mpz_probab_prime_p (const mpz_t n, int reps);
+    // void mpz_nextprime (mpz_t rop, const mpz_t op);
+    // void mpz_gcd (mpz_t rop, const mpz_t op1, const mpz_t op2);
+    // unsigned long int mpz_gcd_ui (mpz_t rop, const mpz_t op1, unsigned long int op2);
+    // void mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t a, const mpz_t b);
+    // void mpz_lcm (mpz_t rop, const mpz_t op1, const mpz_t op2);
+    // void mpz_lcm_ui (mpz_t rop, const mpz_t op1, unsigned long op2);
+    // int mpz_invert (mpz_t rop, const mpz_t op1, const mpz_t op2);
+    // int mpz_jacobi (const mpz_t a, const mpz_t b);
+    // int mpz_legendre (const mpz_t a, const mpz_t p);
+    // int mpz_kronecker (const mpz_t a, const mpz_t b);
+    // int mpz_kronecker_si (const mpz_t a, long b);
+    // int mpz_kronecker_ui (const mpz_t a, unsigned long b);
+    // int mpz_si_kronecker (long a, const mpz_t b);
+    // int mpz_ui_kronecker (unsigned long a, const mpz_t b);
+    // void mpz_fac_ui (mpz_t rop, unsigned long int n);
+    // void mpz_2fac_ui (mpz_t rop, unsigned long int n);
+    // void mpz_mfac_uiui (mpz_t rop, unsigned long int n, unsigned long int m);
+    // void mpz_primorial_ui (mpz_t rop, unsigned long int n);
+    // void mpz_bin_ui (mpz_t rop, const mpz_t n, unsigned long int k);
+    // void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k);
+    // void mpz_fib_ui (mpz_t fn, unsigned long int n);
+    // void mpz_fib2_ui (mpz_t fn, mpz_t fnsub1, unsigned long int n);
+    // void mpz_lucnum_ui (mpz_t ln, unsigned long int n);
+    // void mpz_lucnum2_ui (mpz_t ln, mpz_t lnsub1, unsigned long int n);
+    
+
     // MPQ
     typedef struct { ...; } __mpq_struct;
     typedef __mpq_struct *mpq_t;
