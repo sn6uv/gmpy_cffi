@@ -5,7 +5,10 @@ import pytest
 from gmpy_cffi import mpz, MAX_UI
 
 
-if sys.version > '3':
+PY3 = sys.version_info >= (3,0)
+
+
+if PY3:
     long = int
 
 
@@ -31,7 +34,10 @@ class TestInit(object):
         assert mpz(str(n)) == n
         assert mpz(str(n), 0) == n
         assert mpz(hex(n).rstrip('L'), 0) == n
-        assert mpz(oct(n).rstrip('L'), 0) == n
+        if PY3:
+            assert mpz(oct(n).rstrip('L').replace('0o', '0'), 0) == n
+        else:
+            assert mpz(oct(n).rstrip('L'), 0) == n
 
     @pytest.mark.parametrize('n', small_ints + big_ints)
     def test_init_hex_str(self, n):
@@ -192,12 +198,18 @@ class TestMath(object):
         assert str(n) == '1311768467463790320'
         assert repr(n) == 'mpz(1311768467463790320)'
         assert hex(n) == '0x123456789abcdef0'
-        assert oct(n) == '0110642547423257157360'
+        if PY3:
+            assert oct(n) == '0o110642547423257157360'
+        else:
+            assert oct(n) == '0110642547423257157360'
         n = -mpz('123456789abcdef0', 16)
         assert str(n) == '-1311768467463790320'
         assert repr(n) == 'mpz(-1311768467463790320)'
         assert hex(n) == '-0x123456789abcdef0'
-        assert oct(n) == '-0110642547423257157360'
+        if PY3:
+            assert oct(n) == '-0o110642547423257157360'
+        else:
+            assert oct(n) == '-0110642547423257157360'
 
     def test_conversions_int(self):
         for n in self.numbers:
