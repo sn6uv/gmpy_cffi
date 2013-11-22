@@ -1,6 +1,6 @@
 import pytest
 
-from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm
+from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd, gcdext, lcm, invert
 
 
 class Test_ntheory(object):
@@ -65,3 +65,11 @@ class Test_ntheory(object):
             lcm(mpq(1.5), 2)
         with pytest.raises(TypeError):
             lcm(3)
+
+    def test_invert(self):
+        assert invert(4, 5) == mpz(4)
+        assert invert(3, 10) == mpz(7)
+        with pytest.raises(ZeroDivisionError):
+            invert(4, 6)
+        with pytest.raises(ZeroDivisionError):
+            invert(4, 0)

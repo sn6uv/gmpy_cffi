@@ -132,3 +132,30 @@ def lcm(a, b):
     res = _new_mpz()
     gmp.mpz_lcm(res, a._mpz, b._mpz)
     return mpz._from_c_mpz(res)
+
+
+def invert(x, m):
+    """
+    invert(x, m) -> mpz
+
+    Return y such that x*y == 1 (mod m). Raises ZeroDivisionError if no
+    inverse exists.
+    """
+    if isinstance(x, mpz):
+        pass
+    elif isinstance(x, (int, long)):
+        x = mpz(x)
+    else:
+        raise TypeError('invert() expected integer x got %s' % type(x))
+
+    if isinstance(m, mpz):
+        pass
+    elif isinstance(m, (int, long)):
+        m = mpz(m)
+    else:
+        raise TypeError('lcm() expected integer m got %s' % type(m))
+
+    res = _new_mpz()
+    if gmp.mpz_invert(res, x._mpz, m._mpz) == 0:
+        raise ZeroDivisionError
+    return mpz._from_c_mpz(res)
