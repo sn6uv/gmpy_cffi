@@ -4,7 +4,11 @@ import sys
 from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.convert import _pyint_to_mpz, _pylong_to_mpz, _mpz_to_pylong, _mpz_to_str, MAX_UI
 
-if sys.version > '3':
+
+PY3 = sys.version_info >= (3,0)
+
+
+if PY3:
     long = int
     xrange = range
 
@@ -82,7 +86,7 @@ class mpz(object):
             if base is None:
                 base = 10
             if base == 0 or 2 <= base <= 62:
-                if gmp.mpz_set_str(a, n, base) == -1:
+                if gmp.mpz_set_str(a, n.encode('UTF-8'), base) != 0:
                     raise ValueError("Can't create mpz from %s with base %s" % (n, base))
             else:
                 raise ValueError('base must be 0 or 2..62, not %s' % base)

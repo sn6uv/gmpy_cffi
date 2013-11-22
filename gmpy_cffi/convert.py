@@ -4,8 +4,13 @@ from math import log10
 
 from gmpy_cffi.interface import gmp, ffi
 
-
 MAX_UI = 2 * sys.maxsize + 1
+PY3 = sys.version_info >= (3,0)
+
+
+if PY3:
+    long = int
+    xrange = range
 
 
 def _pyint_to_mpz(n, a):
@@ -20,7 +25,7 @@ def _pyint_to_mpz(n, a):
     elif sys.maxsize < n <= MAX_UI:
         gmp.mpz_set_ui(a, n)
     else:
-        gmp.mpz_set_str(a, hex(n).rstrip('L'), 0)
+        gmp.mpz_set_str(a, hex(n).rstrip('L').encode('UTF-8'), 0)
 
 
 def _pylong_to_mpz(n, a):
@@ -30,7 +35,7 @@ def _pylong_to_mpz(n, a):
     :type n: long
     :type a: mpz_t
     """
-    gmp.mpz_set_str(a, hex(n).rstrip('L'), 0)
+    gmp.mpz_set_str(a, hex(n).rstrip('L').encode('UTF-8'), 0)
 
 
 def _mpz_to_pylong(a):
@@ -66,7 +71,10 @@ def _mpz_to_str(a, base):
     l = gmp.mpz_sizeinbase(a, base) + 2
     p = ffi.new('char[]', l)
     gmp.mpz_get_str(p, base, a)
-    return ffi.string(p)
+    if PY3:
+        return ffi.string(p).decode('UTF-8')
+    else:
+        return ffi.string(p)
 
 
 def _pyint_to_mpq(n, a):
@@ -85,9 +93,11 @@ def _mpq_to_str(a, base):
     l = (gmp.mpz_sizeinbase(gmp.mpq_numref(a), base) +
          gmp.mpz_sizeinbase(gmp.mpq_denref(a), base) + 3)
     p = ffi.new('char[]', l)
-    gmp.mpq_get_str(ffi.NULL, base, a)
     gmp.mpq_get_str(p, base, a)
-    return ffi.string(p)
+    if PY3:
+        return ffi.string(p).decode('UTF-8')
+    else:
+        return ffi.string(p)
 
 
 def _str_to_mpq(s, base, a):
@@ -120,7 +130,10 @@ def _mpfr_to_str(a):
     buf = ffi.new('char []', precision + 10)
     fmtstr = "%.{0}Rg".format(precision)
     buflen = gmp.mpfr_sprintf(buf, fmtstr, a)
-    pybuf = ffi.string(buf)
+    if PY3:
+        pybuf = ffi.string(buf).decode('UTF-8')
+    else:
+        pybuf = ffi.string(buf)
     if gmp.mpfr_number_p(a) and '.' not in pybuf:
         pybuf = pybuf + '.0'
     return pybuf
