@@ -340,9 +340,9 @@ class mpq(object):
         if self == float(self):
             return hash(float(self))
         else:
-            return hash((
-                int(mpz._from_c_mpz(gmp.mpq_numref(self._mpq))),
-                int(mpz._from_c_mpz(gmp.mpq_denref(self._mpq)))))
+            num = long(mpz._from_c_mpz(gmp.mpq_numref(self._mpq)))
+            den = long(mpz._from_c_mpz(gmp.mpq_denref(self._mpq))) 
+            return hash((num, den))
 
     def __cmp(self, other):
         if isinstance(other, mpq):

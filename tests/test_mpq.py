@@ -423,6 +423,10 @@ class TestCmp(object):
         assert hash(mpq(3,2)) == hash(fractions.Fraction(3,2)) == hash(1.5)
         assert hash(mpq(3,1)) == hash(fractions.Fraction(3,1)) == 3
         assert hash(mpq(0)) == hash(fractions.Fraction(0,1)) == hash(0.0) == 0
+
+    @pytest.mark.xfail("sys.version_info > (2,)")
+    def test_hash_big(self):
+        import fractions
         assert (hash(mpq(sys.maxsize + 1, sys.maxsize)) ==
                 hash(fractions.Fraction(sys.maxsize + 1, sys.maxsize)))
 
