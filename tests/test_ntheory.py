@@ -1,6 +1,6 @@
 import pytest
 
-from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime
+from gmpy_cffi import mpz, mpq, mpfr, is_prime, next_prime, gcd
 
 
 class Test_ntheory(object):
@@ -37,3 +37,13 @@ class Test_ntheory(object):
         assert next_prime(453425342532454325324532453245) == mpz(453425342532454325324532453293)
         with pytest.raises(TypeError):
             next_prime(mpq(1, 4))
+
+    def test_gcd(self):
+        assert gcd(4, 6) == mpz(2)
+        assert gcd(5, 0) == mpz(5)
+        assert gcd(5, 0) == mpz(5)
+        assert gcd(323, 340) == gcd(mpz(323), 340) == gcd(323, mpz(340)) == gcd(mpz(323), mpz(340)) == mpz(17)
+        with pytest.raises(TypeError):
+            gcd(mpq(1.5), 2)
+        with pytest.raises(TypeError):
+            gcd(3)

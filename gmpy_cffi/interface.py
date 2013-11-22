@@ -78,7 +78,7 @@ ffi.cdef("""
     // Number Theoretic Functions
     int mpz_probab_prime_p (const mpz_t n, int reps);
     void mpz_nextprime (mpz_t rop, const mpz_t op);
-    // void mpz_gcd (mpz_t rop, const mpz_t op1, const mpz_t op2);
+    void mpz_gcd (mpz_t rop, const mpz_t op1, const mpz_t op2);
     // unsigned long int mpz_gcd_ui (mpz_t rop, const mpz_t op1, unsigned long int op2);
     // void mpz_gcdext (mpz_t g, mpz_t s, mpz_t t, const mpz_t a, const mpz_t b);
     // void mpz_lcm (mpz_t rop, const mpz_t op1, const mpz_t op2);

@@ -46,3 +46,29 @@ def next_prime(x):
     res = _new_mpz()
     gmp.mpz_nextprime(res, x._mpz)
     return mpz._from_c_mpz(res)
+
+
+def gcd(a, b):
+    """
+    gcd(a, b) -> mpz
+
+    Return the greatest common denominator of integers a and b.
+    """
+
+    if isinstance(a, mpz):
+        pass
+    elif isinstance(a, (int, long)):
+        a = mpz(a)
+    else:
+        raise TypeError('gcd() expected integer a got %s' % type(a))
+
+    if isinstance(b, mpz):
+        pass
+    elif isinstance(b, (int, long)):
+        b = mpz(b)
+    else:
+        raise TypeError('gcd() expected integer b got %s' % type(b))
+
+    res = _new_mpz()
+    gmp.mpz_gcd(res, a._mpz, b._mpz)
+    return mpz._from_c_mpz(res)
