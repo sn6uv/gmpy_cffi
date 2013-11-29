@@ -25,7 +25,8 @@ def _check_mpz(function_name, value_name, value):
 def _check_int(function_name, value_name, value):
     if isinstance(value, mpz):
         value = int(value)
-    if not (isinstance(value, (int, long)) and -sys.maxsize - 1 <= value <= sys.maxsize):
+    if not (isinstance(value, (int, long)) and
+            -sys.maxsize - 1 <= value <= sys.maxsize):
         raise TypeError('%s() expected integer %s got %s' % (
             function_name, value_name, type(value)))
     return value
@@ -82,7 +83,9 @@ def gcdext(a, b):
     b = _check_mpz('gcdext', 'b', b)
     mpz_g, mpz_s, mpz_t = _new_mpz(), _new_mpz(), _new_mpz()
     gmp.mpz_gcdext(mpz_g, mpz_s, mpz_t, a._mpz, b._mpz)
-    return (mpz._from_c_mpz(mpz_g), mpz._from_c_mpz(mpz_s), mpz._from_c_mpz(mpz_t))
+    return (mpz._from_c_mpz(mpz_g),
+            mpz._from_c_mpz(mpz_s),
+            mpz._from_c_mpz(mpz_t))
 
 
 def lcm(a, b):

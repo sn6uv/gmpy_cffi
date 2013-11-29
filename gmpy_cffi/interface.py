@@ -101,7 +101,7 @@ ffi.cdef("""
     void mpz_fib2_ui (mpz_t fn, mpz_t fnsub1, unsigned long int n);
     void mpz_lucnum_ui (mpz_t ln, unsigned long int n);
     void mpz_lucnum2_ui (mpz_t ln, mpz_t lnsub1, unsigned long int n);
-    
+
     // MPQ
     typedef struct { ...; } __mpq_struct;
     typedef __mpq_struct *mpq_t;
