@@ -101,7 +101,7 @@ class Test_ntheory(object):
 
     def test_fac(self):
         assert fac(0) == 1
-        assert fac(10) == mpz(3628800)
+        assert fac(10) == fac(mpz(10)) == mpz(3628800)
         with pytest.raises(ValueError):
             fac(-1)
         with pytest.raises(TypeError):
@@ -112,10 +112,13 @@ class Test_ntheory(object):
     def test_bincoef(self):
         assert bincoef(1, 4) == mpz(0)
         assert bincoef(19, 3) == mpz(969)
+        assert bincoef(mpz(5), 3) == bincoef(5, mpz(3)) == mpz(10)
         with pytest.raises(ValueError):
             bincoef(1, -3)
         with pytest.raises(TypeError):
             bincoef(1, 2534253426342543253426)
+        with pytest.raises(TypeError):
+            bincoef(1.5, 3)
 
     def test_fib(self):
         assert fib(4) == mpz(3)
