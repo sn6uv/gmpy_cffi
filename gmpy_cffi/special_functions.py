@@ -2,6 +2,25 @@ from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.mpfr import mpfr, _new_mpfr
 from gmpy_cffi.convert import _pyint_to_mpfr
 
+def _init_check_mpfr(x):
+    """
+    Returns a new mpfr and a pointer to a c mpfr storing the value of x
+    """
+    if isinstance(x, mpfr):
+        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
+        mpfr_x = x._mpfr
+    elif isinstance(x, float):
+        res = _new_mpfr()
+        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
+        mpfr_x = res        # avoid initialising another c mpfr
+    elif isinstance(x, (int, long)):
+        res = _new_mpfr()
+        _pyint_to_mpfr(x, res)
+        mpfr_x = res        # avoid initialising another c mpfr
+    else:
+        raise TypeError
+    return res, mpfr_x
+
 
 def log(x):
     """
@@ -9,19 +28,8 @@ def log(x):
 
     Return the natural logarithm of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_log(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_log(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_log(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_log(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -31,19 +39,8 @@ def log2(x):
 
     Return the base-2 logarithm of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_log2(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_log2(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_log2(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_log2(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -53,19 +50,8 @@ def log10(x):
 
     Return the base-10 logarithm of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_log10(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_log10(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_log10(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_log10(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -75,19 +61,8 @@ def exp(x):
 
     Return the exponential of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_exp(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_exp(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_exp(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_exp(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -97,19 +72,8 @@ def exp2(x):
 
     Return 2**x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_exp2(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_exp2(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_exp2(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_exp2(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -119,19 +83,8 @@ def exp10(x):
 
     Return 10**x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_exp10(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_exp10(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_exp10(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_exp10(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -141,19 +94,8 @@ def cos(x):
 
     Return the cosine of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_cos(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_cos(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_cos(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_cos(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -163,19 +105,8 @@ def sin(x):
 
     Return the sine of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_sin(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_sin(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_sin(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_sin(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -185,19 +116,8 @@ def tan(x):
 
     Return the tangent of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_tan(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_tan(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_tan(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_tan(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -210,19 +130,19 @@ def sin_cos(x):
     if isinstance(x, mpfr):
         res1 = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
         res2 = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_sin_cos(res1, res2, x._mpfr, gmp.MPFR_RNDN)
+        mpfr_x = x._mpfr
     elif isinstance(x, float):
         res1 = _new_mpfr()
         res2 = _new_mpfr()
-        gmp.mpfr_set_d(res1, x, gmp.MPFR_RNDN)
-        gmp.mpfr_sin_cos(res1, res2, res1, gmp.MPFR_RNDN)
+        mpfr_x = res1
     elif isinstance(x, (int, long)):
         res1 = _new_mpfr()
         res2 = _new_mpfr()
-        _pyint_to_mpfr(x, res1)
-        gmp.mpfr_sin_cos(res1, res2, res1, gmp.MPFR_RNDN)
+        mpfr_x = res1
+        _pyint_to_mpfr(x, mpfr_x)
     else:
         raise TypeError
+    gmp.mpfr_sin_cos(res1, res2, mpfr_x, gmp.MPFR_RNDN)
     return (mpfr._from_c_mpfr(res1), mpfr._from_c_mpfr(res2))
 
 
@@ -232,19 +152,8 @@ def sec(x):
 
     Return the secant of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_sec(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_sec(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_sec(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_sec(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -254,19 +163,8 @@ def csc(x):
 
     Return the cosecant of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_csc(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_csc(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_csc(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_csc(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -276,19 +174,8 @@ def cot(x):
 
     Return the cotangent of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_cot(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_cot(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_cot(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_cot(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -298,18 +185,8 @@ def acos(x):
 
     Return the arc-cosine of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_acos(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_acos(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_acos(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -319,19 +196,8 @@ def asin(x):
 
     Return the arc-sine of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_asin(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_asin(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_asin(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_asin(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -341,19 +207,8 @@ def atan(x):
 
     Return the arc-tangent of x; x in radians.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_atan(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_atan(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_atan(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_atan(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -398,19 +253,8 @@ def cosh(x):
 
     Return the hyperbolic cosine of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_cosh(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_cosh(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_cosh(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_cosh(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -420,19 +264,8 @@ def sinh(x):
 
     Return the hyperbolic sine of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_sinh(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_sinh(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_sinh(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_sinh(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -442,19 +275,8 @@ def tanh(x):
 
     Return the hyperbolic tangent of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_tanh(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_tanh(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_tanh(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_tanh(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -467,19 +289,20 @@ def sinh_cosh(x):
     if isinstance(x, mpfr):
         res1 = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
         res2 = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_sinh_cosh(res1, res2, x._mpfr, gmp.MPFR_RNDN)
+        mpfr_x = x._mpfr
     elif isinstance(x, float):
         res1 = _new_mpfr()
         res2 = _new_mpfr()
-        gmp.mpfr_set_d(res1, x, gmp.MPFR_RNDN)
-        gmp.mpfr_sinh_cosh(res1, res2, res1, gmp.MPFR_RNDN)
+        mpfr_x = res1
+        gmp.mpfr_set_d(mpfr_x, x, gmp.MPFR_RNDN)
     elif isinstance(x, (int, long)):
         res1 = _new_mpfr()
         res2 = _new_mpfr()
-        _pyint_to_mpfr(x, res1)
-        gmp.mpfr_sinh_cosh(res1, res2, res1, gmp.MPFR_RNDN)
+        mpfr_x = res1
+        _pyint_to_mpfr(x, mpfr_x)
     else:
         raise TypeError
+    gmp.mpfr_sinh_cosh(res1, res2, mpfr_x, gmp.MPFR_RNDN)
     return (mpfr._from_c_mpfr(res1), mpfr._from_c_mpfr(res2))
 
 
@@ -489,19 +312,8 @@ def sech(x):
 
     Return the hyperbolic secant of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_sech(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_sech(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_sech(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_sech(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -511,19 +323,8 @@ def csch(x):
 
     Return the hyperbolic cosecant of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_csch(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_csch(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_csch(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_csch(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -533,19 +334,8 @@ def coth(x):
 
     Return the hyperbolic cotangent of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_coth(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_coth(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_coth(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_coth(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -555,19 +345,8 @@ def acosh(x):
 
     Return the inverse hyperbolic cosine of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_acosh(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_acosh(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_acosh(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_acosh(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -577,19 +356,8 @@ def asinh(x):
 
     Return the inverse hyperbolic sine of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_asinh(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_asinh(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_asinh(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_asinh(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
 
 
@@ -599,17 +367,6 @@ def atanh(x):
 
     Return the inverse hyperbolic tangent of x.
     """
-    if isinstance(x, mpfr):
-        res = _new_mpfr(gmp.mpfr_get_prec(x._mpfr))
-        gmp.mpfr_atanh(res, x._mpfr, gmp.MPFR_RNDN)
-    elif isinstance(x, float):
-        res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
-        gmp.mpfr_atanh(res, res, gmp.MPFR_RNDN)
-    elif isinstance(x, (int, long)):
-        res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
-        gmp.mpfr_atanh(res, res, gmp.MPFR_RNDN)
-    else:
-        raise TypeError
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_atanh(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
