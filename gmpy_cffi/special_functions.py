@@ -1,6 +1,16 @@
+import sys
+
 from gmpy_cffi.interface import gmp, ffi
+from gmpy_cffi.mpz import mpz
+from gmpy_cffi.mpq import mpq
 from gmpy_cffi.mpfr import mpfr, _new_mpfr
 from gmpy_cffi.convert import _pyint_to_mpfr
+
+
+if sys.version > '3':
+    long = int
+    xrange = range
+
 
 def _init_check_mpfr(x):
     """
@@ -11,12 +21,20 @@ def _init_check_mpfr(x):
         mpfr_x = x._mpfr
     elif isinstance(x, float):
         res = _new_mpfr()
-        gmp.mpfr_set_d(res, x, gmp.MPFR_RNDN)
         mpfr_x = res        # avoid initialising another c mpfr
+        gmp.mpfr_set_d(mpfr_x, x, gmp.MPFR_RNDN)
     elif isinstance(x, (int, long)):
         res = _new_mpfr()
-        _pyint_to_mpfr(x, res)
         mpfr_x = res        # avoid initialising another c mpfr
+        _pyint_to_mpfr(x, mpfr_x)
+    elif isinstance(x, mpz):
+        res = _new_mpfr()
+        mpfr_x = res        # avoid initialising another c mpfr
+        gmp.mpfr_set_z(mpfr_x, x._mpz, gmp.MPFR_RNDN)
+    elif isinstance(x, mpq):
+        res = _new_mpfr()
+        mpfr_x = res        # avoid initialising another c mpfr
+        gmp.mpfr_set_q(mpfr_x, x._mpq, gmp.MPFR_RNDN)
     else:
         raise TypeError
     return res, mpfr_x
@@ -140,6 +158,16 @@ def sin_cos(x):
         res2 = _new_mpfr()
         mpfr_x = res1
         _pyint_to_mpfr(x, mpfr_x)
+    elif isinstance(x, mpz):
+        res1 = _new_mpfr()
+        res2 = _new_mpfr()
+        mpfr_x = res1
+        gmp.mpfr_set_z(mpfr_x, x._mpz, gmp.MPFR_RNDN)
+    elif isinstance(x, mpq):
+        res1 = _new_mpfr()
+        res2 = _new_mpfr()
+        mpfr_x = res1
+        gmp.mpfr_set_q(mpfr_x, x._mpq, gmp.MPFR_RNDN)
     else:
         raise TypeError
     gmp.mpfr_sin_cos(res1, res2, mpfr_x, gmp.MPFR_RNDN)
@@ -227,6 +255,12 @@ def atan2(y, x):
     elif isinstance(x, (int, long)):
         mpfr_x = _new_mpfr()
         _pyint_to_mpfr(x, mpfr_x)
+    elif isinstance(x, mpz):
+        mpfr_x = _new_mpfr()
+        gmp.mpfr_set_z(mpfr_x, x._mpz, gmp.MPFR_RNDN)
+    elif isinstance(x, mpq):
+        mpfr_x = _new_mpfr()
+        gmp.mpfr_set_q(mpfr_x, x._mpq, gmp.MPFR_RNDN)
     else:
         raise TypeError
 
@@ -239,6 +273,12 @@ def atan2(y, x):
     elif isinstance(y, (int, long)):
         mpfr_y = _new_mpfr()
         _pyint_to_mpfr(y, mpfr_y)
+    elif isinstance(y, mpz):
+        mpfr_y = _new_mpfr()
+        gmp.mpfr_set_z(mpfr_y, y._mpz, gmp.MPFR_RNDN)
+    elif isinstance(y, mpq):
+        mpfr_y = _new_mpfr()
+        gmp.mpfr_set_q(mpfr_y, y._mpq, gmp.MPFR_RNDN)
     else:
         raise TypeError
 
@@ -300,6 +340,16 @@ def sinh_cosh(x):
         res2 = _new_mpfr()
         mpfr_x = res1
         _pyint_to_mpfr(x, mpfr_x)
+    elif isinstance(x, mpz):
+        res1 = _new_mpfr()
+        res2 = _new_mpfr()
+        mpfr_x = res1
+        gmp.mpfr_set_z(mpfr_x, x._mpz, gmp.MPFR_RNDN)
+    elif isinstance(x, mpq):
+        res1 = _new_mpfr()
+        res2 = _new_mpfr()
+        mpfr_x = res1
+        gmp.mpfr_set_q(mpfr_x, x._mpq, gmp.MPFR_RNDN)
     else:
         raise TypeError
     gmp.mpfr_sinh_cosh(res1, res2, mpfr_x, gmp.MPFR_RNDN)
