@@ -306,6 +306,65 @@ ffi.cdef("""
     int mpfr_ceil(mpfr_t rop, mpfr_t op);
     int mpfr_trunc(mpfr_t rop, mpfr_t op);
     // int mpfr_round(mpfr_t rop, mpfr_t op);
+
+    /* Special functions */
+    int mpfr_log (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_log2 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_log10 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_exp (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_exp2 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_exp10 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_cos (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_sin (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_tan (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_sin_cos (mpfr_t sop, mpfr_t cop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_sec (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_csc (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_cot (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_acos (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_asin (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_atan (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_atan2 (mpfr_t rop, mpfr_t y, mpfr_t x, mpfr_rnd_t rnd);
+    int mpfr_cosh (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_sinh (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_tanh (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_sinh_cosh (mpfr_t sop, mpfr_t cop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_sech (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_csch (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_coth (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_acosh (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_asinh (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_atanh (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_fac_ui (mpfr_t rop, unsigned long int op, mpfr_rnd_t rnd);
+    // int mpfr_log1p (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_expm1 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_eint (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_li2 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_gamma (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_lngamma (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_lgamma (mpfr_t rop, int *signp, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_digamma (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_zeta (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_zeta_ui (mpfr_t rop, unsigned long op, mpfr_rnd_t rnd);
+    // int mpfr_erf (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_erfc (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_j0 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_j1 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_jn (mpfr_t rop, long n, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_y0 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_y1 (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_yn (mpfr_t rop, long n, mpfr_t op, mpfr_rnd_t rnd);
+    // int mpfr_fma (mpfr_t rop, mpfr_t op1, mpfr_t op2, mpfr_t op3, mpfr_rnd_t rnd);
+    // int mpfr_fms (mpfr_t rop, mpfr_t op1, mpfr_t op2, mpfr_t op3, mpfr_rnd_t rnd);
+    // int mpfr_agm (mpfr_t rop, mpfr_t op1, mpfr_t op2, mpfr_rnd_t rnd);
+    // int mpfr_hypot (mpfr_t rop, mpfr_t x, mpfr_t y, mpfr_rnd_t rnd);
+    // int mpfr_ai (mpfr_t rop, mpfr_t x, mpfr_rnd_t rnd);
+    // int mpfr_const_log2 (mpfr_t rop, mpfr_rnd_t rnd);
+    // int mpfr_const_pi (mpfr_t rop, mpfr_rnd_t rnd);
+    // int mpfr_const_euler (mpfr_t rop, mpfr_rnd_t rnd);
+    // int mpfr_const_catalan (mpfr_t rop, mpfr_rnd_t rnd);
+    // void mpfr_free_cache (void);
+    // int mpfr_sum (mpfr_t rop, mpfr_ptr const tab[], unsigned long int n, mpfr_rnd_t rnd);
 """)
 
 gmp = ffi.verify("""
