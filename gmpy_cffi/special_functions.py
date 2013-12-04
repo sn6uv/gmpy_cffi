@@ -4,7 +4,7 @@ from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.mpz import mpz
 from gmpy_cffi.mpq import mpq
 from gmpy_cffi.mpfr import mpfr, _new_mpfr
-from gmpy_cffi.convert import _pyint_to_mpfr
+from gmpy_cffi.convert import _pyint_to_mpfr, MAX_UI
 
 
 if sys.version > '3':
@@ -419,4 +419,148 @@ def atanh(x):
     """
     res, x = _init_check_mpfr(x)
     gmp.mpfr_atanh(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def factorial(n):
+    """
+    factorial(n) -> number
+
+    Return the floating-point approximation to the factorial of n.
+
+    See fac(n) to get the exact integer result.
+    """
+    if isinstance(n, (int, long)):
+        if 0 <= n <= MAX_UI:
+            res = _new_mpfr()
+            gmp.mpfr_fac_ui(res, n, gmp.MPFR_RNDN)
+            return mpfr._from_c_mpfr(res)
+        elif n < 0:
+            raise ValueError("factorial() of negative number")
+    raise TypeError("factorial() requires 'int' argument")
+
+
+def log1p(x):
+    """
+    log1p(x) -> number
+
+    Return the logarithm of (1+x).
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_log1p(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def expm1(x):
+    """
+    expm1(x) -> number
+
+    Return exponential(x) - 1.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_expm1(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def eint(x):
+    """
+    eint(x) -> number
+
+    Return the exponential integral of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_eint(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def li2(x):
+    """
+    li2(x) -> number
+
+    Return the real part of dilogarithm of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_li2(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def gamma(x):
+    """
+    gamma(x) -> number
+
+    Return gamma of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_gamma(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def lngamma(x):
+    """
+    lngamma(x) -> number
+
+    Return logarithm of gamma(x).
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_lngamma(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def lgamma(x):
+    """
+    lgamma(x) -> (number, int)
+
+    Return a tuple containing the logarithm of the absolute value of
+    gamma(x) and the sign of gamma(x)
+    """
+    res, x = _init_check_mpfr(x)
+    sgn = ffi.new('int *')
+    gmp.mpfr_lgamma(res, sgn, x, gmp.MPFR_RNDN)
+    return (mpfr._from_c_mpfr(res), int(sgn[0]))
+
+
+def digamma(x):
+    """
+    digamma(x) -> number
+
+    Return digamma of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_digamma(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def zeta(x):
+    """
+    zeta(x) -> number
+
+    Return Riemann zeta of x.
+    """
+    # if isinstance(x, (int, long)) and 0 <= x <= MAX_UI:
+    #     res = _new_mpfr()
+    #     gmp.mpfr_zeta_ui(res, x, gmp.MPFR_RNDN)
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_zeta(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def erf(x):
+    """
+    zeta(x) -> number
+
+    Return error function of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_erf(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def erfc(x):
+    """
+    zeta(x) -> number
+
+    Return complementary error function of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_erfc(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)

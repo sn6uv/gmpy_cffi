@@ -5,7 +5,8 @@ import pytest
 from gmpy_cffi import (
     log, log2, log10, exp, exp2, exp10, cos, sin, tan, sin_cos, sec, csc, cot,
     acos, asin, atan, atan2, cosh, sinh, tanh, sinh_cosh, sech, csch, coth,
-    acosh, asinh, atanh, mpfr, mpq, mpz)
+    acosh, asinh, atanh, factorial, log1p, expm1, eint, li2, gamma, lngamma,
+    lgamma, digamma, zeta, erf, erfc, mpfr, mpq, mpz)
 
 
 class TestTrig(object):
@@ -122,3 +123,44 @@ class TestTrig(object):
 
     def test_atanh(self):
         assert atanh(0.5) == mpfr('0.549306144334054846')
+
+    def test_factorial(self):
+        assert factorial(10**3) == mpfr('4.0238726007709379e+2567')
+        with pytest.raises(ValueError):
+            factorial(-3)
+        with pytest.raises(TypeError):
+            factorial(0.5)
+
+    def test_log1p(self):
+        assert log1p(1.4) == mpfr('0.87546873735389985')
+
+    def test_expm1(self):
+        assert expm1(2.4) == mpfr('10.023176380641601')
+
+    def test_eint(self):
+        assert eint(0.5) == mpfr('0.4542199048631736')
+
+    def test_li2(self):
+        assert li2(0.5) == mpfr('0.58224052646501245')
+
+    def test_gamma(self):
+        assert gamma(0.5) == mpfr('1.7724538509055161')
+
+    def test_lngamma(self):
+        assert lngamma(0.5) == mpfr('0.57236494292470008')
+
+    def test_lgamma(self):
+        assert lgamma(0.5) == (mpfr('0.57236494292470008'), 1)
+        assert lgamma(-0.0) == (mpfr('inf'), -1)
+
+    def test_digamma(self):
+        assert digamma(0.5) == mpfr('-1.9635100260214235')
+
+    def test_zeta(self):
+        assert zeta(0.5) == mpfr('-1.4603545088095868')
+
+    def test_erf(self):
+        assert erf(0.5) == mpfr('0.52049987781304652')
+
+    def test_erfc(self):
+        assert erfc(0.5) == mpfr('0.47950012218695348')
