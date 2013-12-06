@@ -7,7 +7,7 @@ from gmpy_cffi import (
     acos, asin, atan, atan2, cosh, sinh, tanh, sinh_cosh, sech, csch, coth,
     acosh, asinh, atanh, factorial, log1p, expm1, eint, li2, gamma, lngamma,
     lgamma, digamma, zeta, erf, erfc, j0, j1, jn, y0, y1, yn, fma, fms, agm,
-    hypot, ai, mpfr, mpq, mpz)
+    hypot, ai, const_log2, const_pi, const_euler, const_catalan, mpfr, mpq, mpz)
 
 
 class TestTrig(object):
@@ -211,3 +211,21 @@ class TestSpecial(object):
 
     def test_ai(self):
         assert ai(0.5) == mpfr('0.23169360648083348')
+
+
+class TestConst(object):
+    def test_const_log2(self):
+        assert const_log2() == mpfr('0.69314718055994529')
+        assert const_log2(100) == mpfr('0.69314718055994530941723212145798', 100)
+
+    def test_const_pi(self):
+        assert const_pi() == mpfr('3.1415926535897931')
+        assert const_pi(100) == mpfr('3.1415926535897932384626433832793', 100)
+
+    def test_const_euler(self):
+        assert const_euler() == mpfr('0.57721566490153287')
+        assert const_euler(100) == mpfr('0.57721566490153286060651209008234', 100)
+
+    def test_const_catalan(self):
+        assert const_catalan() == mpfr('0.91596559417721901')
+        assert const_catalan(100) == mpfr('0.91596559417721901505460351493252', 100)

@@ -699,3 +699,51 @@ def ai(x):
     res, mpfr_x = _init_check_mpfr(x)
     gmp.mpfr_ai(res, mpfr_x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
+
+
+def const_log2(precision=0):
+    """
+    const_log2([precision=0]) -> mpfr
+
+    Return the log2 constant  using the specified precision. If no
+    precision is specified, the default precision is used.
+    """
+    res = _new_mpfr(precision)
+    gmp.mpfr_const_log2(res, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def const_pi(precision=0):
+    """
+    const_pi([precision=0]) -> mpfr
+
+    Return the constant pi using the specified precision. If no
+    precision is specified, the default precision is used.
+    """
+    res = _new_mpfr(precision)
+    gmp.mpfr_const_pi(res, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def const_euler(precision=0):
+    """
+    const_euler([precision=0]) -> mpfr
+
+    Return the euler constant using the specified precision. If no
+    precision is specified, the default precision is used.
+    """
+    res = _new_mpfr(precision)
+    gmp.mpfr_const_euler(res, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def const_catalan(precision=0):
+    """
+    const_catalan([precision=0]) -> mpfr
+
+    Return the catalan constant  using the specified precision. If no
+    precision is specified, the default precision is used.
+    """
+    res = _new_mpfr(precision)
+    gmp.mpfr_const_catalan(res, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)

@@ -359,10 +359,10 @@ ffi.cdef("""
     int mpfr_agm (mpfr_t rop, mpfr_t op1, mpfr_t op2, mpfr_rnd_t rnd);
     int mpfr_hypot (mpfr_t rop, mpfr_t x, mpfr_t y, mpfr_rnd_t rnd);
     int mpfr_ai (mpfr_t rop, mpfr_t x, mpfr_rnd_t rnd);
-    // int mpfr_const_log2 (mpfr_t rop, mpfr_rnd_t rnd);
-    // int mpfr_const_pi (mpfr_t rop, mpfr_rnd_t rnd);
-    // int mpfr_const_euler (mpfr_t rop, mpfr_rnd_t rnd);
-    // int mpfr_const_catalan (mpfr_t rop, mpfr_rnd_t rnd);
+    int mpfr_const_log2 (mpfr_t rop, mpfr_rnd_t rnd);
+    int mpfr_const_pi (mpfr_t rop, mpfr_rnd_t rnd);
+    int mpfr_const_euler (mpfr_t rop, mpfr_rnd_t rnd);
+    int mpfr_const_catalan (mpfr_t rop, mpfr_rnd_t rnd);
     // void mpfr_free_cache (void);
     // int mpfr_sum (mpfr_t rop, mpfr_ptr const tab[], unsigned long int n, mpfr_rnd_t rnd);
 """)
