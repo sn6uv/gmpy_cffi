@@ -7,4 +7,5 @@ from .special_functions import (
     log, log2, log10, exp, exp2, exp10, cos, sin, tan, sin_cos, sec, csc, cot,
     acos, asin, atan, atan2, cosh, sinh, tanh, sinh_cosh, sech, csch, coth,
     acosh, asinh, atanh, factorial, log1p, expm1, eint, li2, gamma, lngamma,
-    lgamma, digamma, zeta, erf, erfc)
+    lgamma, digamma, zeta, erf, erfc, j0, j1, jn, y0, y1, yn, fma, fms, agm,
+    hypot, ai)

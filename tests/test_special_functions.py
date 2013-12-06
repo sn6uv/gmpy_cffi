@@ -6,7 +6,8 @@ from gmpy_cffi import (
     log, log2, log10, exp, exp2, exp10, cos, sin, tan, sin_cos, sec, csc, cot,
     acos, asin, atan, atan2, cosh, sinh, tanh, sinh_cosh, sech, csch, coth,
     acosh, asinh, atanh, factorial, log1p, expm1, eint, li2, gamma, lngamma,
-    lgamma, digamma, zeta, erf, erfc, mpfr, mpq, mpz)
+    lgamma, digamma, zeta, erf, erfc, j0, j1, jn, y0, y1, yn, fma, fms, agm,
+    hypot, ai, mpfr, mpq, mpz)
 
 
 class TestTrig(object):
@@ -124,6 +125,9 @@ class TestTrig(object):
     def test_atanh(self):
         assert atanh(0.5) == mpfr('0.549306144334054846')
 
+
+class TestSpecial(object):
+
     def test_factorial(self):
         assert factorial(10**3) == mpfr('4.0238726007709379e+2567')
         with pytest.raises(ValueError):
@@ -164,3 +168,46 @@ class TestTrig(object):
 
     def test_erfc(self):
         assert erfc(0.5) == mpfr('0.47950012218695348')
+
+    def test_j0(self):
+        assert j0(0.5) == mpfr('0.93846980724081286')
+
+    def test_j1(self):
+        assert j1(0.5) == mpfr('0.2422684576748739')
+
+    def test_jn(self):
+        assert jn(0.5, 4) == mpfr('0.00016073647636428759')
+        with pytest.raises(TypeError):
+            jn(0.5, sys.maxsize+1)
+        with pytest.raises(TypeError):
+            jn(0.5, -sys.maxsize-2)
+
+    def test_y0(self):
+        assert y0(0.5) == mpfr('-0.44451873350670656')
+
+    def test_y1(self):
+        assert y1(0.5) == mpfr('-1.4714723926702431')
+
+    def test_yn(self):
+        assert yn(0.5, 4) == mpfr('-499.27256081951231')
+        with pytest.raises(TypeError):
+            yn(0.5, sys.maxsize+1)
+        with pytest.raises(TypeError):
+            yn(0.5, -sys.maxsize-2)
+
+    def test_fma(self):
+        assert fma(0.5, 0.7, 1.1) == mpfr('1.4500000000000002')
+
+    def test_fms(self):
+        assert fms(0.5, 0.7, 1.1) == mpfr('-0.75000000000000011')
+        assert fms(0.5, mpfr(0.7), 1.1) == mpfr('-0.75000000000000011')
+        assert fms(0.5, 0.7, mpfr(1.1)) == mpfr('-0.75000000000000011')
+
+    def test_agm(self):
+        assert agm(0.5, 0.4) == mpfr('0.44860571605752053')
+
+    def test_hypot(self):
+        assert hypot(0.5, 0.4) == mpfr('0.6403124237432849')
+
+    def test_ai(self):
+        assert ai(0.5) == mpfr('0.23169360648083348')

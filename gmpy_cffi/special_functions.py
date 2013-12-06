@@ -564,3 +564,138 @@ def erfc(x):
     res, x = _init_check_mpfr(x)
     gmp.mpfr_erfc(res, x, gmp.MPFR_RNDN)
     return mpfr._from_c_mpfr(res)
+
+
+def j0(x):
+    """
+    j0(x) -> number
+
+    Return the first kind Bessel function of order 0 of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_j0(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def j1(x):
+    """
+    j1(x) -> number
+
+    Return the first kind Bessel function of order 1 of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_j1(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def jn(x, n):
+    """
+    jn(x, n) -> number
+
+    Return the first kind Bessel function of order n of x.
+    """
+    if not (isinstance(n, (int, long)) and -sys.maxsize-1 <= n <= sys.maxsize):
+        raise TypeError("yn() requires 'mpfr', 'int' arguments")
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_jn(res, n, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def y0(x):
+    """
+    y0(x) -> number
+
+    Return the second kind Bessel function of order 0 of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_y0(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def y1(x):
+    """
+    y1(x) -> number
+
+    Return the second kind Bessel function of order 1 of x.
+    """
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_y1(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def yn(x, n):
+    """
+    yn(x, n) -> number
+
+    Return the second kind Bessel function of order n of x.
+    """
+    if not (isinstance(n, (int, long)) and -sys.maxsize-1 <= n <= sys.maxsize):
+        raise TypeError("yn() requires 'mpfr', 'int' arguments")
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_yn(res, n, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def fma(x, y, z):
+    """
+    fma(x, y, z) -> number
+
+    Return the correctly rounded result of (x * y) + z.
+    """
+    # XXX Optimise
+    res, mpfr_x = _init_check_mpfr(x)
+    res, mpfr_y = _init_check_mpfr(y)
+    res, mpfr_z = _init_check_mpfr(z)
+    gmp.mpfr_fma(res, mpfr_x, mpfr_y, mpfr_z, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def fms(x, y, z):
+    """
+    fms(x, y, z) -> number
+
+    Return the correctly rounded result of (x * y) - z.
+    """
+    # XXX Optimise
+    res, mpfr_x = _init_check_mpfr(x)
+    res, mpfr_y = _init_check_mpfr(y)
+    res, mpfr_z = _init_check_mpfr(z)
+    gmp.mpfr_fms(res, mpfr_x, mpfr_y, mpfr_z, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def agm(x, y):
+    """
+    agm(x, y) -> number
+
+    Return the arithmetic-geometric mean of x and y.
+    """
+    # XXX Optimise
+    res, mpfr_x = _init_check_mpfr(x)
+    res, mpfr_y = _init_check_mpfr(y)
+    gmp.mpfr_agm(res, mpfr_x, mpfr_y, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def hypot(x, y):
+    """
+    hypot(y, x) -> number
+
+    Return the square root of (x**2 + y**2).
+    """
+    # XXX Optimise
+    res, mpfr_x = _init_check_mpfr(x)
+    res, mpfr_y = _init_check_mpfr(y)
+    gmp.mpfr_hypot(res, mpfr_x, mpfr_y, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+
+
+def ai(x):
+    """
+    ai(x) -> number
+
+    Return the Airy function of x.
+    """
+    res, mpfr_x = _init_check_mpfr(x)
+    gmp.mpfr_ai(res, mpfr_x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
