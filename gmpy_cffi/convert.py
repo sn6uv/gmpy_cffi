@@ -149,3 +149,33 @@ def _str_to_mpfr(s, base, a):
             raise ValueError('base must be 0 or 2..62, not %s' % base)
     else:
         raise TypeError('an integer is required')
+
+
+def _mpc_to_str(a, base):
+    real_str = _mpfr_to_str(gmp.mpc_realref(a))
+    imag_str = _mpfr_to_str(gmp.mpc_imagref(a))
+    if imag_str.startswith('-'):
+        return real_str + imag_str + 'j'
+    else:
+        return real_str + '+' + imag_str + 'j'
+
+
+def _str_to_mpc(s, base, a):
+    # Strip trailing 'j'
+    if s.endswith('j'):
+        s = s[:-1]
+
+    # Space required between real and imag parts
+    s = s.replace('+', ' +').replace('-', ' -').replace('e +', 'e+').replace('e -', 'e-')
+    if s.find(' +', 1) == -1 and s.find(' -', 1) == -1:
+        s = s + ' +0.0'
+
+    # Wrap string in brackets
+    s = '(' + s + ')'
+
+    if 2 <= base <= 36:
+        if gmp.mpc_set_str(a, s.encode('UTF-8'), base, gmp.MPC_RNDNN) == -1:
+            raise ValueError("invalid string in mpc()")
+    else:
+        raise ValueError(
+            "base for mpc() must be in the interval 2 ... 36.")

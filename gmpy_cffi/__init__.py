@@ -1,6 +1,7 @@
 from .mpz import mpz
 from .mpq import mpq
 from .mpfr import mpfr, isinf, isnan
+from .mpc import mpc
 from .convert import MAX_UI
 from .ntheory import is_prime, next_prime, gcd, gcdext, lcm, invert, jacobi, legendre, kronecker, fac, bincoef, fib, fib2, lucas, lucas2
 from .special_functions import (

@@ -6,7 +6,7 @@ python:
   - 3.3
   - pypy
 before_install:
-  - sudo apt-get install libgmp3-dev libmpfr-dev
+  - sudo apt-get install libgmp3-dev libmpfr-dev libmpc-dev
   - pip install --use-mirrors cffi
   - pip install --use-mirrors pytest
 install:

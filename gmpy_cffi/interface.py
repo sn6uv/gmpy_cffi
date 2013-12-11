@@ -180,7 +180,7 @@ ffi.cdef("""
     int mpfr_printf (const char *template, ...);
     int mpfr_asprintf (char **str, const char *template, ...);
 
-    // int mpfr_set (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
+    int mpfr_set (mpfr_t rop, mpfr_t op, mpfr_rnd_t rnd);
     int mpfr_set_ui (mpfr_t rop, unsigned long int op, mpfr_rnd_t rnd);
     int mpfr_set_si (mpfr_t rop, long int op, mpfr_rnd_t rnd);
     // int mpfr_set_uj (mpfr_t rop, uintmax_t op, mpfr_rnd_t rnd);
@@ -369,9 +369,113 @@ ffi.cdef("""
     int mpfr_const_catalan (mpfr_t rop, mpfr_rnd_t rnd);
     // void mpfr_free_cache (void);
     // int mpfr_sum (mpfr_t rop, mpfr_ptr const tab[], unsigned long int n, mpfr_rnd_t rnd);
+
+    // MPC
+    typedef struct { ...; } __mpc_struct;
+    typedef __mpc_struct *mpc_t;
+
+    typedef int mpc_rnd_t;
+
+    #define MPC_RNDNN ...
+    #define MPC_RNDNZ ...
+    #define MPC_RNDNU ...
+    #define MPC_RNDND ...
+    #define MPC_RNDZN ...
+    #define MPC_RNDZZ ...
+    #define MPC_RNDZU ...
+    #define MPC_RNDZD ...
+    #define MPC_RNDUN ...
+    #define MPC_RNDUZ ...
+    #define MPC_RNDUU ...
+    #define MPC_RNDUD ...
+    #define MPC_RNDDN ...
+    #define MPC_RNDDZ ...
+    #define MPC_RNDDU ...
+    #define MPC_RNDDD ...
+
+    void mpc_init2 (mpc_t z, mpfr_prec_t prec);
+    void mpc_init3 (mpc_t z, mpfr_prec_t prec_r, mpfr_prec_t prec_i);
+    void mpc_clear (mpc_t z);
+    void mpc_set_prec (mpc_t x, mpfr_prec_t prec);
+    // mpfr_prec_t mpc_get_prec (mpc_t x);
+    void mpc_get_prec2 (mpfr_prec_t* pr, mpfr_prec_t* pi, mpc_t x);
+
+    int mpc_set (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_set_ui (mpc_t rop, unsigned long int op, mpc_rnd_t rnd);
+    // int mpc_set_si (mpc_t rop, long int op, mpc_rnd_t rnd);
+    // int mpc_set_uj (mpc_t rop, uintmax_t op, mpc_rnd_t rnd);
+    // int mpc_set_sj (mpc_t rop, intmax_t op, mpc_rnd_t rnd);
+    // int mpc_set_d (mpc_t rop, double op, mpc_rnd_t rnd);
+    // int mpc_set_ld (mpc_t rop, long double op, mpc_rnd_t rnd);
+    // int mpc_set_dc (mpc_t rop, double _Complex op, mpc_rnd_t rnd);
+    // int mpc_set_ldc (mpc_t rop, long double _Complex op, mpc_rnd_t rnd);
+    int mpc_set_z (mpc_t rop, mpz_t op, mpc_rnd_t rnd);
+    int mpc_set_q (mpc_t rop, mpq_t op, mpc_rnd_t rnd);
+    // int mpc_set_f (mpc_t rop, mpf_t op, mpc_rnd_t rnd);
+    int mpc_set_fr (mpc_t rop, mpfr_t op, mpc_rnd_t rnd);
+
+    // int mpc_set_ui_ui (mpc_t rop, unsigned long int op1, unsigned long int op2, mpc_rnd_t rnd);
+    // int mpc_set_si_si (mpc_t rop, long int op1, long int op2, mpc_rnd_t rnd);
+    // int mpc_set_uj_uj (mpc_t rop, uintmax_t op1, uintmax_t op2, mpc_rnd_t rnd);
+    // int mpc_set_sj_sj (mpc_t rop, intmax_t op1, intmax_t op2, mpc_rnd_t rnd)
+    int mpc_set_d_d (mpc_t rop, double op1, double op2, mpc_rnd_t rnd);
+    // int mpc_set_ld_ld (mpc_t rop, long double op1, long double op2, mpc_rnd_t rnd);
+    // int mpc_set_z_z (mpc_t rop, mpz_t op1, mpz_t op2, mpc_rnd_t rnd);
+    // int mpc_set_q_q (mpc_t rop, mpq_t op1, mpq_t op2, mpc_rnd_t rnd);
+    // int mpc_set_f_f (mpc_t rop, mpf_t op1, mpf_t op2, mpc_rnd_t rnd);
+    // int mpc_set_fr_fr (mpc_t rop, mpfr_t op1, mpfr_t op2, mpc_rnd_t rnd);
+    // void mpc_set_nan (mpc_t rop);
+    // void mpc_swap (mpc_t op1, mpc_t op2);
+
+    // double _Complex mpc_get_dc (mpc_t op, mpc_rnd_t rnd);
+    // long double _Complex mpc_get_ldc (mpc_t op, mpc_rnd_t rnd);
+
+    // int mpc_strtoc (mpc_t rop, const char *nptr, char **endptr, int base, mpc_rnd_t rnd);
+    int mpc_set_str (mpc_t rop, const char *s, int base, mpc_rnd_t rnd);
+    char * mpc_get_str (int b, size_t n, mpc_t op, mpc_rnd_t rnd);
+    void mpc_free_str (char *str);
+    // int mpc_inp_str (mpc_t rop, FILE *stream, size_t *read, int base, mpc_rnd_t rnd);
+    // size_t mpc_out_str (FILE *stream, int base, size_t n_digits, mpc_t op, mpc_rnd_t rnd);
+
+    mpfr_t mpc_realref (mpc_t op);
+    mpfr_t mpc_imagref (mpc_t op);
+
+    int mpc_cmp (mpc_t op1, mpc_t op2);
+    // int mpc_cmp_si_si (mpc_t op1, long int op2r , long int op2i);
+    // int mpc_cmp_si (mpc_t op1 , long int op2);
+
+    int mpc_add (mpc_t rop, mpc_t op1, mpc_t op2 , mpc_rnd_t rnd);
+    int mpc_add_ui (mpc_t rop, mpc_t op1, unsigned long int op2, mpc_rnd_t rnd);
+    int mpc_add_fr (mpc_t rop, mpc_t op1, mpfr_t op2, mpc_rnd_t rnd);
+    int mpc_sub (mpc_t rop , mpc_t op1 , mpc_t op2 , mpc_rnd_t rnd);
+    int mpc_sub_fr (mpc_t rop , mpc_t op1 , mpfr_t op2 , mpc_rnd_t rnd);
+    int mpc_fr_sub (mpc_t rop , mpfr_t op1 , mpc_t op2 , mpc_rnd_t rnd);
+    int mpc_sub_ui (mpc_t rop , mpc_t op1 , unsigned long int op2 , mpc_rnd_t rnd);
+    int mpc_ui_sub (mpc_t rop , unsigned long int op1 , mpc_t op2 , mpc_rnd_t rnd);
+    int mpc_mul (mpc_t rop, mpc_t op1, mpc_t op2, mpc_rnd_t rnd);
+    int mpc_mul_ui (mpc_t rop, mpc_t op1, unsigned long int op2, mpc_rnd_t rnd);
+    int mpc_mul_si (mpc_t rop, mpc_t op1, long int op2, mpc_rnd_t rnd);
+    int mpc_mul_fr (mpc_t rop, mpc_t op1, mpfr_t op2, mpc_rnd_t rnd);
+
+    int mpc_div (mpc_t rop, mpc_t op1, mpc_t op2, mpc_rnd_t rnd);
+    int mpc_div_ui (mpc_t rop, mpc_t op1, unsigned long int op2, mpc_rnd_t rnd);
+    int mpc_div_fr (mpc_t rop, mpc_t op1, mpfr_t op2, mpc_rnd_t rnd);
+    int mpc_ui_div (mpc_t rop, unsigned long int op1, mpc_t op2, mpc_rnd_t rnd);
+    int mpc_fr_div (mpc_t rop, mpfr_t op1, mpc_t op2, mpc_rnd_t rnd);
+
+    int mpc_pow (mpc_t rop , mpc_t op1 , mpc_t op2 , mpc_rnd_t rnd);
+    int mpc_pow_d (mpc_t rop , mpc_t op1 , double op2 , mpc_rnd_t rnd);
+    int mpc_pow_ld (mpc_t rop , mpc_t op1 , long double op2 , mpc_rnd_t rnd);
+    int mpc_pow_si (mpc_t rop , mpc_t op1 , long op2 , mpc_rnd_t rnd);
+    int mpc_pow_ui (mpc_t rop , mpc_t op1 , unsigned long op2 , mpc_rnd_t rnd);
+    int mpc_pow_z (mpc_t rop , mpc_t op1 , mpz_t op2 , mpc_rnd_t rnd);
+    int mpc_pow_fr (mpc_t rop , mpc_t op1 , mpfr_t op2 , mpc_rnd_t rnd);
+    int mpc_abs (mpfr_t rop , mpc_t op , mpfr_rnd_t rnd);
+    int mpc_neg (mpc_t rop , mpc_t op , mpc_rnd_t rnd);
 """)
 
 gmp = ffi.verify("""
     #include <gmp.h>
     #include <mpfr.h>
-""", libraries=['gmp', 'mpfr'])
+    #include <mpc.h>
+""", libraries=['gmp', 'mpfr', 'mpc'])
