@@ -9,7 +9,7 @@ from gmpy_cffi import mpfr, mpq, mpz, isinf, isnan
 from math import sqrt
 
 
-PY3 = sys.version_info >= (3, 0)
+PY3 = sys.version.startswith('3')
 
 
 invalids = [(), [], set(), dict(), lambda x: x**2]
@@ -350,7 +350,7 @@ class TestCmp(object):
         assert mpfr(1.4) != mpfr(1.5)
         assert mpfr(1.5) != mpfr(-1.5)
 
-    @pytest.mark.xfail("sys.version_info < (3,)", reason="python2 comparison")
+    @pytest.mark.xfail("sys.version.startswith('2.')", reason="python2 comparison")
     @pytest.mark.parametrize('n', invalids)
     def test_invalid_cmp(self, n):
         with pytest.raises(TypeError):

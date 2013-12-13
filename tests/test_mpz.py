@@ -5,7 +5,7 @@ import pytest
 from gmpy_cffi import mpz, MAX_UI
 
 
-PY3 = sys.version_info >= (3, 0)
+PY3 = sys.version.startswith('3')
 
 
 if PY3:
@@ -387,7 +387,7 @@ class TestCmp(object):
         assert mpz(1) < mpz(2)
         assert mpz(2) == mpz(2)
 
-    @pytest.mark.xfail("sys.version_info < (3,)", reason="python2 comparison")
+    @pytest.mark.xfail("sys.version.startswith('2')", reason="python2 comparison")
     @pytest.mark.parametrize('n', invalids)
     def test_invalid_cmp(self, n):
         with pytest.raises(TypeError):

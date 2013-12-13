@@ -7,7 +7,7 @@ from gmpy_cffi import mpq, mpz, mpfr
 from math import sqrt
 
 
-PY3 = sys.version_info >= (3, 0)
+PY3 = sys.version.startswith('3')
 
 
 if PY3:
@@ -424,13 +424,13 @@ class TestCmp(object):
         assert hash(mpq(3,1)) == hash(fractions.Fraction(3,1)) == 3
         assert hash(mpq(0)) == hash(fractions.Fraction(0,1)) == hash(0.0) == 0
 
-    @pytest.mark.xfail("sys.version_info > (2,)")
+    @pytest.mark.xfail("sys.version.startswith('3')")
     def test_hash_big(self):
         import fractions
         assert (hash(mpq(sys.maxsize + 1, sys.maxsize)) ==
                 hash(fractions.Fraction(sys.maxsize + 1, sys.maxsize)))
 
-    @pytest.mark.xfail("sys.version_info < (3,)", reason="python2 comparison")
+    @pytest.mark.xfail("sys.version.startswith('2')", reason="python2 comparison")
     @pytest.mark.parametrize('n', invalids)
     def test_invalid_type_math(self, n):
         with pytest.raises(TypeError):

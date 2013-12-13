@@ -4,8 +4,9 @@ from math import log10
 
 from gmpy_cffi.interface import gmp, ffi
 
+
 MAX_UI = 2 * sys.maxsize + 1
-PY3 = sys.version_info >= (3,0)
+PY3 = sys.version.startswith('3')
 
 
 if PY3:

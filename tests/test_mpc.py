@@ -6,7 +6,7 @@ import pytest
 from gmpy_cffi import mpq, mpz, mpfr, mpc
 
 
-PY3 = sys.version_info >= (3, 0)
+PY3 = sys.version.startswith('3')
 
 
 if PY3:
@@ -267,7 +267,7 @@ class TestConv(object):
         with pytest.raises(TypeError):
             long(mpc('1.5'))
 
-    @pytest.mark.xfail("sys.version_info <= (2,6)", reason="python2.6 complex")
+    @pytest.mark.xfail("sys.version.startswith('2.6')", reason="python2.6 complex")
     def test_complex(self):
         complex(mpc('1.5+0.5j')) == 1.5+0.5j
         complex(mpc('1.5-0.5j')) == 1.5-0.5j

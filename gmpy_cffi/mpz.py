@@ -5,7 +5,7 @@ from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.convert import _pyint_to_mpz, _pylong_to_mpz, _mpz_to_pylong, _mpz_to_str, MAX_UI
 
 
-PY3 = sys.version_info >= (3,0)
+PY3 = sys.version.startswith('3')
 
 
 if PY3:

@@ -4,7 +4,7 @@ from gmpy_cffi.interface import gmp
 from gmpy_cffi.mpz import mpz, _new_mpz
 
 
-PY3 = sys.version_info >= (3, 0)
+PY3 = sys.version.startswith('3')
 
 
 if PY3:
