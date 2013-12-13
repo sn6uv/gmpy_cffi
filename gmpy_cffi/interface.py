@@ -371,6 +371,8 @@ ffi.cdef("""
     // int mpfr_sum (mpfr_t rop, mpfr_ptr const tab[], unsigned long int n, mpfr_rnd_t rnd);
 
     // MPC
+    const char * mpc_get_version (void);
+
     typedef struct { ...; } __mpc_struct;
     typedef __mpc_struct *mpc_t;
 

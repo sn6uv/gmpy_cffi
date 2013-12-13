@@ -39,4 +39,4 @@ def mpc_version():
     Return string giving current MPC version. Return None if MPC
     support is not available.
     """
-    return None
+    return "MPC {0}".format(ffi.string(gmp.mpc_get_version()))

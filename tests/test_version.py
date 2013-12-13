@@ -20,7 +20,6 @@ class TestVersion:
         assert isinstance(s, str)
         assert s.startswith('MPFR ')
 
-    @pytest.mark.xfail(reason="mpc not implemented")
     def test_mpc_version(self):
         s = mpc_version()
         assert isinstance(s, str)
