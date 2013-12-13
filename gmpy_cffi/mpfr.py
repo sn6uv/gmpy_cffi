@@ -267,7 +267,7 @@ class mpfr(object):
                 gmp.mpfr_add_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
                 _del_mpz(tmp_mpz)
         else:
-            raise TypeError
+            return NotImplemented
         return mpfr._from_c_mpfr(res)
 
     __radd__ = __add__
@@ -293,7 +293,7 @@ class mpfr(object):
                 gmp.mpfr_sub_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
                 _del_mpz(tmp_mpz)
         else:
-            raise TypeError
+            return NotImplemented
         return mpfr._from_c_mpfr(res)
 
     def __rsub__(self, other):
@@ -317,7 +317,7 @@ class mpfr(object):
                 gmp.mpfr_z_sub(res, tmp_mpz, self._mpfr, gmp.MPFR_RNDN)
                 _del_mpz(tmp_mpz)
         else:
-            raise TypeError
+            return NotImplemented
         return mpfr._from_c_mpfr(res)
 
     def __mul__(self, other):
@@ -341,7 +341,7 @@ class mpfr(object):
                 gmp.mpfr_mul_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
                 _del_mpz(tmp_mpz)
         else:
-            raise TypeError
+            return NotImplemented
         return mpfr._from_c_mpfr(res)
 
     __rmul__ = __mul__
@@ -369,7 +369,7 @@ class mpfr(object):
                 gmp.mpfr_div_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
                 _del_mpz(tmp_mpz)
         else:
-            raise TypeError
+            return NotImplemented
         return mpfr._from_c_mpfr(res)
 
     __div__ = __truediv__
@@ -401,7 +401,7 @@ class mpfr(object):
                 gmp.mpfr_div(res, res, self._mpfr, gmp.MPFR_RNDN)
                 _del_mpz(tmp_mpz)
         else:
-            raise TypeError
+            return NotImplemented
         return mpfr._from_c_mpfr(res)
 
     def __pow__(self, other):
@@ -429,7 +429,7 @@ class mpfr(object):
                 gmp.mpfr_pow_z(res, self._mpfr, tmp_mpz, gmp.MPFR_RNDN)
                 _del_mpz(tmp_mpz)
         else:
-            raise TypeError
+            return NotImplemented
         return mpfr._from_c_mpfr(res)
 
     def __rpow__(self, other):
@@ -451,7 +451,7 @@ class mpfr(object):
             _pyint_to_mpfr(other, res)
             gmp.mpfr_pow(res, res, self._mpfr, gmp.MPFR_RNDN)
         else:
-            raise TypeError
+            return NotImplemented
         return mpfr._from_c_mpfr(res)
 
     def __pos__(self):
