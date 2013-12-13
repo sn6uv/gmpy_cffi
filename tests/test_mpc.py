@@ -251,6 +251,33 @@ class TestCmp(object):
         with pytest.raises(TypeError):
             mpc('0.5') > []
 
+
+class TestConv(object):
+    def test_float(self):
+        with pytest.raises(TypeError):
+            float(mpc('1.5+0.5j'))
+        with pytest.raises(TypeError):
+            float(mpc('1.5'))
+
+    def test_int(self):
+        with pytest.raises(TypeError):
+            int(mpc('1.5'))
+
+    def test_long(self):
+        with pytest.raises(TypeError):
+            long(mpc('1.5'))
+
+    def test_complex(self):
+        complex(mpc('1.5+0.5j')) == 1.5+0.5j
+        complex(mpc('1.5-0.5j')) == 1.5-0.5j
+        complex(mpc('nan+0.5j')) == complex('nan+0.5j')
+        complex(mpc('0.5+nanj')) == complex('0.5+nanj')
+        complex(mpc('nan+nanj')) == complex('nan+nanj')
+        complex(mpc('inf+0.5j')) == complex('inf+0.5j')
+        complex(mpc('0.5+infj')) == complex('0.5+infj')
+        complex(mpc('inf-infj')) == complex('inf-infj')
+
+
 class TestMath(object):
     def test_add(self):
         assert mpc('1.5+0.5j') + mpc('0.2+0.3j') == mpc('1.7+0.8j')
