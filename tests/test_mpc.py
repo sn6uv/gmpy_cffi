@@ -251,6 +251,11 @@ class TestCmp(object):
         with pytest.raises(TypeError):
             mpc('0.5') > []
 
+    def test_hash(self):
+        if PY3:
+            assert hash(mpc('1.5+0.3j')) == 3228180212873571457
+        else:
+            assert hash(mpc('1.5+0.3j')) == 3006454865978212
 
 class TestConv(object):
     def test_float(self):
@@ -341,3 +346,73 @@ class TestMath(object):
         with pytest.raises(TypeError):
             mpc('1.5+0.5j') * []
         assert 3 * mpc('1.5+0.5j') == mpc('4.5+1.5j')
+
+    def test_truediv(self):
+        assert mpc(1,3) / mpc(2,5) == mpc('0.58620689655172409+0.034482758620689655j')
+        assert mpc('1.5+3.2j') / (2.1+0.4j) == mpc('0.96936542669584247+1.3391684901531729j')
+        assert mpc('1.5+1.2j') / 0.3 == mpc('5.0+4.0j')
+        assert mpc('1.5+1.2j') / mpfr('0.3') == mpc('5.0+4.0j')
+        assert mpc('1.5+3.0j') / 3 == mpc('0.5+1.0j')
+        assert mpc('1.5+3.0j') / mpz(3) == mpc('0.5+1.0j')
+        assert mpc('1.5+0.6j') / mpq(7,5) == mpc('1.0714285714285714+0.4285714285714286j')
+        assert mpc('4.4+1.7j') / (-2) ==  mpc('-2.2000000000000002-0.84999999999999998j')
+        assert mpc(1.4e+19-1.2e+19j) / sys.maxsize == mpc('1.5178830414797062-1.3010426069826053j')
+        assert mpc(1.4e+19-1.2e+19j) / (2*sys.maxsize) == mpc('0.7589415207398531-0.65052130349130266j')
+        assert mpc(1.4e+19-1.2e+19j) / (3*sys.maxsize) == mpc('0.50596101382656877-0.43368086899420177j')
+        with pytest.raises(TypeError):
+            mpc('1.5+0.5j') / []
+
+    def test_rtruediv(self):
+        assert (2.1+0.4j) / mpc('1.5+3.2j') == mpc('0.35468374699759808-0.48999199359487589j')
+        assert 0.3 / mpc('1.2+3.1j') == mpc('0.032579185520361986-0.084162895927601802j')
+        assert mpq(2,3) / mpc('1.4+0.4j') == mpc('0.44025157232704404-0.12578616352201258j')
+        assert mpfr('0.3') / mpc('1.2+3.1j') == mpc('0.032579185520361986-0.084162895927601802j')
+        assert 3 / mpc('1.3+0.7j') == mpc('1.7889908256880733-0.96330275229357787j')
+        assert mpz(3) / mpc('1.3+0.7j') == mpc('1.7889908256880733-0.96330275229357787j')
+        assert (-1) / mpc(0.4+0.6j) == mpc('-0.76923076923076927+1.1538461538461537j')
+        assert sys.maxsize / mpc(1.3e19+1.6e19j) == mpc('0.28212667406849901-0.34723282962276802j')
+        assert (2*sys.maxsize) / mpc(1.3e19+1.6e19j) == mpc('0.56425334813699801-0.69446565924553605j')
+        assert (3*sys.maxsize) / mpc(1.3e19+1.6e19j) == mpc('0.84638002220549713-1.0416984888683041j')
+        with pytest.raises(TypeError):
+            [] / mpc('1.5+0.5j')
+
+    def test_pow(self):
+        assert mpc('1.2+3.1j') ** mpc('0.7+0.3j') == mpc('0.58374557428865026+1.5076769261293019j')
+        assert mpc('1.2+3.1j') ** (0.7+0.3j) == mpc('0.58374557428865026+1.5076769261293019j')
+
+        assert mpc('1.3+2.7j') ** mpq(2,3) == mpc('1.523607752011799+1.4138443176037268j')
+        assert mpc('1.2+2.7j') ** mpfr(1.35) == mpc('0.063993805808622087+4.3165511702888386j')
+        assert mpc('1.2+2.7j') ** 1.35 == mpc('0.063993805808622087+4.3165511702888386j')
+        assert mpc('1.2+2.7j') ** 15 == mpc('112131.44281004601-11417890.819726286j')
+        assert mpc('1.2+2.7j') ** mpz(15) == mpc('112131.44281004601-11417890.819726286j')
+        assert mpc('1.2+2.7j') ** (-1) == mpc('0.1374570446735395-0.30927835051546393j')
+        assert mpc('0.0+1.0j') ** sys.maxsize == mpc('-0.0-1.0j')
+        assert mpc('0.0+1.0j') ** (2*sys.maxsize) == mpc('-1.0+0.0j')
+        assert mpc('0.0+1.0j') ** (3*sys.maxsize) == mpc('0.0+1.0j')
+        with pytest.raises(TypeError):
+            mpc('1.5+0.5j') ** []
+
+    def test_rpow(self):
+        assert 2 ** mpc('1.2+0.7j') == mpc('2.0322318210346983+1.0714781699435463j')
+        assert (-3) ** mpc('1.2+0.7j') == mpc('-0.07152774910532736-0.40824064717539998j')
+        assert mpz(2) ** mpc('1.2+0.7j') == mpc('2.0322318210346983+1.0714781699435463j')
+        assert mpq(2,3) ** mpc('1.2+0.7j') == mpc('0.59014364683348408-0.17214537996429355j')
+        assert mpfr(1.3) ** mpc('1.2+0.7j') == mpc('1.3469959279701931+0.25020189563974787j')
+        assert 1.3 ** mpc('1.2+0.7j') == mpc('1.3469959279701931+0.25020189563974787j')
+        assert (1.1+0.8j) ** mpc('1.2+0.7j') == mpc('0.52663021989956504+0.76824606795641459j')
+        assert sys.maxsize ** mpc('1.5+0.3j') == mpc('2.4110001396293724e+28+1.4259928106202001e+28j')
+        assert (2*sys.maxsize) ** mpc('1.5+0.3j') == mpc('5.8397586579879863e+28+5.354272702274433e+28j')
+        assert (3*sys.maxsize) ** mpc('1.5+0.3j') == mpc('9.4555004785752363e+28+1.1065518255778351e+29j')
+        with pytest.raises(TypeError):
+            [] ** mpc('1.5+0.5j')
+
+    def test_neg(self):
+        assert -mpc('1.4+0.3j') == mpc('-1.4-0.3j')
+        assert -mpc('1.4-0.3j') == mpc('-1.4+0.3j')
+
+    def test_pos(self):
+        assert +mpc('1.4+0.3j') == mpc('1.4+0.3j')
+        assert +mpc('1.4-0.3j') == mpc('1.4-0.3j')
+
+    def test_abs(self):
+        assert abs(mpc('1.5+0.3j')) == mpfr('1.5297058540778354')

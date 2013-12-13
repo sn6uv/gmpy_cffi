@@ -464,10 +464,8 @@ class mpc(object):
         elif isinstance(other, mpfr):
             gmp.mpc_div_fr(res, self._mpc, other._mpfr, gmp.MPC_RNDNN)
         elif isinstance(other, mpq):
-            gmp.mpfr_div_q(gmp.mpc_realref(res), gmp.mpc_realref(self._mpc),
-                           other._mpq, gmp.MPFR_RNDN)
-            gmp.mpfr_div_q(gmp.mpc_imagref(res), gmp.mpc_imagref(self._mpc),
-                           other._mpq, gmp.MPFR_RNDN)
+            gmp.mpc_set_q(res, other._mpq, gmp.MPC_RNDNN)
+            gmp.mpc_div(res, self._mpc, res, gmp.MPC_RNDNN)
         elif isinstance(other, mpz):
             gmp.mpfr_div_z(gmp.mpc_realref(res), gmp.mpc_realref(self._mpc),
                            other._mpz, gmp.MPFR_RNDN)
@@ -512,42 +510,28 @@ class mpc(object):
         if isinstance(other, mpfr):
             gmp.mpc_fr_div(res, other._mpfr, self._mpc, gmp.MPC_RNDNN)
         elif isinstance(other, mpq):
-            gmp.mpfr_q_div(gmp.mpc_realref(res), other._mpq,
-                           gmp.mpc_realref(self._mpc), gmp.MPFR_RNDN)
-            gmp.mpfr_q_div(gmp.mpc_imagref(res), other._mpq,
-                           gmp.mpc_imagref(self._mpc), gmp.MPFR_RNDN)
+            gmp.mpc_set_q(res, other._mpq, gmp.MPC_RNDNN)
+            gmp.mpc_div(res, res, self._mpc, gmp.MPC_RNDNN)
         elif isinstance(other, mpz):
-            gmp.mpfr_z_div(gmp.mpc_realref(res), other._mpz,
-                           gmp.mpc_realref(self._mpc), gmp.MPFR_RNDN)
-            gmp.mpfr_z_div(gmp.mpc_imagref(res), other._mpz,
-                           gmp.mpc_imagref(self._mpc), gmp.MPFR_RNDN)
+            gmp.mpc_set_z(res, other._mpz, gmp.MPC_RNDNN)
+            gmp.mpc_div(res, res, self._mpc, gmp.MPC_RNDNN)
         elif isinstance(other, complex):
             gmp.mpc_set_d_d(res, other.real, other.imag, gmp.MPC_RNDNN)
             gmp.mpc_div(res, res, self._mpc, gmp.MPC_RNDNN)
         elif isinstance(other, float):
-            gmp.mpfr_d_div(gmp.mpc_realref(res), other,
-                           gmp.mpc_realref(self._mpc), gmp.MPFR_RNDN)
-            gmp.mpfr_d_div(gmp.mpc_imagref(res), other,
-                           gmp.mpc_imagref(self._mpc), gmp.MPFR_RNDN)
+            gmp.mpc_set_d(res, other.real, gmp.MPC_RNDNN)
+            gmp.mpc_div(res, res, self._mpc, gmp.MPC_RNDNN)
         elif isinstance(other, (int, long)):
             if 0 <= other <= MAX_UI:
                 gmp.mpc_ui_div(res, other, self._mpc, gmp.MPC_RNDNN)
             elif -sys.maxsize-1 <= other <= sys.maxsize:
-                gmp.mpfr_si_div(gmp.mpc_realref(res),
-                                other, gmp.mpc_realref(self._mpc),
-                                gmp.MPFR_RNDN)
-                gmp.mpfr_si_div(gmp.mpc_imagref(res),
-                                other, gmp.mpc_imagref(self._mpc),
-                                gmp.MPFR_RNDN)
+                gmp.mpc_set_si(res, other, gmp.MPC_RNDNN)
+                gmp.mpc_div(res, res, self._mpc, gmp.MPC_RNDNN)
             else:
                 tmp_mpz = _new_mpz()
                 _pyint_to_mpz(other, tmp_mpz)
-                gmp.mpfr_z_div(gmp.mpc_realref(res),
-                               tmp_mpz, gmp.mpc_realref(self._mpc),
-                               gmp.MPFR_RNDN)
-                gmp.mpfr_z_div(gmp.mpc_imagref(res),
-                               tmp_mpz, gmp.mpc_imagref(self._mpc),
-                               gmp.MPFR_RNDN)
+                gmp.mpc_set_z(res, tmp_mpz, gmp.MPC_RNDNN)
+                gmp.mpc_div(res, res, self._mpc, gmp.MPC_RNDNN)
                 _del_mpz(tmp_mpz)
         else:
             return NotImplemented
@@ -562,11 +546,8 @@ class mpc(object):
         elif isinstance(other, mpfr):
             gmp.mpc_pow_fr(res, self._mpc, other._mpfr, gmp.MPC_RNDNN)
         elif isinstance(other, mpq):
-            gmp.mpfr_set_q(gmp.mpc_imagref(res), other._mpq, gmp.MPFR_RNDN)
-            gmp.mpfr_pow(gmp.mpc_realref(res), gmp.mpc_realref(self._mpc),
-                         gmp.mpc_imagref(res), gmp.MPFR_RNDN)
-            gmp.mpfr_pow(gmp.mpc_imagref(res), gmp.mpc_imagref(self._mpc),
-                         gmp.mpc_imagref(res), gmp.MPFR_RNDN)
+            gmp.mpc_set_q(res, other._mpq, gmp.MPFR_RNDN)
+            gmp.mpc_pow(res, self._mpc, res, gmp.MPC_RNDNN)
         elif isinstance(other, mpz):
             gmp.mpc_pow_z(res, self._mpc, other._mpz,
                           gmp.MPFR_RNDN)
@@ -591,9 +572,7 @@ class mpc(object):
 
     def __rpow__(self, other):
         res = _new_mpc()    # TODO use context precision
-        if isinstance(other, mpc):
-            gmp.mpc_pow(res, other._mpc, self._mpc, gmp.MPC_RNDNN)
-        elif isinstance(other, mpfr):
+        if isinstance(other, mpfr):
             gmp.mpc_set_fr(res, other._mpfr, gmp.MPFR_RNDN)
             gmp.mpc_pow(res, res, self._mpc, gmp.MPFR_RNDN)
         elif isinstance(other, mpq):
@@ -604,10 +583,10 @@ class mpc(object):
             gmp.mpc_pow(res, res, self._mpc, gmp.MPFR_RNDN)
         elif isinstance(other, complex):
             gmp.mpc_set_d_d(res, other.real, other.imag, gmp.MPC_RNDNN)
-            gmp.mpc_pow(res, self._mpc, res, gmp.MPC_RNDNN)
+            gmp.mpc_pow(res, res, self._mpc, gmp.MPC_RNDNN)
         elif isinstance(other, float):
             gmp.mpc_set_d(res, other, gmp.MPFR_RNDN)
-            gmp.mpc_pow(res, self._mpc, res, gmp.MPC_RNDNN)
+            gmp.mpc_pow(res, res, self._mpc, gmp.MPC_RNDNN)
         elif isinstance(other, (int, long)):
             if 0 <= other <= MAX_UI:
                 gmp.mpc_set_ui(res, other, gmp.MPC_RNDNN)

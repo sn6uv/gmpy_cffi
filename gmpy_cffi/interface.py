@@ -404,10 +404,10 @@ ffi.cdef("""
 
     int mpc_set (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
     int mpc_set_ui (mpc_t rop, unsigned long int op, mpc_rnd_t rnd);
-    // int mpc_set_si (mpc_t rop, long int op, mpc_rnd_t rnd);
+    int mpc_set_si (mpc_t rop, long int op, mpc_rnd_t rnd);
     // int mpc_set_uj (mpc_t rop, uintmax_t op, mpc_rnd_t rnd);
     // int mpc_set_sj (mpc_t rop, intmax_t op, mpc_rnd_t rnd);
-    // int mpc_set_d (mpc_t rop, double op, mpc_rnd_t rnd);
+    int mpc_set_d (mpc_t rop, double op, mpc_rnd_t rnd);
     // int mpc_set_ld (mpc_t rop, long double op, mpc_rnd_t rnd);
     // int mpc_set_dc (mpc_t rop, double _Complex op, mpc_rnd_t rnd);
     // int mpc_set_ldc (mpc_t rop, long double _Complex op, mpc_rnd_t rnd);
