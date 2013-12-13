@@ -6,6 +6,8 @@ __all__ = "ffi", "gmp", "mpz"
 ffi = cffi.FFI()
 
 ffi.cdef("""
+    const char * const gmp_version;
+
     // MPZ
     typedef struct { ...; } __mpz_struct;
     typedef __mpz_struct *mpz_t;
@@ -146,6 +148,8 @@ ffi.cdef("""
     int mpq_equal (const mpq_t op1, const mpq_t op2);
 
     // MPFR
+    const char * mpfr_get_version (void);
+
     typedef struct { ...; } __mpfr_struct;
     typedef __mpfr_struct *mpfr_t;
 
