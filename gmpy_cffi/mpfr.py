@@ -137,25 +137,26 @@ class mpfr(object):
          base=2, 0x implies base=16, otherwise base=10 is assumed.
     """
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], self.__class__):
+        nargs = len(args)
+        if nargs == 1 and isinstance(args[0], self.__class__):
             self._mpfr = args[0]._mpfr
             return
 
-        if len(args) > 3:
+        if nargs > 3:
             raise TypeError("mpfr() requires 0 to 3 arguments")
 
-        if len(args) >= 2:
+        if nargs >= 2:
             a = self._mpfr = ffi.gc(_new_mpfr(prec=args[1]), _del_mpfr)
         else:
             a = self._mpfr = ffi.gc(_new_mpfr(), _del_mpfr)
 
-        if len(args) == 0:
+        if nargs == 0:
             gmp.mpfr_set_zero(a, 1)
-        elif len(args) == 3:
+        elif nargs == 3:
             if isinstance(args[0], str):
                 _str_to_mpfr(args[0], args[2], a)
             else:
-                raise TypeError('function takes at most 2 arguments (%i given)' % len(args))
+                raise TypeError('function takes at most 2 arguments (%i given)' % nargs)
         else:
             if isinstance(args[0], str):
                 _str_to_mpfr(args[0], 10, a)

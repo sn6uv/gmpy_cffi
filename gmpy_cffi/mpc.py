@@ -86,20 +86,21 @@ class mpc(object):
     """
     """
     def __init__(self, *args):
-        # if len(args) == 1 and isinstance(args[0], self.__class__):
+        nargs = len(args)
+        # if nargs == 1 and isinstance(args[0], self.__class__):
         #     self._mpc = args[0]._mpc
         #     return
 
-        if len(args) == 0:
+        if nargs == 0:
             self._mpc = ffi.gc(_new_mpc(), _del_mpc)
             gmp.mpc_set_ui(self._mpc, 0, gmp.MPC_RNDNN)
         elif isinstance(args[0], str):   # unicode?
             # First argument is a string
-            if len(args) == 1:
+            if nargs == 1:
                 prec, base = 0, 10
-            elif len(args) == 2:
+            elif nargs == 2:
                 prec, base = args[1], 10
-            elif len(args) == 3:
+            elif nargs == 3:
                 prec, base = args[1], args[2]
             else:
                 raise TypeError("function takes at most 3 arguments (4 given)")
@@ -110,9 +111,9 @@ class mpc(object):
             _str_to_mpc(args[0], base, self._mpc)
         elif isinstance(args[0], (mpc, complex)):
             # First argument is complex
-            if len(args) == 1:
+            if nargs == 1:
                 prec = (0,  0)
-            elif len(args) == 2:
+            elif nargs == 2:
                 prec = _check_prec(args[1])
             else:
                 raise TypeError("function takes at most 2 arguments (3 given)")
@@ -127,9 +128,9 @@ class mpc(object):
         elif isinstance(args[0], (mpfr, mpq, mpz, float, int, long)):
             # First argument is real
 
-            if len(args) <= 2:
+            if nargs <= 2:
                 prec = (0, 0)
-            elif len(args) == 3:
+            elif nargs == 3:
                 prec = _check_prec(args[2])
             else:
                 raise TypeError("function takes at most 3 arguments (4 given)")
@@ -149,7 +150,7 @@ class mpc(object):
             elif isinstance(args[0], (int, long)):
                _pyint_to_mpfr(args[0], realref)
 
-            if len(args) >= 2:
+            if nargs >= 2:
                 # Check if second argument is real
                 if isinstance(args[1], mpfr):
                     gmp.mpfr_set(imagref, args[1]._mpfr, gmp.MPFR_RNDN)

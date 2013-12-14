@@ -78,15 +78,16 @@ class mpq(object):
 
         #TODO kwargs (base)
 
-        if len(args) == 1 and isinstance(args[0], self.__class__):
+        nargs = len(args)
+        if nargs == 1 and isinstance(args[0], self.__class__):
             self._mpq = args[0]._mpq
             return
 
         a = self._mpq = ffi.gc(_new_mpq(), _del_mpq)
 
-        if len(args) == 0:
+        if nargs == 0:
             gmp.mpq_set_ui(a, 0, 1)
-        elif len(args) == 1:
+        elif nargs == 1:
             if isinstance(args[0], float):
                 gmp.mpq_set_d(a, args[0])
             elif isinstance(args[0], (int, long)):
@@ -97,7 +98,7 @@ class mpq(object):
                 _str_to_mpq(args[0], 10, a)
             else:
                 raise TypeError('mpq() requires numeric or string argument')
-        elif len(args) == 2:
+        elif nargs == 2:
             if isinstance(args[0], str):
                 _str_to_mpq(args[0], args[1], a)
             elif all(isinstance(arg, (int, long, mpz)) for arg in args):
