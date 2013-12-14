@@ -62,23 +62,6 @@ def _del_mpfr(mpfr):
         gmp.mpfr_clear(mpfr)
 
 
-def _min_prec(*args):
-    """
-    Calculates the minimum precision of a given args
-
-    returns None if precision is infinite
-    """
-    precs = []
-    for arg in args:
-        if isinstance(arg, mpfr):
-            precs.append(gmp.mpfr_get_prec(arg._mpfr))
-        elif isinstance(arg, float):
-            precs.append(53)
-    if precs:
-        return min(precs)
-    return None
-
-
 def isinf(x):
     """
     isinf(x) -> boolean
@@ -248,7 +231,7 @@ class mpfr(object):
         return hash(float(self))
 
     def __add__(self, other):
-        res = _new_mpfr(prec=_min_prec(self, other))
+        res = _new_mpfr()
         if isinstance(other, mpfr):
             gmp.mpfr_add(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
         elif isinstance(other, mpq):
@@ -274,7 +257,7 @@ class mpfr(object):
     __radd__ = __add__
 
     def __sub__(self, other):
-        res = _new_mpfr(prec=_min_prec(self, other))
+        res = _new_mpfr()
         if isinstance(other, mpfr):
             gmp.mpfr_sub(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
         elif isinstance(other, mpq):
@@ -298,7 +281,7 @@ class mpfr(object):
         return mpfr._from_c_mpfr(res)
 
     def __rsub__(self, other):
-        res = _new_mpfr(prec=_min_prec(self, other))
+        res = _new_mpfr()
         if isinstance(other, mpq):
             # There is no mpfr_q_sub
             gmp.mpfr_sub_q(res, self._mpfr, other._mpq, gmp.MPFR_RNDN)
@@ -322,7 +305,7 @@ class mpfr(object):
         return mpfr._from_c_mpfr(res)
 
     def __mul__(self, other):
-        res = _new_mpfr(prec=_min_prec(self, other))
+        res = _new_mpfr()
         if isinstance(other, mpfr):
             gmp.mpfr_mul(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
         elif isinstance(other, mpq):
@@ -350,7 +333,7 @@ class mpfr(object):
     def __truediv__(self, other):
         if other == 0:
             raise ZeroDivisionError
-        res = _new_mpfr(prec=_min_prec(self, other))
+        res = _new_mpfr()
         if isinstance(other, mpfr):
             gmp.mpfr_div(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
         elif isinstance(other, mpq):
@@ -378,7 +361,7 @@ class mpfr(object):
     def __rtruediv__(self, other):
         if self == 0:
             raise ZeroDivisionError
-        res = _new_mpfr(prec=_min_prec(self, other))
+        res = _new_mpfr()
         if isinstance(other, mpq):
             # There is no mpfr_q_div
             gmp.mpfr_set_q(res, other._mpq, gmp.MPFR_RNDN)
@@ -406,7 +389,7 @@ class mpfr(object):
         return mpfr._from_c_mpfr(res)
 
     def __pow__(self, other):
-        res = _new_mpfr(prec=_min_prec(self, other))
+        res = _new_mpfr()
         if isinstance(other, mpfr):
             gmp.mpfr_pow(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
         elif isinstance(other, mpq):
@@ -434,7 +417,7 @@ class mpfr(object):
         return mpfr._from_c_mpfr(res)
 
     def __rpow__(self, other):
-        res = _new_mpfr(prec=_min_prec(self, other))
+        res = _new_mpfr()
         if isinstance(other, mpq):
             # There is no mpfr_pow_q
             gmp.mpfr_set_q(res, other._mpq, gmp.MPFR_RNDN)
@@ -459,17 +442,17 @@ class mpfr(object):
         return self
 
     def __neg__(self):
-        res = _new_mpfr(prec=_min_prec(self))
+        res = _new_mpfr()
         gmp.mpfr_neg(res, self._mpfr, gmp.MPFR_RNDN)
         return mpfr._from_c_mpfr(res)
 
     def __abs__(self):
-        res = _new_mpfr(prec=_min_prec(self))
+        res = _new_mpfr()
         gmp.mpfr_abs(res, self._mpfr, gmp.MPFR_RNDN)
         return mpfr._from_c_mpfr(res)
 
     def __trunc__(self):
-        tmp_mpfr = _new_mpfr(prec=_min_prec(self))
+        tmp_mpfr = _new_mpfr()
         gmp.mpfr_trunc(tmp_mpfr, self._mpfr)
         res = gmp.mpfr_get_d(tmp_mpfr, gmp.MPFR_RNDN)
         _del_mpfr(tmp_mpfr)
