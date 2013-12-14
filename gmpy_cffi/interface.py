@@ -478,7 +478,8 @@ ffi.cdef("""
     int mpc_fma (mpc_t rop, mpc_t op1, mpc_t op2, mpc_t op3, mpc_rnd_t rnd);
     int mpc_exp (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
     int mpc_log (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
-    int mpc_log10 (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    // Requires mpc >= 1.0.1
+    // int mpc_log10 (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
     int mpc_sin (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
     int mpc_cos (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
     int mpc_sin_cos (mpc_t rop_sin, mpc_t rop_cos, mpc_t op, mpc_rnd_t rnd_sin, mpc_rnd_t rnd_cos);

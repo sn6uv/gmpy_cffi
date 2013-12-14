@@ -110,14 +110,13 @@ def log10(x):
 
     Return the base-10 logarithm of x.
     """
-    try:
-        res, x = _init_check_mpfr(x)
-        gmp.mpfr_log10(res, x, gmp.MPFR_RNDN)
-        return mpfr._from_c_mpfr(res)
-    except TypeError:
-        res, x = _init_check_mpc(x)
-        gmp.mpc_log10(res, x, gmp.MPC_RNDNN)
-        return mpc._from_c_mpc(res)
+    res, x = _init_check_mpfr(x)
+    gmp.mpfr_log10(res, x, gmp.MPFR_RNDN)
+    return mpfr._from_c_mpfr(res)
+    # except TypeError:
+    #     res, x = _init_check_mpc(x)
+    #     gmp.mpc_log10(res, x, gmp.MPC_RNDNN)
+    #     return mpc._from_c_mpc(res)
 
 
 def exp(x):
