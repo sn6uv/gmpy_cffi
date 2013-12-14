@@ -7,7 +7,8 @@ from gmpy_cffi import (
     acos, asin, atan, atan2, cosh, sinh, tanh, sinh_cosh, sech, csch, coth,
     acosh, asinh, atanh, factorial, log1p, expm1, eint, li2, gamma, lngamma,
     lgamma, digamma, zeta, erf, erfc, j0, j1, jn, y0, y1, yn, fma, fms, agm,
-    hypot, ai, const_log2, const_pi, const_euler, const_catalan, mpfr, mpq, mpz)
+    hypot, ai, const_log2, const_pi, const_euler, const_catalan,
+    mpfr, mpq, mpz, mpc)
 
 
 class TestTrig(object):
@@ -20,15 +21,18 @@ class TestTrig(object):
 
     def test_log(self):
         assert log(0.5) == mpfr('-0.69314718055994529')
+        assert log(0.5+0.7j) == mpc('-0.15055254639196086+0.95054684081207508j')
 
     def test_log2(self):
         assert log2(0.5) == mpfr('-1.0')
 
     def test_log10(self):
         assert log10(0.5) == mpfr('-0.3010299956639812')
+        assert log10(0.5+0.7j) == mpc('-0.065384140134511923+0.41281724775525297j')
 
     def test_exp(self):
         assert exp(0.5) == mpfr('1.6487212707001282')
+        assert exp(0.5+0.7j) == mpc('1.2610115829047472+1.0621354039100237j')
 
     def test_exp2(self):
         assert exp2(0.5) == mpfr('1.4142135623730951')
@@ -38,21 +42,27 @@ class TestTrig(object):
 
     def test_cos(self):
         assert cos(0.5) == mpfr('0.87758256189037276')
+        assert cos(0.5+0.7j) == mpc('1.1015144315669947-0.36368439983078849j')
 
     def test_sin(self):
         assert sin(0.5) == mpfr('0.47942553860420301')
+        assert sin(0.5+0.7j) == mpc('0.60176007656391672+0.66571982846862043j')
 
     def test_tan(self):
         assert tan(0.5) == mpfr('0.54630248984379048')
+        assert tan(0.5+0.7j) == mpc('0.31267491960977917+0.70760291160255884j')
 
     def test_acos(self):
         assert acos(0.5) == mpfr('1.0471975511965979')
+        assert acos(0.5+0.7j) == mpc('1.1619717971477033-0.70341059318814581j')
 
     def test_asin(self):
         assert asin(0.5) == mpfr('0.52359877559829893')
+        assert asin(0.5+0.7j) == mpc('0.40882452964719346+0.70341059318814581j')
 
     def test_atan(self):
         assert atan(0.5) == mpfr('0.46364760900080609')
+        assert atan(0.5+0.7j) == mpc('0.65821413412081531+0.55575811532302299j')
 
     def test_sin_cos(self):
         assert sin_cos(0.5) == sin_cos(mpfr(0.5)) == (sin(0.5), cos(0.5))
@@ -61,6 +71,10 @@ class TestTrig(object):
         assert sin_cos(mpz(3)) == (sin(mpz(3)), cos(mpz(3)))
         with pytest.raises(TypeError):
             sin_cos([])
+        assert sin_cos(0.5+0.7j) == (
+            mpc('0.60176007656391672+0.66571982846862043j'),
+            mpc('1.1015144315669947-0.36368439983078849j'))
+        assert sin_cos(mpc(0.5+0.7j)) == (sin(mpc(0.5+0.7j)), cos(mpc(0.5+0.7j)))
 
     def test_sec(self):
         assert sec(0.5) == mpfr('1.139493927324549')
@@ -73,12 +87,15 @@ class TestTrig(object):
 
     def test_acos(self):
         assert acos(0.5) == mpfr('1.0471975511965979')
+        assert acos(0.5+0.7j) == mpc('1.1619717971477033-0.70341059318814581j')
 
     def test_asin(self):
         assert asin(0.5) == mpfr('0.52359877559829893')
+        assert asin(0.5+0.7j) == mpc('0.40882452964719346+0.70341059318814581j')
 
     def test_atan(self):
         assert atan(0.5) == mpfr('0.46364760900080609')
+        assert atan(0.5+0.7j) == mpc('0.65821413412081531+0.55575811532302299j')
 
     def test_atan2(self):
         assert atan2(1, 2) == atan2(1.0, 2) == atan2(mpfr(1), 2) == mpfr('0.46364760900080609')
@@ -92,12 +109,15 @@ class TestTrig(object):
 
     def test_sinh(self):
         assert sinh(0.5) == mpfr('0.52109530549374738')
+        assert sinh(0.5+0.7j) == mpc('0.39855567323751645+0.72643659137442362j')
 
     def test_cosh(self):
         assert cosh(0.5) == mpfr('1.1276259652063807')
+        assert cosh(0.5+0.7j) == mpc('0.86245590966723074+0.33569881253559997j')
 
     def test_tanh(self):
         assert tanh(0.5) == mpfr('0.46211715726000974')
+        assert tanh(0.5+0.7j) == mpc('0.68602943183000187+0.57526108892459082j')
 
     def test_sinh_cosh(self):
         assert sinh_cosh(0.5) == sinh_cosh(mpfr(0.5)) == (sinh(0.5), cosh(0.5))
@@ -118,12 +138,15 @@ class TestTrig(object):
 
     def test_acosh(self):
         assert acosh(1.5) == mpfr('0.96242365011920694')
+        assert acosh(0.5+0.7j) == mpc('0.70341059318814581+1.1619717971477033j')
 
     def test_asinh(self):
         assert asinh(0.5) == mpfr('0.48121182505960347')
+        assert asinh(0.5+0.7j) == mpc('0.58742022866413157+0.63658730712537337j')
 
     def test_atanh(self):
         assert atanh(0.5) == mpfr('0.549306144334054846')
+        assert atanh(0.5+0.7j) == mpc('0.32726575329597513+0.69358700031280818j')
 
 
 class TestSpecial(object):
@@ -197,6 +220,7 @@ class TestSpecial(object):
 
     def test_fma(self):
         assert fma(0.5, 0.7, 1.1) == mpfr('1.4500000000000002')
+        assert fma(3, 1, 0.5+0.1j) == mpc('3.5+0.10000000000000001j')
 
     def test_fms(self):
         assert fms(0.5, 0.7, 1.1) == mpfr('-0.75000000000000011')

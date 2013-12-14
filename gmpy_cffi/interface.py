@@ -474,6 +474,25 @@ ffi.cdef("""
     int mpc_pow_fr (mpc_t rop , mpc_t op1 , mpfr_t op2 , mpc_rnd_t rnd);
     int mpc_abs (mpfr_t rop , mpc_t op , mpfr_rnd_t rnd);
     int mpc_neg (mpc_t rop , mpc_t op , mpc_rnd_t rnd);
+
+    int mpc_fma (mpc_t rop, mpc_t op1, mpc_t op2, mpc_t op3, mpc_rnd_t rnd);
+    int mpc_exp (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_log (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_log10 (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_sin (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_cos (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_sin_cos (mpc_t rop_sin, mpc_t rop_cos, mpc_t op, mpc_rnd_t rnd_sin, mpc_rnd_t rnd_cos);
+    int mpc_tan (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+
+    int mpc_sinh (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_cosh (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_tanh (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_asin (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_acos (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_atan (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_asinh (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_acosh (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
+    int mpc_atanh (mpc_t rop, mpc_t op, mpc_rnd_t rnd);
 """)
 
 gmp = ffi.verify("""
