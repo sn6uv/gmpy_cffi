@@ -474,6 +474,17 @@ ffi.cdef("""
     int mpc_pow_fr (mpc_t rop , mpc_t op1 , mpfr_t op2 , mpc_rnd_t rnd);
     int mpc_abs (mpfr_t rop , mpc_t op , mpfr_rnd_t rnd);
     int mpc_neg (mpc_t rop , mpc_t op , mpc_rnd_t rnd);
+
+    // Random
+    typedef struct { ...; } __gmp_randstate_struct;
+    typedef __gmp_randstate_struct gmp_randstate_t[1];
+
+    void gmp_randinit_default(gmp_randstate_t randstate);
+    void gmp_randseed (gmp_randstate_t randstate, mpz_t seed);
+    void gmp_randseed_ui (gmp_randstate_t randstate, unsigned long seed);
+    void mpz_urandomm (mpz_t rop, gmp_randstate_t state, mpz_t op);
+    void mpfr_urandom (mpfr_t rop, gmp_randstate_t state, mpfr_rnd_t rnd);
+    void mpc_urandom (mpc_t rop, gmp_randstate_t state);
 """)
 
 gmp = ffi.verify("""
