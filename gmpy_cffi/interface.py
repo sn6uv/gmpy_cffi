@@ -485,6 +485,7 @@ ffi.cdef("""
     void mpz_urandomm (mpz_t rop, gmp_randstate_t state, mpz_t op);
     void mpfr_urandom (mpfr_t rop, gmp_randstate_t state, mpfr_rnd_t rnd);
     void mpc_urandom (mpc_t rop, gmp_randstate_t state);
+    void mpfr_grandom (mpfr_t rop1, mpfr_t rop2, gmp_randstate_t state, mpfr_rnd_t rnd);
 """)
 
 gmp = ffi.verify("""

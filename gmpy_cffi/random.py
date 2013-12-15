@@ -102,3 +102,17 @@ def mpc_random(random_state):
     res = _new_mpc()
     gmp.mpc_urandom(res, random_state._state)
     return mpc._from_c_mpc(res)
+
+
+def mpfr_grandom(random_state):
+    """
+    mpfr_grandom(random_state) -> (mpfr, mpfr)
+
+    Return two random numbers with gaussian distribution.
+    """
+    if not isinstance(random_state, RandomState):
+        raise TypeError("Expected RandomState in position 1 (got %s)" % type(
+            random_state))
+    res1, res2 = _new_mpfr(), _new_mpfr()
+    gmp.mpfr_grandom(res1, res2, random_state._state, gmp.MPFR_RNDN)
+    return (mpfr._from_c_mpfr(res1), mpfr._from_c_mpfr(res2))
