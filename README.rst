@@ -1,7 +1,13 @@
 GMPY_CFFI
 =========
 
-This is a fork of Marc Christiansen's gmpy_cfii experiment found at http://bazaar.launchpad.net/~tolot-solar-empire/+junk/gmpy_cffi/
+GMPY_CFFI is a python wrapper of the GNU Multiple Precision Arithmetic Library.
+It aims to be a PyPy compatible alternative to gmpy2.
+Consequently we use the python cffi library to wrap:
+
+-  GMP for integer and rational arithmetic.
+-  MPFR for correctly rounded floating-point arithmetic.
+-  MPC for correctly rounded complex floating-point arithmetic.
 
 |Travis|_
 
