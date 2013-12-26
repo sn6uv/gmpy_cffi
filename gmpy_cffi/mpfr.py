@@ -1,65 +1,16 @@
 import sys
 import math
 
-from gmpy_cffi.mpz import mpz, _new_mpz, _del_mpz
+from gmpy_cffi.mpz import mpz
 from gmpy_cffi.mpq import mpq
 from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.convert import _mpfr_to_str, _str_to_mpfr, _pyint_to_mpfr, _pylong_to_mpz, MAX_UI, _mpz_to_pylong
+from gmpy_cffi.cache import _new_mpfr, _del_mpfr, _new_mpz, _del_mpz
 
 
 if sys.version > '3':
     long = int
     xrange = range
-
-
-cache_size = _incache = 100
-_cache = []
-
-
-def _init_cache():
-    for _ in xrange(cache_size):
-        mpfr = ffi.new("mpfr_t")
-        gmp.mpfr_init(mpfr)
-        _cache.append(mpfr)
-_init_cache()
-
-
-def _new_mpfr(prec=0):
-    """Return an initialized mpfr_t."""
-    global _incache
-
-    if isinstance(prec, (int, long)):
-        if not (prec == 0 or gmp.MPFR_PREC_MIN <= prec <= gmp.MPFR_PREC_MAX):
-            raise ValueError("invalid prec %i (wanted %s <= prec <= %s)" % (
-                prec, gmp.MPFR_PREC_MIN, gmp.MPFR_PREC_MAX))
-    else:
-        raise TypeError('an integer is required')
-
-    if _incache:
-        _incache -= 1
-        # Set default precision
-        if prec == 0:
-            gmp.mpfr_set_prec(_cache[_incache], gmp.mpfr_get_default_prec())
-        else:
-            gmp.mpfr_set_prec(_cache[_incache], prec)
-        return _cache[_incache]
-    else:
-        mpfr = ffi.new("mpfr_t")
-        if prec == 0:
-            gmp.mpfr_init(mpfr)
-        else:
-            gmp.mpfr_init2(mpfr, prec)
-        return mpfr
-
-
-def _del_mpfr(mpfr):
-    global _incache
-
-    if _incache < cache_size:
-        _cache[_incache] = mpfr
-        _incache += 1
-    else:
-        gmp.mpfr_clear(mpfr)
 
 
 def isinf(x):

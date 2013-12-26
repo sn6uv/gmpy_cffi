@@ -3,55 +3,12 @@ import sys
 
 from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.convert import _pyint_to_mpz, _pylong_to_mpz, _mpz_to_pylong, _mpz_to_str, MAX_UI
+from gmpy_cffi.cache import _new_mpz, _del_mpz
 
 
-PY3 = sys.version.startswith('3')
-
-
-if PY3:
+if sys.version > '3':
     long = int
     xrange = range
-
-#logging.basicConfig(filename='_gmpy.log', level=logging.DEBUG)
-#logging.basicConfig(level=logging.DEBUG)
-
-cache_size = _incache = 100
-_cache = []
-
-
-def _init_cache():
-    for _ in xrange(cache_size):
-        mpz = ffi.new("mpz_t")
-        gmp.mpz_init(mpz)
-        _cache.append(mpz)
-_init_cache()
-
-
-def _new_mpz():
-    """Return an initialized mpz_t."""
-    global _incache
-
-    if _incache:
-#        logging.debug('_from_cache: %d', _incache)
-        _incache -= 1
-        return _cache[_incache]
-    else:
-#        logging.debug('_new_mpz')
-        mpz = ffi.new("mpz_t")
-        gmp.mpz_init(mpz)
-        return mpz
-
-
-def _del_mpz(mpz):
-    global _incache
-
-    if _incache < cache_size:
-#        logging.debug('_to_cache: %d', _incache)
-        _cache[_incache] = mpz
-        _incache += 1
-    else:
-#        logging.debug('_del_mpz')
-        gmp.mpz_clear(mpz)
 
 
 class mpz(object):

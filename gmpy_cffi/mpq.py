@@ -4,51 +4,13 @@ import logging
 import gmpy_cffi
 from gmpy_cffi.interface import gmp, ffi
 from gmpy_cffi.convert import _mpq_to_str, _str_to_mpq, _pyint_to_mpz, _pyint_to_mpq, MAX_UI
-from gmpy_cffi.mpz import mpz, _new_mpz, _del_mpz
+from gmpy_cffi.mpz import mpz
+from gmpy_cffi.cache import _new_mpq, _del_mpq, _new_mpz, _del_mpz
 
 
 if sys.version > '3':
     long = int
     xrange = range
-
-
-cache_size = _incache = 100
-_cache = []
-
-
-def _init_cache():
-    for _ in xrange(cache_size):
-        mpq = ffi.new("mpq_t")
-        gmp.mpq_init(mpq)
-        _cache.append(mpq)
-_init_cache()
-
-
-def _new_mpq():
-    """Return an initialized mpq_t."""
-    global _incache
-
-    if _incache:
-#        logging.debug('_from_cache: %d', _incache)
-        _incache -= 1
-        return _cache[_incache]
-    else:
-#        logging.debug('_new_mpq')
-        mpq = ffi.new("mpq_t")
-        gmp.mpq_init(mpq)
-        return mpq
-
-
-def _del_mpq(mpq):
-    global _incache
-
-    if _incache < cache_size:
-#        logging.debug('_to_cache: %d', _incache)
-        _cache[_incache] = mpq
-        _incache += 1
-    else:
-#        logging.debug('_del_mpq')
-        gmp.mpq_clear(mpq)
 
 
 class mpq(object):

@@ -2,75 +2,15 @@ import sys
 
 from gmpy_cffi.interface import ffi, gmp
 from gmpy_cffi.convert import _str_to_mpc, _mpc_to_str, _pyint_to_mpfr, _pyint_to_mpz, MAX_UI
-from gmpy_cffi.mpz import mpz, _new_mpz, _del_mpz
+from gmpy_cffi.mpz import mpz
 from gmpy_cffi.mpq import mpq
-from gmpy_cffi.mpfr import mpfr, _new_mpfr
+from gmpy_cffi.mpfr import mpfr
+from gmpy_cffi.cache import _new_mpc, _del_mpc, _new_mpfr, _new_mpz, _del_mpz
 
 
 if sys.version > '3':
     long = int
     xrange = range
-
-
-cache_size = _incache = 100
-_cache = []
-
-
-def _init_cache():
-    for _ in xrange(cache_size):
-        mpc = ffi.new("mpc_t")
-        gmp.mpc_init2(mpc, gmp.mpfr_get_default_prec())
-        _cache.append(mpc)
-_init_cache()
-
-
-def _new_mpc(prec=(0,0)):
-    """Return an initialized mpc_t."""
-    global _incache
-
-    # prec is assumed to be checked already
-    rprec, iprec = prec
-
-    if not all(p == 0 or gmp.MPFR_PREC_MIN <= p <= gmp.MPFR_PREC_MAX
-               for p in prec):
-            raise ValueError(
-                "invalid prec (wanted prec == 0 or %s <= prec <= %s)" % (
-                    gmp.MPFR_PREC_MIN, gmp.MPFR_PREC_MAX))
-
-    if _incache:
-        _incache -= 1
-        # Set default precision
-        if rprec == iprec:
-            if rprec  == 0:
-                gmp.mpc_set_prec(_cache[_incache], gmp.mpfr_get_default_prec())
-            else:
-                gmp.mpc_set_prec(_cache[_incache], rprec)
-        else:
-            if rprec == 0:
-                rprec = gmp.mpfr_get_default_prec()
-            if iprec == 0:
-                iprec = gmp.mpfr_get_default_prec()
-            gmp.mpc_clear(_cache[_incache])
-            gmp.mpc_init3(_cache[_incache], rprec, iprec)
-        return _cache[_incache]
-    else:
-        mpc = ffi.new("mpc_t")
-        if rprec == 0:
-            rprec = gmp.mpfr_get_default_prec()
-        if iprec == 0:
-            iprec = gmp.mpfr_get_default_prec()
-        if rprec == iprec:
-            gmp.mpc_init2(mpc, rprec)
-        else:
-            gmp.mpc_init3(mpc, rprec, iprec)
-        return mpc
-
-
-def _del_mpc(mpc):
-    global _incache
-
-    if _incache < cache_size:
-        _cache[_incache] = mpc
 
 
 def _check_prec(prec):
