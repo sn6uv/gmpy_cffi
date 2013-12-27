@@ -2,6 +2,14 @@ import pytest
 
 from gmpy_cffi import set_cache, get_cache, mpz, mpq, mpfr, mpc
 
+def _cache(f):
+    size, obsize = get_cache()
+
+    # Smaller than obsize
+    x = [f(i) for i in range(size)]      # from the cache
+    y = [f(i) for i in range(size)]      # new instances
+    del(x)                              # refil the cache
+    z = [f(i) for i in range(size)]      # from the cache again
 
 class TestCache(object):
     def test_get_set_cache(self):
@@ -20,36 +28,24 @@ class TestCache(object):
             set_cache(mpz(100), 128)
         with pytest.raises(TypeError):
             set_cache(100, mpz(128))
+        # reset the cache paramaters for other tests
+        set_cache(100, 128)
 
     def test_mpz_cache(self):
-        x = [mpz(i) for i in range(100)]    # from the cache
-        y = [mpz(i) for i in range(100)]    # new instances
-        del(x)  # refills the cache
-        z = [mpq(i) for i in range(100)]    # from the cache again
+        _cache(lambda i : mpz(i))
 
     def test_mpq_cache(self):
-        x = [mpq(i) for i in range(100)]    # from the cache
-        y = [mpq(i) for i in range(100)]    # new instances
-        del(x)  # refills the cache
-        z = [mpq(i) for i in range(100)]    # from the cache again
+        _cache(lambda i : mpq(i))
 
-    def test_mpfr_cache1(self):
-        x = [mpfr(i) for i in range(100)]    # from the cache
-        y = [mpfr(i) for i in range(100)]    # new instances
-        del(x)  # refills the cache
-        z = [mpfr(i) for i in range(100)]    # from the cache again
+    def test_mpfr_cache(self):
+        _cache(lambda i : mpfr(i))
+        _cache(lambda i : mpfr(i, 50))
 
-    def test_mpfr_cache2(self):
-        x = [mpfr(i, 128) for i in range(100)]    # from the cache
-        y = [mpfr(i, 128) for i in range(100)]    # new instances
-
-    def test_mpc_cache1(self):
-        x = [mpc(i) for i in range(100)]    # from the cache
-        y = [mpc(i) for i in range(100)]    # new instances
-        del(x)  # refills the cache
-        z = [mpc(i) for i in range(100)]    # from the cache again
-
-    def test_mpc_cache2(self):
-        x = [mpc(i, 128) for i in range(100)]    # from the cache
-        y = [mpc(i, 128) for i in range(100)]    # new instances
-
+    def test_mpc_cache(self):
+        _cache(lambda i : mpc(i))
+        _cache(lambda i : mpc(complex(i), (0, 0)))
+        _cache(lambda i : mpc(complex(i), (50, 50)))
+        _cache(lambda i : mpc(complex(i), (0, 100)))
+        _cache(lambda i : mpc(complex(i), (100, 0)))
+        _cache(lambda i : mpc(complex(i), (50, 100)))
+        _cache(lambda i : mpc(complex(i), (50000, 50000)))

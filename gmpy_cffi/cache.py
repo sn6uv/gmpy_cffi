@@ -235,6 +235,7 @@ def _del_mpc(mpc):
 
     if in_mpc_cache < cache_size:
         mpc_cache[in_mpc_cache] = mpc
+        # FIXME This doesn't seem to be working properly
         if ffi.sizeof(mpc[0]) <= cache_obsize:
             mpc_cache[in_mpc_cache] = mpc
         else:
