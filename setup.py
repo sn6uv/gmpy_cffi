@@ -6,8 +6,10 @@ setup(
     name='gmpy_cffi',
     version='0.1',
     author="Angus Griffith",
+    author_email="16sn6uv@gmail.com",
     license="3-clause BSD",
     description="GMP CFFI wrapper",
+    url="https://github.com/sn6uv/gmpy_cffi",
     keywords=["PyPy", "gmp"],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
