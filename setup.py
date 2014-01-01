@@ -10,6 +10,7 @@ setup(
     license="3-clause BSD",
     description="GMP CFFI wrapper",
     url="https://github.com/sn6uv/gmpy_cffi",
+    download_url="https://github.com/sn6uv/gmpy_cffi/tarball/0.1",
     keywords=["PyPy", "gmp"],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
