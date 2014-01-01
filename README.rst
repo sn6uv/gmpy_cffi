@@ -9,6 +9,13 @@ Consequently we use the python cffi library to wrap:
 -  MPFR for correctly rounded floating-point arithmetic.
 -  MPC for correctly rounded complex floating-point arithmetic.
 
+Installation
+------------
+
+To install gmpy_cffi, simply run::
+
+    $ pip install gmpy_cffi
+
 |Travis|_
 
 .. |Travis| image:: https://travis-ci.org/sn6uv/gmpy_cffi.png?branch=master
