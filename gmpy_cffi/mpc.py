@@ -124,11 +124,17 @@ class mpc(object):
 
     @property
     def real(self):
-        return mpfr._from_c_mpfr(gmp.mpc_realref(self._mpc))
+        _tmp_mpfr = _new_mpfr()
+        gmp.mpc_real(_tmp_mpfr, self._mpc, gmp.MPC_RNDNN)
+        result = mpfr._from_c_mpfr(_tmp_mpfr)
+        return result
 
     @property
     def imag(self):
-        return mpfr._from_c_mpfr(gmp.mpc_imagref(self._mpc))
+        _tmp_mpfr = _new_mpfr()
+        gmp.mpc_imag(_tmp_mpfr, self._mpc, gmp.MPC_RNDNN)
+        result = mpfr._from_c_mpfr(_tmp_mpfr)
+        return result
 
     def __str__(self):
         return _mpc_to_str(self._mpc, 10)

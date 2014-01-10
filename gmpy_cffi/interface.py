@@ -439,6 +439,8 @@ ffi.cdef("""
     // int mpc_inp_str (mpc_t rop, FILE *stream, size_t *read, int base, mpc_rnd_t rnd);
     // size_t mpc_out_str (FILE *stream, int base, size_t n_digits, mpc_t op, mpc_rnd_t rnd);
 
+    int mpc_real (mpfr_t rop, mpc_t op, mpfr_rnd_t rnd);
+    int mpc_imag (mpfr_t rop, mpc_t op, mpfr_rnd_t rnd);
     mpfr_t mpc_realref (mpc_t op);
     mpfr_t mpc_imagref (mpc_t op);
 
