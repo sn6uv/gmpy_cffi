@@ -282,8 +282,6 @@ class mpfr(object):
     __rmul__ = __mul__
 
     def __truediv__(self, other):
-        if other == 0:
-            raise ZeroDivisionError
         res = _new_mpfr()
         if isinstance(other, mpfr):
             gmp.mpfr_div(res, self._mpfr, other._mpfr, gmp.MPFR_RNDN)
@@ -310,8 +308,6 @@ class mpfr(object):
     __div__ = __truediv__
 
     def __rtruediv__(self, other):
-        if self == 0:
-            raise ZeroDivisionError
         res = _new_mpfr()
         if isinstance(other, mpq):
             # There is no mpfr_q_div

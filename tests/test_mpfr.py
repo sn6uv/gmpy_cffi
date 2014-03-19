@@ -258,16 +258,11 @@ class TestMath(object):
         assert math.isnan(math.trunc(mpfr('nan')))
 
     def test_divzero(self):
-        with pytest.raises(ZeroDivisionError):
-            mpfr(1.0) / mpq(0,1)
-        with pytest.raises(ZeroDivisionError):
-            mpfr(1.0) / mpz(0)
-        with pytest.raises(ZeroDivisionError):
-            mpfr(1.0) / 0
-        with pytest.raises(ZeroDivisionError):
-            mpfr(1.0) / 0.0
-        with pytest.raises(ZeroDivisionError):
-            1 / mpfr(0.0)
+        assert mpfr(1.0) / mpq(0,1) == mpfr('inf')
+        assert mpfr(1.0) / mpz(0) == mpfr('inf')
+        assert mpfr(1.0) / 0 == mpfr('inf')
+        assert mpfr(1.0) / 0.0 == mpfr('inf')
+        assert 1 / mpfr(0.0) == mpfr('inf')
 
 
 class TestConv(object):
