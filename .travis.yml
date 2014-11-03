@@ -11,8 +11,8 @@ matrix:
     - python: pypy3
 before_install:
   - sudo apt-get install libgmp3-dev libmpfr-dev libmpc-dev
-  - pip install --use-mirrors cffi
-  - pip install --use-mirrors pytest
+  - pip install cffi
+  - pip install pytest
 install:
   - python setup.py install
 script:
