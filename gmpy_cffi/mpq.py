@@ -67,6 +67,7 @@ class mpq(object):
                 # Set Numerator
                 if isinstance(args[0], mpz):
                     gmp.mpq_set_num(a, args[0]._mpz)
+                    self._keepalive_num = args[0]
                 else:
                     num = gmp.mpq_numref(a)
                     _pyint_to_mpz(args[0], num)
@@ -77,6 +78,7 @@ class mpq(object):
 
                 if isinstance(args[1], mpz):
                     gmp.mpq_set_den(a, args[1]._mpz)
+                    self._keepalive_den = args[1]
                 else:
                     den = gmp.mpq_denref(a)
                     _pyint_to_mpz(args[1], den)
